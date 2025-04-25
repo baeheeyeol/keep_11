@@ -1,0 +1,41 @@
+server:
+  port: 8081
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+      enabled: true
+
+# database 연동 설정
+spring:
+  datasource:
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    url: jdbc:oracle:thin:@10.129.65.41:1532:DEV1
+    username: apps
+    password: apps
+  thymeleaf:
+    cache: false
+  # spring data jpa 설정
+  jpa:
+    database-platform: org.hibernate.community.dialect.OracleLegacyDialect
+    open-in-view: false
+
+    # DDL-Auto 설정 (none, validate, update, create, create-drop)
+    hibernate:
+      ddl-auto: none
+
+    # Hibernate 프로퍼티
+    properties:
+      hibernate.format_sql: true    # SQL을 키워드별로 개행 포맷팅
+      hibernate.highlight_sql: true # (5.2 이상) ANSI 컬러 하이라이트
+
+logging:
+  level:
+    # SQL 템플릿 (여러 줄로 포맷된 SQL)
+    org.hibernate.SQL: DEBUG
+
+    # 바인딩된 파라미터 값 보기
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+    # (추가) JPA 내부 JDBC 바인드 로그
+    org.hibernate.orm.jdbc.bind: TRACE
