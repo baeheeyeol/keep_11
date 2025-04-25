@@ -18,7 +18,7 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
 
-	//회원가입
+	// 회원가입
 	@Transactional
 	public long save(MemberDTO memberDTO) {
 		// 1. DTO → Entity 변환 (비밀번호 해시 적용)
@@ -34,18 +34,19 @@ public class MemberService {
 		// 3. 저장된 ID 반환
 		return saved.getId();
 	}
-	//이메일 중복검증
+
+	// 이메일 중복검증
 	public boolean existsByEmail(String email) {
 		return memberRepository.findFirstByEmail(email).isPresent();
 	}
 
-	//이메일/비밀번호 조합이 유효한지 검증
+	// 이메일/비밀번호 조합이 유효한지 검증
 	public boolean authenticate(String email, String rawPassword) {
-		return memberRepository.findByEmail(email).map(user -> passwordEncoder.matches(rawPassword, user.getPassword()))
+		return memberRepository.findByEmail(email).map(member -> passwordEncoder.matches(rawPassword, member.getPassword()))
 				.orElse(false);
 	}
-	
-  public Optional<MemberEntity> findByEmail(String email) {
-      return memberRepository.findByEmail(email);
-  }
+
+	public Long findIdByEmail(String email) {
+		return memberRepository.findIdByEmail(email);
+	}
 }

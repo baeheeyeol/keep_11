@@ -50,13 +50,12 @@ public class MemberApiController {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "WRONG_PASSWORD"));
 		}
     // 3) 로그인 성공한 사용자 정보(Member 엔티티) 조회
-		MemberEntity member  = memberService.findByEmail(memberDTO.getEmail()).orElseThrow();  // existsByEmail으로 이미 확인했으니 안전합니다.
+		Long memberId = memberService.findIdByEmail(memberDTO.getEmail());  
 
     // 4) 세션에 MemberDTO 대신 Member 엔티티(또는 id)만 저장해도 OK
-    session.setAttribute("user", member.getId());
+    session.setAttribute("user", memberId);
 
     // 5) id(또는 원하는 다른 값)를 principal로 사용
-    Long memberId = member.getId();
     session.setAttribute("user", memberDTO);
 
     UsernamePasswordAuthenticationToken authToken =
