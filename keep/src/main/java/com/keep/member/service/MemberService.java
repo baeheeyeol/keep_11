@@ -41,8 +41,8 @@ public class MemberService {
 	}
 
 	// 이메일/비밀번호 조합이 유효한지 검증
-	public boolean authenticate(String email, String rawPassword) {
-		return memberRepository.findByEmail(email).map(member -> passwordEncoder.matches(rawPassword, member.getPassword()))
+	public boolean authenticate(String email, String password) {
+		return memberRepository.findByEmail(email).map(member -> passwordEncoder.matches(password, member.getPassword()))
 				.orElse(false);
 	}
 

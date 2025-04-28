@@ -1,6 +1,5 @@
 package com.keep.config;
 
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,27 +14,19 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
 @EnableWebSecurity
 public class SecurityConfig {
 
-  @Bean
-  public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-  }
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		http.csrf(csrf -> csrf.disable()).headers(headers -> headers.frameOptions(FrameOptionsConfig::disable))
+				.authorizeHttpRequests(
+						auth -> auth.requestMatchers("/members/**", "/api/members/**", "/css/**", "/js/**", "/images/**")
+								.permitAll().anyRequest().authenticated())
+				.formLogin((form) -> form.disable())
+				.exceptionHandling(ex -> ex.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/members")));
 
-  @Bean
-  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http
-      .csrf(csrf -> csrf.disable())
-      .headers(headers -> headers.frameOptions(FrameOptionsConfig::disable))
-      .authorizeHttpRequests(auth -> auth
-        .requestMatchers(
-          "/members/**", "/api/members/**"
-          , "/css/**", "/js/**", "/images/**"
-        ).permitAll()
-        .anyRequest().authenticated()
-      ).formLogin((form) -> form.disable())  
-      .exceptionHandling(ex -> ex
-          .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/members"))
-      );
-
-    return http.build();
-  }
+		return http.build();
+	}
 }

@@ -1,10 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/body}">
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+    <title>홈 페이지</title>
 </head>
 <body>
-123
+    <!-- body.html의 <main> 영역을 이 부분으로 대체 -->
+    <div layout:fragment="content">
+        <!-- 예시 링크 -->
+        <a th:href="@{/profile}">내 프로필 보기</a>
+    </div>
 </body>
 </html>

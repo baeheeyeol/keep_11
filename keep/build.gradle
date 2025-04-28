@@ -22,7 +22,7 @@ configurations {
 repositories {
 	mavenCentral()
 }
-
+	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect' /* Thymeleaf Layout */
 dependencies {
  	implementation 'org.hibernate.orm:hibernate-community-dialects:6.6.11.Final'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'

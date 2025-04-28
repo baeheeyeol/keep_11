@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+  <meta charset="UTF-8" />
+  <title layout:insert="~{::title}">기본 타이틀</title>
+
+  <!-- FontAwesome -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+        integrity="…"
+        crossorigin="anonymous" />
+
+  <!-- 테마용 CSS: id로 교체 가능하게 -->
+  <link rel="stylesheet" id="themeStylesheet" th:href="@{/css/main/dark.css}" />
+</head>
+<body>
+  <div class="wrapper">
+    <!-- 최상단 바 -->
+    <header class="topbar">
+      <!-- 좌측: 사이드바 토글 -->
+      <button id="sidebarToggle" class="sidebar-toggle">
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <!-- 우측 아이콘 그룹 -->
+      <div class="topbar-right">
+        <!-- ① 개인 정보 -->
+        <button class="icon-btn"><i class="fas fa-user-circle"></i></button>
+        <!-- ② 테마 토글 -->
+        <button id="themeToggle" class="icon-btn">
+          <i class="fas fa-sun"></i>
+        </button>
+        <!-- ③ 알림 -->
+        <button class="icon-btn"><i class="fas fa-bell"></i></button>
+      </div>
+    </header>
+
+    <!-- 사이드바 -->
+    <aside id="sidebar" class="sidebar open">
+      <ul class="sidebar-menu">
+        <li><a th:href="@{/dashboard}"><i class="fas fa-tachometer-alt"></i> 대시보드</a></li>
+        <li><a th:href="@{/projects}"><i class="fas fa-briefcase"></i> 프로젝트</a></li>
+        <li><a th:href="@{/tasks}"><i class="fas fa-tasks"></i> 작업</a></li>
+        <li><a th:href="@{/settings}"><i class="fas fa-cog"></i> 설정</a></li>
+        <li><a th:href="@{/help}"><i class="fas fa-question-circle"></i> 도움말</a></li>
+      </ul>
+    </aside>
+
+    <!-- 콘텐츠 -->
+    <div class="content">
+      <main layout:fragment="content">
+        <!-- 자식 페이지 컨텐츠 -->
+      </main>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; <span th:text="${#dates.format(today, 'yyyy')}"></span> My Company</p>
+  </footer>
+
+  <!-- 사이드바 + 테마 토글 스크립트 -->
+  <script th:src="@{/js/main/main.js}"></script>
+</body>
+</html>

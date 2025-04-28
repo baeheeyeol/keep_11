@@ -53,10 +53,7 @@ public class MemberApiController {
 		Long memberId = memberService.findIdByEmail(memberDTO.getEmail());  
 
     // 4) 세션에 MemberDTO 대신 Member 엔티티(또는 id)만 저장해도 OK
-    session.setAttribute("user", memberId);
-
-    // 5) id(또는 원하는 다른 값)를 principal로 사용
-    session.setAttribute("user", memberDTO);
+    session.setAttribute("memberId", memberId);
 
     UsernamePasswordAuthenticationToken authToken =
         new UsernamePasswordAuthenticationToken(
@@ -70,7 +67,8 @@ public class MemberApiController {
 
     session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
     
-    authToken.eraseCredentials(); // 
+    //authToken.eraseCredentials();
+    
     return ResponseEntity.ok(Map.of("message", "SUCCESS"));
 	}
 
