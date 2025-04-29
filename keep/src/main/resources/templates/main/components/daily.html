@@ -7,9 +7,8 @@
   <link rel="stylesheet" th:href="@{/css/main/daily.css}" />
     <!-- ① 날짜 헤더 -->
     <div class="daily-header">
-      <div class="day">4월 16일 수요일</div>
+      <div class="day"  id="date-header" data-month=""></div>
     </div>
-
     <!-- ② 타임라인 -->
     <div class="timeline">
       <!-- 예시: 24시간 표시 -->
@@ -24,12 +23,22 @@
         <div class="line"></div>
       </div>
     </div>
-
-    <!-- ③ 하단 일정 추가 바 -->
-    <div class="add-bar">
-      <span class="add-text">4월 16일에 일정 추가</span>
-      <button class="add-btn"><i class="fas fa-plus"></i></button>
+    
+     <!-- ② 모달 창 (달력) -->
+    <div class="modal" id="calendar-modal">
+      <div class="modal-content">
+        <div class="calendar-header">
+       	 <button id="prev-month" class="nav-btn">&#60;</button>
+          <span id="calendar-month">2025년 4월</span>
+             <button id="next-month" class="nav-btn">&#62;</button>
+          <button id="close-modal" class="close-btn">X</button>
+        </div>
+        <div class="calendar-body">
+          <!-- 달력 내용이 동적으로 삽입될 곳 -->
+        </div>
+      </div>
     </div>
+      <script th:src="@{/js/main/daily.js}"></script>
   </div>
 </body>
 </html>

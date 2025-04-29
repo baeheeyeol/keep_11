@@ -20,8 +20,8 @@
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    font-size: 1.1rem;
-      color: #666;
+  font-size: 1.1rem;
+  color: #666;
 }
 
 
@@ -59,40 +59,116 @@
   margin-left: 15px;
 }
 
-/* 일정 추가 바 */
-.add-bar {
-  display: flex;
+/* 모달 배경 */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
+  display: none;  /* 처음에는 숨김 */
+  justify-content: center;
   align-items: center;
-  gap: 12px;
-  background: #fafafa;
-  padding: 16px 20px;
-  border-top: 2px solid #e0e0e0;
-  border-radius: 10px;
+  z-index: 1000;  /* 모달이 다른 요소 위에 표시되도록 */
 }
 
-.add-bar .add-text {
-  flex: 1;
+/* 모달 콘텐츠 */
+.modal-content {
   background: #fff;
-  padding: 12px 20px;
-  border-radius: 30px;
-  color: #555;
-  font-size: 1rem;
-  font-weight: 500;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 80%;
+  max-width: 400px;
 }
 
-.add-bar .add-btn {
-  width: 50px;
-  height: 50px;
-  background: #ff7f50;
+/* 모달 헤더 */
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+#calendar-month {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+#close-modal {
+  background: none;
   border: none;
-  border-radius: 50%;
-  font-size: 1.25rem;
-  color: #fff;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  color: #888;
+  font-size: 1.2rem;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+}
+/* 달력 스타일 */
+.calendar {
+  position: absolute;
+  top: 100%;  /* 날짜 헤더 바로 아래 */
+  left: 0;
+  width: 100%;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  display: none; /* 처음에는 숨김 */
+  z-index: 1000;
 }
 
-.add-bar .add-btn:hover {
-  background: #ff6347;
+/* 달력 헤더 */
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+#calendar-month {
+  font-size: 1.2rem;
+  font-weight: bold;
+     color: black;
+}
+
+#close-modal {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+/* 달력 바디 */
+.calendar-body {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+/* 달력 일 */
+.calendar-day {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  background-color: #f8f8f8;
+  border-radius: 5px;
+  cursor: pointer;
+   color: black;
+}
+
+.calendar-day:hover {
+  background-color: #ddd;
+}
+
+.empty {
+  background-color: #f0f0f0;
+  pointer-events: none;
+}
+
+/* 주말에 대한 스타일 */
+.weekend {
+  color: red;
 }
