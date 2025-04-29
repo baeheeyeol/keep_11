@@ -1,0 +1,98 @@
+/* 전체 레이아웃을 위한 스타일 */
+.container {
+  display: flex;
+  flex-direction: column;  /* 세로 방향으로 레이아웃 */
+  height: 80vh;            /* 화면 높이의 80% */
+  justify-content: space-between;  /* 헤더와 푸터 사이에 공간 분배 */
+  padding: 30px 40px;
+  box-sizing: border-box;
+  background-color: #f7f7f7;  /* 전체 배경 색상 */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);  /* 현대적인 그림자 효과 */
+}
+/* 날짜 헤더 */
+.daily-header {
+  display: flex;
+  flex-direction: row;  /* 가로로 배치 */
+  align-items: center;     /* 가운데 정렬 */
+  justify-content: center;
+  padding: 10px 0;         /* 상하 여백 줄이기 */
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    font-size: 1.1rem;
+      color: #666;
+}
+
+
+/* 타임라인 */
+.timeline {
+  flex: 1;                  /* 남은 공간을 모두 차지하도록 */
+  overflow-y: auto;         /* 세로 스크롤 가능 */
+  padding: 0 20px;
+}
+
+.time-row {
+  display: flex;
+  align-items: center;
+  height: 60px;
+  margin-bottom: 15px;
+  transition: background-color 0.3s ease;
+}
+
+.time-row:hover {
+  background-color: #f1f1f1;  /* 시간대 구분에 마우스 올리면 색상 변경 */
+}
+
+.hour-label {
+  width: 70px;
+  text-align: right;
+  padding-right: 12px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #666;
+}
+
+.line {
+  flex-grow: 1;
+  border-bottom: 2px dashed #ddd;
+  margin-left: 15px;
+}
+
+/* 일정 추가 바 */
+.add-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fafafa;
+  padding: 16px 20px;
+  border-top: 2px solid #e0e0e0;
+  border-radius: 10px;
+}
+
+.add-bar .add-text {
+  flex: 1;
+  background: #fff;
+  padding: 12px 20px;
+  border-radius: 30px;
+  color: #555;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.add-bar .add-btn {
+  width: 50px;
+  height: 50px;
+  background: #ff7f50;
+  border: none;
+  border-radius: 50%;
+  font-size: 1.25rem;
+  color: #fff;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.add-bar .add-btn:hover {
+  background: #ff6347;
+}

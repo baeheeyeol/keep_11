@@ -1,40 +1,157 @@
- * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: Arial, sans-serif; background: #f0f2f5; }
-    .container { position: relative; width: 100%; max-width: 900px; min-height: 500px; margin: 50px auto; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-    .panels { display: flex; width: 200%; transition: transform 0.6s ease-in-out; }
-    .panel { width: 50%; padding: 60px; display: flex; align-items: center; justify-content: center; flex-direction: column; }
-    .form-container { width: 100%; max-width: 320px; }
-    .form-container h1 { margin-bottom: 20px; font-size: 24px; text-align: center; }
-    .form-container input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 4px; }
-	.form-container button {width: 100%;padding: 12px;margin-top: 16px;border: none;background: #4CAF50;color: #fff;font-size: 16px;border-radius: 4px;cursor: pointer; transition: background 0.2s, opacity 0.2s;}
-	.form-container button:disabled {background: #A5A5A5;color: #EEE;cursor: not-allowed; opacity: 0.7;}
-    .options { display: flex; justify-content: space-between; margin-top: 12px; }
-    .options button { background: none; border: none; color: #007BFF; cursor: pointer; font-size: 14px; }
-    .image-container { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-    .image-container img { max-width: 100%; height: auto; }
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
 
-    /* 회원가입 이메일 중복 확인 UI */
-    .input-group { display: flex; align-items: center; }
-    .duplicate-check-btn { margin-left: 8px; padding: 8px 12px; background: #007BFF; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
-    .duplicate-check-btn:disabled { background: #ccc; cursor: default; }
-    .email-feedback { font-size: 14px; margin-top: 4px; }
-    .email-feedback.success { color: green; }
-    .email-feedback.error { color: red; }
+body {
+	font-family: Arial, sans-serif;
+	background: #f0f2f5;
+}
 
-    /* Sign-up mode */
-    .container.sign-up-mode .panels { transform: translateX(-50%); }
-    /* login.css 에 추가 */
-	.sign-in-container .toast-login {
-	  margin-top: 8px;
-	  padding: 8px 12px;
-	  background: #ffffff;
-	  color: #333333;	
-	  font-size: 14px;
-	  text-align: center;
-	  opacity: 0;
-	  transition: opacity 0.3s ease;
-	}
+.container {
+	position: relative;
+	width: 100%;
+	max-width: 900px;
+	min-height: 500px;
+	margin: 50px auto;
+	background: #fff;
+	border-radius: 10px;
+	overflow: hidden;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
 
-	.sign-in-container .toast-login.show {
-	  opacity: 1;
-	}
+.panels {
+	display: flex;
+	width: 200%;
+	transition: transform 0.6s ease-in-out;
+}
+
+.panel {
+	width: 50%;
+	padding: 60px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+}
+
+.form-container {
+	width: 100%;
+	max-width: 320px;
+}
+
+.form-container h1 {
+	margin-bottom: 20px;
+	font-size: 24px;
+	text-align: center;
+}
+
+.form-container input {
+	width: 100%;
+	padding: 12px;
+	margin: 8px 0;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+}
+
+.form-container button {
+	width: 100%;
+	padding: 12px;
+	margin-top: 16px;
+	border: none;
+	background: #4CAF50;
+	color: #fff;
+	font-size: 16px;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: background 0.2s, opacity 0.2s;
+}
+
+.form-container button:disabled {
+	background: #A5A5A5;
+	color: #EEE;
+	cursor: not-allowed;
+	opacity: 0.7;
+}
+
+.options {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 12px;
+}
+
+.options button {
+	background: none;
+	border: none;
+	color: #007BFF;
+	cursor: pointer;
+	font-size: 14px;
+}
+
+.image-container {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.image-container img {
+	max-width: 100%;
+	height: auto;
+}
+
+/* 회원가입 이메일 중복 확인 UI */
+.input-group {
+	display: flex;
+	align-items: center;
+}
+
+.duplicate-check-btn {
+	margin-left: 8px;
+	padding: 8px 12px;
+	background: #007BFF;
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+.duplicate-check-btn:disabled {
+	background: #ccc;
+	cursor: default;
+}
+
+.email-feedback {
+	font-size: 14px;
+	margin-top: 4px;
+}
+
+.email-feedback.success {
+	color: green;
+}
+
+.email-feedback.error {
+	color: red;
+}
+
+/* Sign-up mode */
+.container.sign-up-mode .panels {
+	transform: translateX(-50%);
+}
+/* login.css 에 추가 */
+.sign-in-container .toast-login {
+	margin-top: 8px;
+	padding: 8px 12px;
+	background: #ffffff;
+	color: #333333;
+	font-size: 14px;
+	text-align: center;
+	opacity: 0;
+	transition: opacity 0.3s ease;
+}
+
+.sign-in-container .toast-login.show {
+	opacity: 1;
+}

@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
       showToast('비밀번호를 입력해주세요.');
       return;
     }
-
+	
     loginBtn.disabled = true;
     try {
       const res = await fetch('/api/members/login', {
@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } 
       else if (res.ok) {
         // 로그인 성공하면 원하는 페이지로 이동
-        window.location.href = '/home';
+        window.location.href = '/main/dashboard';
       } 
       else {
         showToast('알 수 없는 오류가 발생했습니다.');

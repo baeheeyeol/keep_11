@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/body}">
+<body>
+  <div th:fragment="content" class="container">
+  <link rel="stylesheet" th:href="@{/css/main/daily.css}" />
+    <!-- ① 날짜 헤더 -->
+    <div class="daily-header">
+      <div class="day">4월 16일 수요일</div>
+    </div>
+
+    <!-- ② 타임라인 -->
+    <div class="timeline">
+      <!-- 예시: 24시간 표시 -->
+      <div class="time-row" th:each="hour : ${#numbers.sequence(0,23)}">
+        <div class="hour-label"
+             th:text="${(hour == 0) ? '12오전' 
+                        : (hour < 12) ? hour + '오전' 
+                        : (hour == 12) ? '12오후' 
+                        : (hour - 12) + '오후'}">
+          5오후
+        </div>
+        <div class="line"></div>
+      </div>
+    </div>
+
+    <!-- ③ 하단 일정 추가 바 -->
+    <div class="add-bar">
+      <span class="add-text">4월 16일에 일정 추가</span>
+      <button class="add-btn"><i class="fas fa-plus"></i></button>
+    </div>
+  </div>
+</body>
+</html>

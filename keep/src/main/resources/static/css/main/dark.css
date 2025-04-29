@@ -1,4 +1,11 @@
 /* Dark Theme CSS */
+:root {
+  --btn-bg: #3a3f5a;
+  --btn-color: #e0e0e0;
+  --btn-active-bg: #4e5570;
+  --btn-active-color: #ffffff;
+}
+
 /* --- 전체 기본 설정 --- */
 * {
   box-sizing: border-box;
@@ -100,4 +107,33 @@ footer {
   position: fixed;
   bottom: 0;
   width: 100%;
+}
+/* ── 대시보드 토글 그룹 & 버튼 ── */
+.toggle-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.toggle-btn {
+  background: var(--btn-bg);
+  color: var(--btn-color);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+/* 활성화된 버튼 */
+.toggle-btn.active {
+  background: var(--btn-active-bg);
+  color: var(--btn-active-color);
+}
+
+/* 호버 효과 */
+.toggle-btn:hover {
+  opacity: 0.85;
 }
