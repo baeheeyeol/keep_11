@@ -4,6 +4,7 @@ let currentYear = currentDate.getFullYear(); // 현재 연도
 // 날짜 헤더 클릭 시 모달 열기
    document.getElementById('date-header').addEventListener('click', function() {
      document.getElementById('calendar-modal').style.display = 'block';
+	 
 	 const month = this.dataset.month;
 	 if (month) {
 	   generateCalendar(new Date(new Date().getFullYear(), month - 1, 1)); // 달력 생성 (현재 연도와 선택한 월)
@@ -29,7 +30,7 @@ let currentYear = currentDate.getFullYear(); // 현재 연도
        currentYear--; // 연도를 한 해 전으로 변경
      }
 	 updateCalendarHeader();
-     generateCalendar(currentYear, currentMonth);
+     generateCalendar(new Date(currentYear, currentMonth,1));
    });
 
    // 다음 달로 이동
@@ -40,7 +41,7 @@ let currentYear = currentDate.getFullYear(); // 현재 연도
        currentYear++; // 연도를 한 해 후로 변경
      }
 	 updateCalendarHeader();
-     generateCalendar(currentYear, currentMonth);
+     generateCalendar(new Date(currentYear, currentMonth,1));
    });
 
    // 달력 생성 함수
@@ -67,7 +68,11 @@ let currentYear = currentDate.getFullYear(); // 현재 연도
 
      // 날짜 채우기 (주말은 빨간색으로 표시)
      for (let i = startDay; i < 7; i++) {
-          calendarBody += `<div class="calendar-day" onclick="updateDateHeader(${dayCounter}, ${month + 1})">${dayCounter}</div>`;
+		if(i==0||i==6){
+			calendarBody += `<div class="calendar-weekend" onclick="updateDateHeader(${dayCounter}, ${month + 1})">${dayCounter}</div>`;
+		}else{
+			calendarBody += `<div class="calendar-day" onclick="updateDateHeader(${dayCounter}, ${month + 1})">${dayCounter}</div>`;
+		}
        dayCounter++;
      }
 
@@ -75,7 +80,12 @@ let currentYear = currentDate.getFullYear(); // 현재 연도
      while (dayCounter <= daysInMonth) {
        for (let i = 0; i < 7; i++) {
          if (dayCounter <= daysInMonth) {
-           calendarBody += `<div class="calendar-day" onclick="updateDateHeader(${dayCounter}, ${month + 1})">${dayCounter}</div>`;
+			if(i==0||i==6){
+				calendarBody += `<div class="calendar-weekend" onclick="updateDateHeader(${dayCounter}, ${month + 1})">${dayCounter}</div>`;
+			}else{
+				calendarBody += `<div class="calendar-day" onclick="updateDateHeader(${dayCounter}, ${month + 1})">${dayCounter}</div>`;	
+			}
+           
            dayCounter++;
          } else {
            calendarBody += '<div class="calendar-day empty"></div>';

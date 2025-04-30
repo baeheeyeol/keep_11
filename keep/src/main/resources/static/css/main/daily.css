@@ -22,16 +22,17 @@
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   font-size: 1.1rem;
   color: #666;
+  position: relative;
 }
 
 
 /* 타임라인 */
 .timeline {
-  flex: 1;                  /* 남은 공간을 모두 차지하도록 */
-  overflow-y: auto;         /* 세로 스크롤 가능 */
-  padding: 0 20px;
+  flex: 1;                  /* 남은 공간을 모두 차지 */
+  overflow-y: auto;         /* 세로 스크롤 */
 }
 
+/* 각 시간행 */
 .time-row {
   display: flex;
   align-items: center;
@@ -39,10 +40,31 @@
   margin-bottom: 15px;
   transition: background-color 0.3s ease;
 }
-
 .time-row:hover {
-  background-color: #f1f1f1;  /* 시간대 구분에 마우스 올리면 색상 변경 */
+  background-color: #f1f1f1;
 }
+
+/* 시각 레이블: 왼쪽 오전/오후, 오른쪽 숫자 */
+.hour-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 80px;      /* 필요에 따라 조정 */
+  margin-right: 16px;
+  font-weight: bold;
+}
+
+/* 필요하다면 스타일 추가 */
+.hour-label .period { /* ex) font-size: 0.9rem; */ }
+.hour-label .number { /* ex) font-size: 1.1rem; */ }
+
+/* 시간라인 가로선 */
+.line {
+  flex: 1;                  /* 남은 공간 모두 차지 */
+  height: 2px;
+  background-color: #ddd;
+}
+
 
 .hour-label {
   width: 70px;
@@ -61,12 +83,12 @@
 
 /* 모달 배경 */
 .modal {
-  position: fixed;
-  top: 0;
-  left: 0;
+    position: absolute;        /* 부모(wrapper)를 기준으로 절대 위치 */
+  top: calc(100% + 5px);     /* 버튼 바닥부터 5px 아래 */
+  left :calc(35%); 
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
+/*   background: rgba(0, 0, 0, 0.5); 반투명 배경 */
   display: none;  /* 처음에는 숨김 */
   justify-content: center;
   align-items: center;
@@ -169,6 +191,18 @@
 }
 
 /* 주말에 대한 스타일 */
-.weekend {
-  color: red;
+.calendar-weekend {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  background-color: #f8f8f8;
+  border-radius: 5px;
+  cursor: pointer;
+   color: red;
 }
+
+.calendar-weekend:hover {
+  background-color: #ddd;
+}
+
