@@ -1,56 +1,38 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/body}">
-<body>
-  <div th:fragment="content" class="container">
-  <link rel="stylesheet" th:href="@{/css/main/daily.css}" />
-    <!-- ① 날짜 헤더 -->
-    <div class="daily-header">
-      <div class="day"  id="date-header" data-month=""></div>
-        <!-- ② 모달 창 (달력) -->
-    <div class="modal" id="calendar-modal">
-      <div class="modal-content">
-        <div class="calendar-header">
-       	 <button id="prev-month" class="nav-btn">&#60;</button>
-          <span id="calendar-month"></span>
-             <button id="next-month" class="nav-btn">&#62;</button>
-          <button id="close-modal" class="close-btn">X</button>
-        </div>
-        <div class="calendar-body">
-          <!-- 달력 내용이 동적으로 삽입될 곳 -->
-        </div>
-      </div>
-    </div>
-    </div>
-    <!-- ② 타임라인 -->
-<div class="timeline">
-  <div class="time-row" th:each="hour : ${#numbers.sequence(0,23)}">
-    <div class="hour-label">
-      <span class="period"
-            th:text="
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/body}">
+<div th:fragment="content" class="container">
+
+	<!-- ① 날짜 헤더 -->
+	<div class="daily-header">
+		<div class="day" id="date-header" data-month=""></div>
+		<!-- ② 모달 창 (달력) -->
+		<div th:insert="~{fragments/modal-calendar :: modalCalendar}" id="calendar" data-on-select="updateDailyDateHeader"></div>
+	</div>
+	<!-- ② 타임라인 -->
+	<div class="timeline">
+		<div class="time-row" th:each="hour : ${#numbers.sequence(0,23)}">
+			<div class="hour-label">
+				<span class="period"
+					th:text="
               ${(hour == 0)   ? '오전'
                : (hour < 12)  ? '오전'
                : (hour == 12) ? '오후'
                : '오후'}
             ">
-      </span>
-      <span class="number"
-            th:text="
+				</span> <span class="number"
+					th:text="
               ${(hour == 0)   ? 12
                : (hour < 12)  ? hour
                : (hour == 12) ? 12
                : (hour - 12)}
             ">
-      </span>
-    </div>
-    <div class="line"></div>
-  </div>
-</div>
+				</span>
+			</div>
+			<div class="line"></div>
+		</div>
+	</div>
 
-    
-   
-      <script th:src="@{/js/main/daily.js}"></script>
-  </div>
-</body>
+</div>
 </html>

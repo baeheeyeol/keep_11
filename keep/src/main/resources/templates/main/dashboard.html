@@ -2,10 +2,11 @@
 <html xmlns:th="http://www.thymeleaf.org"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{layouts/body}">
-<head>
-<title>대시보드</title>
+<head layout:fragment="head">
+<title>대시보드 | MyApp</title>
+<link rel="stylesheet" th:href="@{/css/common/modal-calendar.css}" />
+<link rel="stylesheet" th:href="@{/css/main/daily.css}" />
 </head>
-
 <body>
 	<div layout:fragment="content">
 		<!-- 토글 버튼 그룹 (우측 상단) -->
@@ -16,9 +17,17 @@
 			<button type="button" id="btn-yearly" class="toggle-btn">년간</button>
 		</div>
 		<!-- 실제 뷰가 교체될 컨테이너 -->
-		<div th:insert="~{main/components/daily :: content}"></div>
+		<div th:insert="~{main/components/daily :: content}" id="view-container"></div>
 
 	</div>
-	<script th:src="@{/js/main/dashboard.js}"></script>
+	<div layout:fragment="scripts">
+		<!-- 대시보드 전용 스크립트 -->
+		<script th:src="@{/js/main/dashboard.js}"></script>
+		<!-- daily 컴포넌트 스크립트 -->
+		<script th:src="@{/js/main/daily.js}"></script>
+		<!-- calendar 스크립트 -->
+		<script th:src="@{/js/common/modal-calendar.js}"></script>
+	</div>
 </body>
 </html>
+
