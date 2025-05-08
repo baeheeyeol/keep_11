@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } 
       else if (res.ok) {
         // 로그인 성공하면 원하는 페이지로 이동
-        window.location.href = '/main/dashboard';
+        window.location.href = '/dashboard';
       } 
       else {
         showToast('알 수 없는 오류가 발생했습니다.');

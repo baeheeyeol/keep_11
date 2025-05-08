@@ -18,6 +18,7 @@ public class SecurityConfig {
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.csrf(csrf -> csrf.disable()).headers(headers -> headers.frameOptions(FrameOptionsConfig::disable))
@@ -25,7 +26,14 @@ public class SecurityConfig {
 						auth -> auth.requestMatchers("/members/**", "/api/members/**", "/css/**", "/js/**", "/images/**")
 								.permitAll().anyRequest().authenticated())
 				.formLogin((form) -> form.disable())
-				.exceptionHandling(ex -> ex.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/members")));
+				.exceptionHandling(ex -> ex.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/members")))
+			   .logout(logout -> logout
+			        .logoutUrl("/logout")
+			        .invalidateHttpSession(true)               // 세션 무효화
+			        .clearAuthentication(true)                 // SecurityContextHolder 클리어
+			        .deleteCookies("JSESSIONID", "remember-me")// 쿠키 삭제
+			        .logoutSuccessUrl("/members")
+			      );
 
 		return http.build();
 	}

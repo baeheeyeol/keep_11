@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<header th:fragment="main-head" class="app-header">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+
+	<th:block layout:fragment="title"></th:block>
+
+	<link rel="stylesheet" th:href="@{/css/fragments/body.css}" />
+
+	<th:block layout:fragment="add-css"></th:block>
+
+	<div class="head">
+		<h1>일정</h1>
+		<div class="top-menu">
+			<div class="login-user">님 반갑습니다.</div>
+			<div class="logout">
+				<form action="/logout" method="post">
+					<button type="submit">
+						<span class="skip-info">로그아웃</span>
+					</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</header>
+</html>

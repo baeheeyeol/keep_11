@@ -1,38 +1,11 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{layouts/body}">
-<div th:fragment="content" class="container">
+<html xmlns="http://www.w3.org/1999/xhtml"	xmlns:th="http://www.thymeleaf.org"	>
 
-	<!-- ① 날짜 헤더 -->
-	<div class="daily-header">
-		<div class="day" id="date-header" data-month=""></div>
-		<!-- ② 모달 창 (달력) -->
-		<div th:insert="~{fragments/modal-calendar :: modalCalendar}" id="calendar" data-on-select="updateDailyDateHeader"></div>
-	</div>
-	<!-- ② 타임라인 -->
-	<div class="timeline">
-		<div class="time-row" th:each="hour : ${#numbers.sequence(0,23)}">
-			<div class="hour-label">
-				<span class="period"
-					th:text="
-              ${(hour == 0)   ? '오전'
-               : (hour < 12)  ? '오전'
-               : (hour == 12) ? '오후'
-               : '오후'}
-            ">
-				</span> <span class="number"
-					th:text="
-              ${(hour == 0)   ? 12
-               : (hour < 12)  ? hour
-               : (hour == 12) ? 12
-               : (hour - 12)}
-            ">
-				</span>
-			</div>
-			<div class="line"></div>
-		</div>
-	</div>
-
+<div th:fragment="content">
+  <!-- Daily Header -->
+ test
 </div>
+
 </html>
+
+ 

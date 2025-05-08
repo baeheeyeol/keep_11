@@ -1,58 +1,11 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>로그인 / 회원가입</title>
-  <!-- 공통 CSS -->
-<!--   <link rel="stylesheet" th:href="@{/css/common.css}" /> -->
-  <!-- 페이지 전용 CSS -->
-  <link rel="stylesheet" th:href="@{/css/login/login.css}" />
-</head>
-<body>
-  <div class="container" id="container">
-    <div class="panels">
-      <!-- 로그인 패널 -->
-      <div class="panel left-panel">
-        <div class="form-container sign-in-container">
-          <form th:action="@{/login}" method="post">
-            <h1>로그인</h1>
-            <input type="email" name="email"  id="login-email"placeholder="이메일" required />
-            <input type="password" name="password" id="login-password" placeholder="비밀번호" required />
-            <button type="button" id="loginBtn">로그인</button>
-            <div class="options">
-              <button type="button" id="forgotPwdBtn">비밀번호 찾기</button>
-              <button type="button" id="signUpBtn">회원가입</button>
-            </div>
-          </form>
-        </div>
-      </div>
-      
-      <!-- 회원가입 패널 -->
-      <div class="panel right-panel">
-        <div class="form-container sign-up-container">
-          <form method="post" id="signup">
-            <h1>회원가입</h1>
+<html xmlns="http://www.w3.org/1999/xhtml"	xmlns:th="http://www.thymeleaf.org"	>
 
-            <!-- 이메일 + 중복 확인 -->
-            <div class="input-group">
-              <input type="email" name="email" id="signup-email" placeholder="이메일" required pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$"/>
-              <button type="button" class="duplicate-check-btn" id="checkEmailBtn" style="width :50%; margin-top :0">중복 확인</button>
-            </div>
-            <p class="email-feedback" id="emailFeedback"></p>
+<div th:fragment="content">
+  <!-- Daily Header -->
+ test1
+</div>
 
-            <input type="text" name="hname" placeholder="이름" required />
-            <input type="password" name="password" placeholder="비밀번호" required />
-            <button type="button" id="submitSignupBtn" disabled>회원가입</button>
-            <div class="options">
-              <button type="button" id="signInBtn">돌아가기</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- 페이지 전용 스크립트 -->
-  <script th:src="@{/js/login/login.js}"></script>
-</body>
 </html>
+
+ 

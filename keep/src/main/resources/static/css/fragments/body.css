@@ -1,0 +1,153 @@
+/* 기본 리셋 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html, body {
+  height: 100%;
+  font-family: 'Noto Sans KR', sans-serif;
+  background-color: #f9fafb;
+  color: #333;
+}
+
+/* 레이아웃 컨테이너 */
+.app-body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+#container {
+  display: flex;
+  flex: 1;
+}
+
+/* 사이드바 */
+/* 열려있을 때: width 240px (기본) */
+.sidebar {
+  width: 240px;
+}
+/* 닫혀있을 때: width 60px */
+.sidebar.collapsed {
+  width: 60px;
+}
+.sidebar.collapsed nav ul li a {
+  /* 텍스트를 화면 밖으로 밀어냄 */
+  text-indent: -9999px;
+  /* 줄바꿈 방지 */
+  white-space: nowrap;
+  /* 넘친 텍스트는 숨김 */
+  overflow: hidden;
+  /* 가운데 정렬 유지 */
+  text-align: center;
+}
+#sidebar {
+  background-color: #ffffff;
+  width: 240px;
+  box-shadow: 2px 0 6px rgba(0,0,0,0.1);
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  overflow: hidden;
+  transition: width 0.01s;
+}
+#sidebar.collapsed {
+  width: 60px;
+}
+.sidebar-toggle {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  padding: 10px;
+  cursor: pointer;
+}
+.sidebar nav ul {
+  list-style: none;
+  margin-top: 20px;
+}
+.sidebar nav ul li + li {
+  margin-top: 10px;
+}
+.sidebar nav ul li a {
+  display: block;
+  padding: 10px 20px;
+  color: #333;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: background-color 0.2s, padding-left 0.3s;
+}
+#sidebar.collapsed nav ul li a {
+  text-align: center;
+  padding: 10px 0;
+}
+.sidebar nav ul li a:hover {
+  background-color: #eef2ff;
+  padding-left: 25px;
+}
+
+/* 헤더 */
+header .head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  border-bottom: 1px solid #e5e7eb;
+  border-radius: 10px 10px 0 0;
+}
+header .head h1 {
+  font-size: 1.25rem;
+  color: #333;
+}
+.top-menu {
+  display: flex;
+  align-items: center;
+}
+.login-user {
+  font-size: 0.95rem;
+  color: #555;
+  margin-right: 15px;
+}
+.logout button {
+  background-color: #4f46e5;
+  color: #ffffff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.logout button:hover {
+  background-color: #4338ca;
+}
+
+/* 콘텐츠 영역 */
+.content {
+  flex: 1;
+  padding: 20px;
+  background-color: #f1f3f5;
+  border-radius: 0 10px 10px 0;
+}
+.content h1 {
+  margin-bottom: 20px;
+  color: #444;
+}
+.card {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  margin-bottom: 20px;
+}
+
+/* 푸터 */
+.app-footer {
+  text-align: center;
+  padding: 15px 0;
+  background-color: #ffffff;
+  box-shadow: 0 -2px 4px rgba(0,0,0,0.05);
+  border-top: 1px solid #e5e7eb;
+  border-radius: 0 0 10px 10px;
+  font-size: 0.9rem;
+  color: #777;
+}

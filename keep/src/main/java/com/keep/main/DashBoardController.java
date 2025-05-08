@@ -4,27 +4,21 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@RequestMapping("/main")
+@RequestMapping("/dashboard")
 public class DashBoardController {
 
     // 메인 대시보드 (초기 로드: daily fragment 로딩)
-    @GetMapping("/dashboard")
+    @GetMapping({"/",""})
     public String dashboard() {
         // 예시 데이터
         return "main/dashboard";  // -> templates/main/dashboard.html
     }
-
-    // AJAX 용 fragment 반환 예시
-    @GetMapping("/dashboard/{period}")
-    public String dashboardPeriod(@PathVariable String period) {
-        switch(period) {
-            case "daily":
-                break;
-            case "weekly":
-                break;
-        }
-        return "main/components/" + period;
+    // fragment 만 뽑아 주는 엔드포인트
+    @GetMapping("/fragment/{view}")
+    public String fragment(@PathVariable("view") String view) {
+      return "main/components/" + view + " :: content";
     }
 }

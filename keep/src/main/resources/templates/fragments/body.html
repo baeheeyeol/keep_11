@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body th:fragment="main-body"  id="body" class="app-body">
+
+	<div id="container">
+<!-- 		<aside id="sidebar"	class="sidebar"> -->
+<!-- 			<button id="sidebar-toggle" class="sidebar-toggle">☰</button> -->
+<!-- 			<nav id = "sidebar-nav" class="sidebar-nav"> -->
+<!-- 				<ul> -->
+<!-- 					<li><a th:href="@{/menu1}">메뉴 1</a></li> -->
+<!-- 					<li><a th:href="@{/menu2}">메뉴 2</a></li> -->
+<!-- 					<li><a th:href="@{/menu3}">메뉴 3</a></li> -->
+<!-- 				</ul> -->
+<!-- 			</nav> -->
+<!-- 		</aside> -->
+		<div class="content">
+			<!--/* 페이지별 컨텐츠 */-->
+			<th:block layout:fragment="content"></th:block>
+		</div>
+	</div>
+	
+	<!-- 	footer -->
+	<footer>&copy; <span>2025</span> Your Company</footer>
+	
+	<script type="text/javascript">
+	document.addEventListener('DOMContentLoaded', function() {
+// 	  const sidebar = document.getElementById('sidebar');
+// 	  const toggleBtn = document.getElementById('sidebar-toggle');
+
+// 	  toggleBtn.addEventListener('click', function() {
+// 	    // collapsed 클래스 토글
+// 	    sidebar.classList.toggle('collapsed');
+// 	  });
+	});
+
+	</script>
+	<th:block layout:fragment="script"></th:block>
+</body>
+</html>

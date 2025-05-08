@@ -22,13 +22,12 @@ configurations {
 repositories {
 	mavenCentral()
 }
-	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect' /* Thymeleaf Layout */
 dependencies {
  	implementation 'org.hibernate.orm:hibernate-community-dialects:6.6.11.Final'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-   	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect' /* Thymeleaf Layout */
+   	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
    	
 	runtimeOnly 'com.oracle.database.jdbc:ojdbc11'
@@ -43,6 +42,9 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	
+}
+compileJava {  
+	options.compilerArgs << '-parameters'
 }
 
 tasks.named('test') {

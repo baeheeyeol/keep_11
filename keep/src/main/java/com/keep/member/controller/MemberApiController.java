@@ -64,7 +64,7 @@ public class MemberApiController {
     
     // 인증 정보 등록
     SecurityContextHolder.getContext().setAuthentication(authToken);
-
+    
     session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
     
     //authToken.eraseCredentials();
