@@ -135,7 +135,9 @@
 .dropdown-display:hover {
   background-color: #f1f3f5;
 }
-
+.dropdown-display.dimmed {
+  background-color: #e5e7eb;
+}
 /* 메뉴 숨김/표시 */
 .dropdown-menu {
   position: absolute;

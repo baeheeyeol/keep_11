@@ -53,7 +53,7 @@ public class MemberApiController {
 		Long memberId = memberService.findIdByEmail(memberDTO.getEmail());  
 
     // 4) 세션에 MemberDTO 대신 Member 엔티티(또는 id)만 저장해도 OK
-    session.setAttribute("memberId", memberId);
+    session.setAttribute("memberId", memberId); 
 
     UsernamePasswordAuthenticationToken authToken =
         new UsernamePasswordAuthenticationToken(

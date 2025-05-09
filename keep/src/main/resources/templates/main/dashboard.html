@@ -12,31 +12,30 @@
 <!--/* style */-->
 <th:block layout:fragment="add-css">
 	<link rel="stylesheet" th:href="@{/css/main/dashboard.css}" />
+	<link rel="stylesheet" th:href="@{/css/main/components/daily.css}" />
 </th:block>
 <!--/* content */-->
 <th:block layout:fragment="content">
 	<div class="dashboard-header">
 		<!-- 좌측: 비워둔 영역 (추후 아이콘 등 추가 가능) -->
 		<div class="header-left"></div>
-
 		<!-- 중앙: 날짜 내비게이션 -->
 		<div class="dashboard-header-center">
 			<button id="prev-date" class="date-nav">&lt;</button>
 			<span id="current-date"></span>
 			<button id="next-date" class="date-nav">&gt;</button>
 		</div>
-
 		<!-- 우측: 뷰 토글 버튼 -->
 		<div class="dashboard-header-right">
 			<button class="view-btn" data-view="today">오늘</button>
-			<button class="view-btn" data-view="daily">일간</button>
+			<button class="view-btn active" data-view="daily">일간</button>
 			<button class="view-btn" data-view="weekly">주간</button>
 			<button class="view-btn" data-view="monthly">월간</button>
 			<button class="view-btn" data-view="yearly">년간</button>
 		</div>
 	</div>
 	<div id="fragment-container"></div>
-
+ 
 	<!-- 캘린더 오버레이 & 모달 -->
 	<div id="calendar-overlay" class="calendar-overlay hidden">
 		<div id="calendar-modal" class="calendar-modal">
@@ -45,13 +44,13 @@
 
 				<!-- 연도 선택 드롭다운 -->
 				<div class="dropdown-container">
-					<span id="cal-year-display" class="dropdown-display">2025년</span>
+					<span id="cal-year-display" class="dropdown-display"></span>
 					<ul id="year-dropdown" class="dropdown-menu hidden"></ul>
 				</div>
 
 				<!-- 월 선택 드롭다운 -->
 				<div class="dropdown-container">
-					<span id="cal-month-display" class="dropdown-display">6월</span>
+					<span id="cal-month-display" class="dropdown-display"></span>
 					<ul id="month-dropdown" class="dropdown-menu hidden"></ul>
 				</div>
 
@@ -79,6 +78,7 @@
 <!--/* script */-->
 <th:block layout:fragment="script">
 	<script th:src="@{/js/main/dashboard.js}"></script>
+	<script th:src="@{/js/main/components/daily.js}"></script>
 </th:block>
 
 </html>

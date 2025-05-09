@@ -1,11 +1,25 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"	xmlns:th="http://www.thymeleaf.org"	>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
 
-<div th:fragment="content">
-  <!-- Daily Header -->
- test
+<!-- templates/main/components/daily.html -->
+<div th:fragment="content" class="daily-schedule-container">
+
+	<!-- 2. 본문: 시간축 + 스케줄 그리드 -->
+	<div class="daily-schedule">
+		<!-- 시간축 -->
+		<div class="daily-schedule">
+			<div class="time-column"></div>
+			<div class="schedule-grid"></div>
+		</div>
+	</div>
+
+	<!-- 스케줄 그리드 -->
+	<div class="schedule-grid">
+		<!-- 24시간 분할선 -->
+		<div class="hour-slot" th:each="h : ${#numbers.sequence(0,23)}"></div>
+	</div>
+	
 </div>
-
 </html>
 
- 
