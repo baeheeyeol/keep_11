@@ -5,21 +5,32 @@
 <!-- templates/main/components/daily.html -->
 <div th:fragment="content" class="daily-schedule-container">
 
-	<!-- 2. 본문: 시간축 + 스케줄 그리드 -->
-	<div class="daily-schedule">
-		<!-- 시간축 -->
-		<div class="daily-schedule">
-			<div class="time-column"></div>
-			<div class="schedule-grid"></div>
-		</div>
-	</div>
+  <!-- 본문: 시간축 + 스케줄 그리드 -->
+  <div class="daily-schedule">
+    <!-- 시간축 -->
+    <div class="time-column">
+      <div class="hour-label" th:each="h : ${#numbers.sequence(0,23)}">
+        <span class="hour-text"
+              th:text="${h < 12
+                       ? '오전 ' + (h==0?12:h) + '시'
+                       : '오후 ' + ((h-12)==0?12:(h-12)) + '시'}">
+          오전 12시
+        </span>
+      </div>
+    </div>
 
-	<!-- 스케줄 그리드 -->
-	<div class="schedule-grid">
-		<!-- 24시간 분할선 -->
-		<div class="hour-slot" th:each="h : ${#numbers.sequence(0,23)}"></div>
-	</div>
-	
+    <!-- 스케줄 그리드 -->
+    <div class="schedule-grid">
+      <div class="hour-slot" th:each="h : ${#numbers.sequence(0,23)}"></div>
+      <!-- 이벤트 블록 예시 (필요시 th:each 로 반복) -->
+      <div class="event"
+           style="top: calc(9 * var(--hour-height)); height: calc(2 * var(--hour-height));">
+        <span class="event-title">회의</span>
+        <span class="event-time">09:00 – 11:00</span>
+      </div>
+    </div>
+
+  </div>
 </div>
-</html>
 
+</html>

@@ -22,6 +22,10 @@ document.addEventListener('DOMContentLoaded', () => {
 			})
 			.then(html => {
 				fragmentContainer.innerHTML = html;
+				if(view ='daily'){
+					window.initDailySchedule();
+					window.initScheduleModal();
+				}
 			})
 			.catch(err => console.error(err));
 	}
@@ -138,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 		bodyTbody.appendChild(row);
 	}
-
+	
 	// 모달 열기/닫기
 	function openCalendar() {
 		// 모달 위치

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <div th:fragment="calendar-modal">
+   	<!-- 캘린더 오버레이 & 모달 -->
+	<div id="calendar-overlay" class="calendar-overlay hidden">
+		<div id="calendar-modal" class="calendar-modal">
+			<div class="calendar-header">
+				<button id="cal-prev" class="date-nav">&lt;</button>
+
+				<!-- 연도 선택 드롭다운 -->
+				<div class="dropdown-container">
+					<span id="cal-year-display" class="dropdown-display"></span>
+					<ul id="year-dropdown" class="dropdown-menu hidden"></ul>
+				</div>
+
+				<!-- 월 선택 드롭다운 -->
+				<div class="dropdown-container">
+					<span id="cal-month-display" class="dropdown-display"></span>
+					<ul id="month-dropdown" class="dropdown-menu hidden"></ul>
+				</div>
+
+				<button id="cal-next" class="date-nav">&gt;</button>
+			</div>
+			<table class="calendar-table">
+				<thead>
+					<tr>
+						<th>일</th>
+						<th>월</th>
+						<th>화</th>
+						<th>수</th>
+						<th>목</th>
+						<th>금</th>
+						<th>토</th>
+					</tr>
+				</thead>
+				<tbody id="calendar-body"></tbody>
+			</table>
+		</div>
+	</div>
+  </div>
+</html>

@@ -1,76 +1,55 @@
-// static/js/daily.js
-document.addEventListener('DOMContentLoaded', () => {
-  const timeColumn = document.querySelector('.time-column');
-  const grid       = document.querySelector('.schedule-grid');
-  const dateSpan   = document.getElementById('current-date');
-  const now        = new Date();
-  if (!timeColumn || !grid) {
-     return;
-   }
-  // 오늘 날짜 텍스트 (예: "2025.5.8")
-  dateSpan.textContent = `${now.getFullYear()}.${now.getMonth()+1}.${now.getDate()}`;
+// static/js/main/components/daily.js
+(function() {
+  function initDailySchedule() {
+    const grid = document.querySelector('.schedule-grid');
+    if (!grid) return;
 
-  // 1시간 높이 (px)
-  const H = parseFloat(getComputedStyle(document.documentElement)
-                       .getPropertyValue('--hour-height'));
-
-  // 시간축 렌더링 (0~23시)
-  timeColumn.innerHTML = '';
-  for (let h = 0; h < 24; h++) {
-    const label = document.createElement('div');
-    label.className = 'hour-label';
-
-    // 6시간 단위 그룹 시작인지 확인
-    const isGroupStart = (h % 6 === 0);
-    const ampm = h < 12 ? '오전' : '오후';
-    const hour12 = h % 12 === 0 ? 12 : h % 12;
-    const text = isGroupStart
-      ? `${ampm} ${hour12}시`
-      : `${hour12}시`;
-
-    // major/minor 클래스로 구분
-    const span = document.createElement('span');
-    span.className = isGroupStart ? 'hour-text-major' : 'hour-text-minor';
-    span.textContent = text;
-
-    label.appendChild(span);
-    timeColumn.appendChild(label);
-  }
-
-  // 그리드 슬롯 24개 생성
-  grid.innerHTML = '';
-  for (let i = 0; i < 24; i++) {
-    const slot = document.createElement('div');
-    slot.className = 'hour-slot';
-    slot.style.position = 'relative';  // later line absolute positioning
-    grid.appendChild(slot);
-  }
-
-  // 현재 시각 실선 그리기
-  function drawCurrentLine() {
-    // 기존 선 제거
-    const prev = grid.querySelector('.current-time-line');
-    if (prev) prev.remove();
-
-    // 오늘 날짜가 맞을 때만
-    const parts = dateSpan.textContent.split('.').map(Number);
-    if (
-      parts[0] === now.getFullYear() &&
-      parts[1] === now.getMonth()+1 &&
-      parts[2] === now.getDate()
-    ) {
-      const offset = (now.getHours() + now.getMinutes()/60) * H;
-      const line = document.createElement('div');
+    // ➊ 현재시간선 요소가 없으면 생성
+    let line = grid.querySelector('.current-time-line');
+    if (!line) {
+      line = document.createElement('div');
       line.className = 'current-time-line';
-      line.style.top = `${offset}px`;
       grid.appendChild(line);
     }
+    // ➋ draw 함수를 분리
+    function draw() {
+      const now = new Date();
+      const dateSpan = document.getElementById('current-date');
+      if (!dateSpan) return;
+      const [y, m, d] = dateSpan.textContent.split('.').map(n => +n);
+      if (y !== now.getFullYear() || m !== now.getMonth()+1 || d !== now.getDate()) {
+        line.style.display = 'none';
+        return;
+      }
+      line.style.display = '';
+      // CSS 변수에서 1시간 높이(px) 가져오기
+      const H = parseFloat(getComputedStyle(document.documentElement)
+                           .getPropertyValue('--hour-height'));
+      const offset = (now.getHours() + now.getMinutes()/60) * H;
+      line.style.top = `${offset}px`;
+      // 툴팁 갱신(hover 시 시간)
+      const hours   = now.getHours();
+      const minutes = now.getMinutes();
+      const ampm    = hours < 12 ? '오전' : '오후';
+      const hour12  = hours % 12 === 0 ? 12 : hours % 12;
+      const mm      = String(minutes).padStart(2, '0');
+      line.setAttribute('data-time', `${ampm} ${hour12}:${mm}`);
+    }
+
+    // ➌ 즉시 위치 그리기
+    draw();
+
+    // ➍ 다음 정각까지 대기
+    const now = new Date();
+    const delay = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
+
+    setTimeout(() => {
+      // 정각에 한 번 더 그린 뒤, 매 1분마다 갱신
+      draw();
+      setInterval(draw, 60 * 1000);
+    }, delay);
   }
 
-  // 초기 드로잉
-  drawCurrentLine();
-
-  // 리사이즈/스크롤 시 위치 보정
-  window.addEventListener('resize', drawCurrentLine);
-  window.addEventListener('scroll', drawCurrentLine);
-});
+  // 전역에 노출
+  window.initDailySchedule = initDailySchedule;
+})();

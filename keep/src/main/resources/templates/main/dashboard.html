@@ -13,6 +13,7 @@
 <th:block layout:fragment="add-css">
 	<link rel="stylesheet" th:href="@{/css/main/dashboard.css}" />
 	<link rel="stylesheet" th:href="@{/css/main/components/daily.css}" />
+	<link rel="stylesheet" th:href="@{/css/main/components/modal/schedule-modal.css}" />
 </th:block>
 <!--/* content */-->
 <th:block layout:fragment="content">
@@ -35,50 +36,21 @@
 		</div>
 	</div>
 	<div id="fragment-container"></div>
- 
-	<!-- 캘린더 오버레이 & 모달 -->
-	<div id="calendar-overlay" class="calendar-overlay hidden">
-		<div id="calendar-modal" class="calendar-modal">
-			<div class="calendar-header">
-				<button id="cal-prev" class="date-nav">&lt;</button>
+	
+	<!-- 	daily.html 등록 모달 -->	
 
-				<!-- 연도 선택 드롭다운 -->
-				<div class="dropdown-container">
-					<span id="cal-year-display" class="dropdown-display"></span>
-					<ul id="year-dropdown" class="dropdown-menu hidden"></ul>
-				</div>
+	     <div th:replace="main/components/modal/schedule-modal :: schedule-modal"></div>
+	     <div th:replace="main/components/modal/calendar-modal :: calendar-modal"></div>      
 
-				<!-- 월 선택 드롭다운 -->
-				<div class="dropdown-container">
-					<span id="cal-month-display" class="dropdown-display"></span>
-					<ul id="month-dropdown" class="dropdown-menu hidden"></ul>
-				</div>
-
-				<button id="cal-next" class="date-nav">&gt;</button>
-			</div>
-			<table class="calendar-table">
-				<thead>
-					<tr>
-						<th>일</th>
-						<th>월</th>
-						<th>화</th>
-						<th>수</th>
-						<th>목</th>
-						<th>금</th>
-						<th>토</th>
-					</tr>
-				</thead>
-				<tbody id="calendar-body"></tbody>
-			</table>
-		</div>
-	</div>
 
 </th:block>
 
 <!--/* script */-->
 <th:block layout:fragment="script">
-	<script th:src="@{/js/main/dashboard.js}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 	<script th:src="@{/js/main/components/daily.js}"></script>
+	<script th:src="@{/js/main/components/modal/schedule-modal.js}"></script>
+	<script th:src="@{/js/main/dashboard.js}"></script>
 </th:block>
 
 </html>
