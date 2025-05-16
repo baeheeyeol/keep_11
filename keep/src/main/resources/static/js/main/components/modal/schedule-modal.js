@@ -1,33 +1,6 @@
 (function() {
   function initScheduleModal() {
 	
-	// flatpickr 초기화
-	flatpickr('#sched-start, #sched-end', {
-	  enableTime: true,            // 시간 활성화
-	  time_24hr: false,            // 12시간제 (AM/PM)
-	  dateFormat: 'Y-m-d h:i K',   // 예: 2025-05-08 03:30 PM
-	  monthSelectorType: 'dropdown',// 월 드롭다운
-	  locale: {
-	    firstDayOfWeek: 1,         // 주 시작요일 월요일
-	    weekdays: {
-	      shorthand: ['일','월','화','수','목','금','토'],
-	      longhand : ['일요일','월요일','화요일','수요일','목요일','금요일','토요일']
-	    },
-	    months: {
-	      shorthand: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
-	      longhand : ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월']
-	    },
-	  },
-	  // 화살표 아이콘을 Dashboard 스타일로 교체
-	  prevArrow: '<svg class="icon"><use xlink:href="#icon-chevron-left"/></svg>',
-	  nextArrow: '<svg class="icon"><use xlink:href="#icon-chevron-right"/></svg>',
-	  onReady: function(dp) {
-	    // flatpickr 기본 테마를 Dashboard 느낌으로 살짝 덮어 씌우기
-	    dp.calendarContainer.classList.add('dashboard-flatpickr');
-	  }
-	});
-
-	
     const overlay = document.getElementById('schedule-modal-overlay');
     const modal   = document.getElementById('schedule-modal');
     const cancel  = document.getElementById('modal-cancel');
@@ -35,10 +8,37 @@
     const hiddenColorInput = document.getElementById('sched-color');
     const form    = document.getElementById('schedule-form');
     const grid    = document.querySelector('.schedule-grid');
+	
+	const startHour = document.getElementById('sched-start-hour');
+	const startMin  = document.getElementById('sched-start-min');
+	const endHour   = document.getElementById('sched-end-hour');
+	const endMin    = document.getElementById('sched-end-min');
 
     // 필수 요소 체크
     if (!overlay || !modal || !cancel || !form || !grid) return;
 
+	// 시 옵션 채우기 (00~23)
+	 for (let h = 0; h < 24; h++) {
+	   const hh = String(h).padStart(2, '0');
+	   [startHour, endHour].forEach(sel => {
+	     const opt = document.createElement('option');
+	     opt.value = hh;
+	     opt.textContent = hh;
+	     sel.appendChild(opt);
+	   });
+	 }
+
+	 // 분 옵션 채우기 (00~59)
+	 for (let m = 0; m < 60; m++) {
+	   const mm = String(m).padStart(2, '0');
+	   [startMin, endMin].forEach(sel => {
+	     const opt = document.createElement('option');
+	     opt.value = mm;
+	     opt.textContent = mm;
+	     sel.appendChild(opt);
+	   });
+	 }
+	
     // 범주 색상 선택 이벤트
     colors.forEach(btn => {
       btn.addEventListener('click', () => {
@@ -53,20 +53,31 @@
     overlay.addEventListener('click', closeModal);
 
     // 그리드 클릭 시 모달 열기 및 시간 세팅
-    grid.addEventListener('click', e => {
-      const slot = e.target.closest('.hour-slot');
-      if (!slot) return;
-      const idx = Array.from(slot.parentNode.children).indexOf(slot);
-      const today = document.getElementById('current-date').textContent;
-      const [y, m, d] = today.split('.').map(n => n.padStart(2, '0'));
-      const startInput = document.getElementById('sched-start');
-      const endInput   = document.getElementById('sched-end');
+	grid.addEventListener('click', e => {
+	  const slot = e.target.closest('.hour-slot');
+	  if (!slot) return;
+	  const idx = Array.from(slot.parentNode.children).indexOf(slot);
 
-      startInput.value = `${y}-${m}-${d}T${String(idx).padStart(2,'0')}:00`;
-      endInput.value   = `${y}-${m}-${d}T${String(idx+1).padStart(2,'0')}:00`;
+	  // 오늘 날짜 (예: "2025.5.16")를 "2025-05-16" 형태로 변환
+	  const today = document.getElementById('current-date').textContent;
+	  const [y, m, d] = today.split('.').map(n => n.padStart(2, '0'));
 
-      openModal();
-    });
+	  // input 요소 가져오기
+	  const startDayInput   = document.getElementById('sched-start-day');	  
+	  const endDayInput     = document.getElementById('sched-end-day');
+	  
+	  // 값 세팅
+	  startDayInput.value  = `${y}-${m}-${d}`;
+	  endDayInput.value    = `${y}-${m}-${d}`;
+	 
+	  startHour.value = String(idx).padStart(2, '0');
+	  startMin.value  = '00';
+	  endHour.value   = String(idx + 1).padStart(2, '0');
+	  endMin.value    = '00';
+
+	  openModal();
+	});
+
   }
 
   function openModal() {

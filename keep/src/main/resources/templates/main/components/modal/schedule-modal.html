@@ -10,19 +10,24 @@
 			enctype="multipart/form-data">
 			<!-- 제목 -->
 			<div class="form-group">
-				<label for="sched-title">제2목</label> <input type="text"
-					id="sched-title" name="title" required />
+				<label for="sched-title">제목</label> 
+				<input type="text" id="sched-title" name="title" required />
 			</div>
 			<!-- 일시: 시작/종료 -->
 			<div class="form-group datetime-group">
-				<label for="sched-start">시작 일시</label> <input id="sched-start"
-					name="start" class="flatpickr-input" placeholder="선택해주세요" />
+				<label for="sched-start">시작 일시</label>
+				<input type="text" id="sched-start-day" name="start-day" placeholder="선택해주세요" required /> 
+  				<select id="sched-start-hour" name="start-hour"></select> 
+				<select id="sched-start-min" name="start-min"></select>
 			</div>
 
 			<div class="form-group datetime-group">
-				<label for="sched-end">종료 일시</label> <input id="sched-end"
-					name="end" class="flatpickr-input" placeholder="선택해주세요" />
+				<label for="sched-end">종료 일시</label> 
+				<input type="text" id="sched-end-day" name="end" placeholder="선택해주세요" required /> 
+				<select id="sched-end-hour" name="end-hour"></select> 
+				<select	id="sched-end-min" name="end-min"></select>
 			</div>
+
 			<!-- 장소 -->
 			<div class="form-group">
 				<label for="sched-location">장소</label> <input type="text"

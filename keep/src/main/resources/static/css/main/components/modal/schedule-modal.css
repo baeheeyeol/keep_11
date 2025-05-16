@@ -42,7 +42,7 @@
   margin-bottom: 1rem;
 }
 .form-group label {
-  display: block;
+  display: flex;
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
   color: #555;
@@ -50,7 +50,15 @@
 .form-group input[type="text"],
 .form-group textarea,
 .form-group input[type="datetime-local"] {
-  width: 100%;
+  width: 40%;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  box-sizing: border-box;
+}
+.form-group select{
+  width: 20%;
   padding: 0.5rem;
   border: 1px solid #d1d5db;
   border-radius: 0.5rem;
