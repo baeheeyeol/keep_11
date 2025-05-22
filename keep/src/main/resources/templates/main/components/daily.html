@@ -4,7 +4,6 @@
 
 <!-- templates/main/components/daily.html -->
 <div th:fragment="content" class="daily-schedule-container">
-
   <!-- 본문: 시간축 + 스케줄 그리드 -->
   <div class="daily-schedule">
     <!-- 시간축 -->
@@ -31,6 +30,23 @@
     </div>
 
   </div>
+  
 </div>
-
 </html>
+<!-- create table schedules -->
+<!-- ( -->
+<!--   schedules_id            NUMBER not null, -->
+<!--   user_id         NUMBER not null, -->
+<!--   title           VARCHAR2(30), -->
+<!--  start_ts          TIMESTAMP        NOT NULL,       -- 시작 일시 -->
+<!-- end_ts            TIMESTAMP        NOT NULL,       -- 종료 일시 -->
+<!-- location          VARCHAR2(200),                   -- 장소 -->
+<!-- description       CLOB,                            -- 상세 설명 -->
+<!-- category          VARCHAR2(50),                    -- 범주(색상명/코드) -->
+<!-- file_url          VARCHAR2(4000),    -->
+<!--   CREATED_BY        NUMBER not null, -->
+<!--   CREATION_DATE     DATE not null, -->
+<!--   LAST_UPDATED_BY   NUMBER not null, -->
+<!--   LAST_UPDATE_DATE  DATE not null, -->
+<!--   LAST_UPDATE_LOGIN NUMBER -->
+<!-- ) -->

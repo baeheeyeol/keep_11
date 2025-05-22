@@ -1,9 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="layouts/layout">
-
+<html xmlns="http://www.w3.org/1999/xhtml"	xmlns:th="http://www.thymeleaf.org"	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"	layout:decorate="layouts/layout">
 <!--/* title */-->
 <th:block layout:fragment="title">
 	<title>리스트</title>
@@ -11,6 +7,7 @@
 
 <!--/* style */-->
 <th:block layout:fragment="add-css">
+	<link rel="stylesheet" th:href="@{/css/common/calendar.css}" />
 	<link rel="stylesheet" th:href="@{/css/main/dashboard.css}" />
 	<link rel="stylesheet" th:href="@{/css/main/components/daily.css}" />
 	<link rel="stylesheet" th:href="@{/css/main/components/modal/schedule-modal.css}" />
@@ -23,7 +20,7 @@
 		<!-- 중앙: 날짜 내비게이션 -->
 		<div class="dashboard-header-center">
 			<button id="prev-date" class="date-nav">&lt;</button>
-			<span id="current-date"></span>
+			<input  type="text" id="current-date" readonly/>
 			<button id="next-date" class="date-nav">&gt;</button>
 		</div>
 		<!-- 우측: 뷰 토글 버튼 -->
@@ -40,14 +37,13 @@
 	<!-- 	daily.html 등록 모달 -->	
 
 	     <div th:replace="main/components/modal/schedule-modal :: schedule-modal"></div>
-	     <div th:replace="main/components/modal/calendar-modal :: calendar-modal"></div>      
-
+	     <div th:replace="common/calendar-modal :: calendar-modal"></div>      
 
 </th:block>
 
 <!--/* script */-->
 <th:block layout:fragment="script">
-	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+	<script th:src="@{/js/common/calendar.js}"></script>
 	<script th:src="@{/js/main/components/daily.js}"></script>
 	<script th:src="@{/js/main/components/modal/schedule-modal.js}"></script>
 	<script th:src="@{/js/main/dashboard.js}"></script>

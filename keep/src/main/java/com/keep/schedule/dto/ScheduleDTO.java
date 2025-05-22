@@ -1,0 +1,74 @@
+package com.keep.schedule.dto;
+
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class ScheduleDTO {
+
+    @NotBlank(message = "제목은 반드시 입력해야 합니다.")
+    private String title;
+
+    @NotNull(message = "시작 일자는 반드시 입력해야 합니다.")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate startDay;
+
+    @NotNull(message = "시작 시(hour)는 반드시 입력해야 합니다.")
+    @Min(value = 0, message = "시(hour)는 0~23 사이여야 합니다.")
+    @Max(value = 23, message = "시(hour)는 0~23 사이여야 합니다.")
+    private Integer startHour;
+
+    @NotNull(message = "시작 분(minute)는 반드시 입력해야 합니다.")
+    @Min(value = 0, message = "분(minute)는 0~59 사이여야 합니다.")
+    @Max(value = 59, message = "분(minute)는 0~59 사이여야 합니다.")
+    private Integer startMin;
+
+    @NotNull(message = "종료 일자는 반드시 입력해야 합니다.")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate endDay;
+
+    @NotNull(message = "종료 시(hour)는 반드시 입력해야 합니다.")
+    @Min(value = 0, message = "시(hour)는 0~23 사이여야 합니다.")
+    @Max(value = 23, message = "시(hour)는 0~23 사이여야 합니다.")
+    private Integer endHour;
+
+    @NotNull(message = "종료 분(minute)는 반드시 입력해야 합니다.")
+    @Min(value = 0, message = "분(minute)는 0~59 사이여야 합니다.")
+    @Max(value = 59, message = "분(minute)는 0~59 사이여야 합니다.")
+    private Integer endMin;
+
+    private String location;
+
+    private String description;
+
+    @NotBlank(message = "범주(색상)를 선택하세요.")
+    private String color;
+
+    private MultipartFile file;
+
+    /**
+     * 편의 메서드: 시작 일시 조합
+     */
+    public LocalDateTime getStartDateTime() {
+        return LocalDateTime.of(startDay, LocalTime.of(startHour, startMin));
+    }
+
+    /**
+     * 편의 메서드: 종료 일시 조합
+     */
+    public LocalDateTime getEndDateTime() {
+        return LocalDateTime.of(endDay, LocalTime.of(endHour, endMin));
+    }
+}

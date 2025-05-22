@@ -39,3 +39,7 @@ logging:
 
     # (추가) JPA 내부 JDBC 바인드 로그
     org.hibernate.orm.jdbc.bind: TRACE
+
+file:
+    storage:
+    location: uploads

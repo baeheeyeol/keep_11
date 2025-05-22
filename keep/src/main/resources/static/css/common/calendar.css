@@ -1,0 +1,119 @@
+
+/* 1) 반투명 오버레이 */
+.calendar-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.2);
+  z-index: 1000;
+}
+.calendar-overlay.hidden {
+  display: none;
+}
+
+/* 2) 모달 박스 */
+.calendar-modal {
+  position: absolute;   /* JS로 위치 조정 */
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  padding: 16px;
+  width: 280px;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+/* 3) 모달 헤더 */
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.calendar-header .date-nav {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+/* 4) 테이블 */
+.calendar-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+.calendar-table th {
+  font-weight: 500;
+  padding-bottom: 6px;
+  color: #555;
+}
+.calendar-table td {
+  width: 14.28%;
+  padding: 6px 0;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+.calendar-table td:hover {
+  background-color: #eef2ff;
+}
+/* 드롭다운 컨테이너 */
+.dropdown-container {
+  position: relative;
+  display: inline-block;
+  margin: 0 4px;
+}
+
+/* 드롭다운 토글 */
+.dropdown-display {
+  display: inline-block;
+  padding: 4px 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: #ffffff;
+  user-select: none;
+  transition: background-color 0.2s;
+}
+.dropdown-display:hover {
+  background-color: #f1f3f5;
+}
+.dropdown-display.dimmed {
+  background-color: #e5e7eb;
+}
+/* 메뉴 숨김/표시 */
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border-radius: 6px;
+  z-index: 1001;
+}
+.dropdown-menu.hidden {
+  display: none;
+}
+
+/* 메뉴 아이템 */
+.dropdown-menu li {
+  list-style: none;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.dropdown-menu li:hover {
+  background-color: #eef2ff;
+}
+
+/* 주말 빨간색 표시 */
+.calendar-table td.weekend {
+  color: #e53e3e;
+}
+
+.calendar-modal.dimmed {
+  background-color: rgba(255, 255, 255, 0.6);
+}

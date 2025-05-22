@@ -1,70 +1,87 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="schedule-modal">
-	<!-- 모달 오버레이 -->
-	<div id="schedule-modal-overlay" class="modal-overlay hidden"></div>
-	<!-- 모달 박스 -->
-	<div id="schedule-modal" class="modal hidden">
-		<h3 class="modal-title">일정 등록</h3>
-		<form id="schedule-form" th:action="@{/schedule/create}" method="post"
-			enctype="multipart/form-data">
-			<!-- 제목 -->
-			<div class="form-group">
-				<label for="sched-title">제목</label> 
-				<input type="text" id="sched-title" name="title" required />
-			</div>
-			<!-- 일시: 시작/종료 -->
-			<div class="form-group datetime-group">
-				<label for="sched-start">시작 일시</label>
-				<input type="text" id="sched-start-day" name="start-day" placeholder="선택해주세요" required /> 
-  				<select id="sched-start-hour" name="start-hour"></select> 
-				<select id="sched-start-min" name="start-min"></select>
-			</div>
+  <!-- 모달 오버레이 -->
+  <div id="schedule-modal-overlay" class="modal-overlay hidden"></div>
+  <!-- 모달 박스 -->
+  <div id="schedule-modal" class="modal hidden">
+    <h3 class="modal-title">일정 등록</h3>
+    <form id="schedule-form"
+          th:action="@{/api/schedules}"
+          method="post"
+          enctype="multipart/form-data">
+      <!-- 제목 -->
+      <div class="form-group">
+        <label for="sched-title">제목</label>
+        <input type="text" id="sched-title" name="title" required />
+      </div>
 
-			<div class="form-group datetime-group">
-				<label for="sched-end">종료 일시</label> 
-				<input type="text" id="sched-end-day" name="end" placeholder="선택해주세요" required /> 
-				<select id="sched-end-hour" name="end-hour"></select> 
-				<select	id="sched-end-min" name="end-min"></select>
-			</div>
+      <!-- 시작 일시 -->
+      <div class="form-group datetime-group">
+        <label for="sched-start-day">시작 일시</label>
+        <input  type="text"
+                id="sched-start-day"
+                name="startDay"
+                placeholder="YYYY-MM-DD"
+                required />
+        <select id="sched-start-hour" name="startHour"></select>
+        <select id="sched-start-min"  name="startMin" ></select>
+      </div>
 
-			<!-- 장소 -->
-			<div class="form-group">
-				<label for="sched-location">장소</label> <input type="text"
-					id="sched-location" name="location" />
-			</div>
-			<!-- 설명 -->
-			<div class="form-group">
-				<label for="sched-desc">설명</label>
-				<textarea id="sched-desc" name="description" rows="3"></textarea>
-			</div>
-			<!-- 범주(색상) -->
-			<div class="form-group">
-				<label>범주</label>
-				<div class="category-picker">
-					<button type="button" class="cat-color" data-color="#4f46e5"
-						style="background: #4f46e5;"></button>
-					<button type="button" class="cat-color" data-color="#10b981"
-						style="background: #10b981;"></button>
-					<button type="button" class="cat-color" data-color="#f59e0b"
-						style="background: #f59e0b;"></button>
-					<button type="button" class="cat-color" data-color="#ef4444"
-						style="background: #ef4444;"></button>
-				</div>
-				<input type="hidden" id="sched-color" name="color" value="#4f46e5" />
-			</div>
-			<!-- 파일 업로드 -->
-			<div class="form-group">
-				<label for="sched-file">파일 첨부</label> <input type="file"
-					id="sched-file" name="file" />
-			</div>
+      <!-- 종료 일시 -->
+      <div class="form-group datetime-group">
+        <label for="sched-end-day">종료 일시</label>
+        <input  type="text"
+                id="sched-end-day"
+                name="endDay"
+                placeholder="YYYY-MM-DD"
+                required />
+        <select id="sched-end-hour" name="endHour"></select>
+        <select id="sched-end-min"  name="endMin" ></select>
+      </div>
 
-			<!-- 모달 액션 -->
-			<div class="modal-actions">
-				<button type="submit" class="btn-primary">저장</button>
-				<button type="button" id="modal-cancel" class="btn-secondary">취소</button>
-			</div>
-		</form>
-	</div>
+      <!-- 장소 -->
+      <div class="form-group">
+        <label for="sched-location">장소</label>
+        <input type="text" id="sched-location" name="location" />
+      </div>
+
+      <!-- 설명 -->
+      <div class="form-group">
+        <label for="sched-desc">설명</label>
+        <textarea id="sched-desc" name="description" rows="3"></textarea>
+      </div>
+
+      <!-- 범주(색상) -->
+      <div class="form-group">
+        <label>범주</label>
+        <div class="category-picker">
+          <button type="button" class="cat-color" data-color="#4f46e5"
+                  style="background: #4f46e5;"></button>
+          <button type="button" class="cat-color" data-color="#10b981"
+                  style="background: #10b981;"></button>
+          <button type="button" class="cat-color" data-color="#f59e0b"
+                  style="background: #f59e0b;"></button>
+          <button type="button" class="cat-color" data-color="#ef4444"
+                  style="background: #ef4444;"></button>
+        </div>
+        <input type="hidden" id="sched-color" name="color" value="#4f46e5" />
+      </div>
+
+      <!-- 파일 업로드 -->
+      <div class="form-group">
+        <label for="sched-file">파일 첨부</label>
+        <input type="file" id="sched-file" name="file" />
+      </div>
+
+      <!-- 모달 액션 -->
+      <div class="modal-actions">
+        <button type="submit" class="btn-primary">저장</button>
+        <button type="button" id="modal-cancel" class="btn-secondary">
+          취소
+        </button>
+      </div>
+    </form>
+  </div>
 </div>
 </html>
