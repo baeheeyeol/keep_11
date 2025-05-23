@@ -1,6 +1,6 @@
 (function() {
-	function initScheduleModal() {
 
+	function initScheduleModal() {
 		const overlay = document.getElementById('schedule-modal-overlay');
 		const modal = document.getElementById('schedule-modal');
 		const cancel = document.getElementById('modal-cancel');
@@ -77,7 +77,6 @@
 
 			openModal();
 		});
-
 		// ❶ 폼 submit 이벤트 가로채기 (REST API용)
 		form.addEventListener('submit', async e => {
 			e.preventDefault();
@@ -119,9 +118,7 @@
 				// ❸ 저장 성공 시 모달 닫기 및 뷰 갱신
 				closeModal();
 				// 예: daily 뷰 다시 로드
-				if (window.loadView) {
-					window.loadView('daily');
-				}
+				window.initDailySchedule();
 			}
 			catch (err) {
 				console.error(err);

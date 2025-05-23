@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org">
 
 <!-- templates/main/components/daily.html -->
 <div th:fragment="content" class="daily-schedule-container">
-  <!-- 본문: 시간축 + 스케줄 그리드 -->
   <div class="daily-schedule">
     <!-- 시간축 -->
     <div class="time-column">
@@ -20,19 +19,19 @@
 
     <!-- 스케줄 그리드 -->
     <div class="schedule-grid">
+      <!-- 각 시간 슬롯(클릭하면 등록 모달) -->
       <div class="hour-slot" th:each="h : ${#numbers.sequence(0,23)}"></div>
-      <!-- 이벤트 블록 예시 (필요시 th:each 로 반복) -->
-      <div class="event"
-           style="top: calc(9 * var(--hour-height)); height: calc(2 * var(--hour-height));">
-        <span class="event-title">회의</span>
-        <span class="event-time">09:00 – 11:00</span>
-      </div>
-    </div>
 
+      <!-- 렌더링된 이벤트 블록들이 들어갑니다 -->
+      <div class="events-container"></div>
+
+      <!-- 현재 시간선 (daily.js에서 그립니다) -->
+      <div class="current-time-line"></div>
+    </div>
   </div>
-  
 </div>
 </html>
+
 <!-- create table schedules -->
 <!-- ( -->
 <!--   schedules_id            NUMBER not null, -->

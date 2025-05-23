@@ -10,13 +10,14 @@ import java.util.List;
 @Repository
 public interface ScheduleRepository extends JpaRepository<ScheduleEntity, Long> {
 
-    /**
-     * 특정 사용자의 startTs가 주어진 기간(start ~ end) 사이에 속하는 일정들을
-     * 시작 시각 순으로 모두 조회합니다.
-     */
-    List<ScheduleEntity> findAllByUserIdAndStartTsBetweenOrderByStartTs(
-            Long userId,
-            LocalDateTime start,
-            LocalDateTime end
-    );
+  /**
+   * userId 사용자의,
+   * startTs ≤ endOfDay  AND  endTs ≥ startOfDay
+   * 조건을 만족하는 일정 전체를 시작 시각 순으로 조회
+   */
+  List<ScheduleEntity> findAllByUserIdAndStartTsLessThanEqualAndEndTsGreaterThanEqualOrderByStartTs(
+      Long userId,
+      LocalDateTime endOfDay,
+      LocalDateTime startOfDay
+  );
 }

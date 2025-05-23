@@ -1,9 +1,12 @@
 package com.keep.schedule.dto;
 
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.Max;
+
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +22,8 @@ import java.time.LocalTime;
 public class ScheduleDTO {
 
     @NotBlank(message = "제목은 반드시 입력해야 합니다.")
+    @Size(max = 30, message = "최대 10자까지 입력 가능합니다")
+    @Column(name = "title", length = 30)
     private String title;
 
     @NotNull(message = "시작 일자는 반드시 입력해야 합니다.")
