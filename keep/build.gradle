@@ -32,17 +32,36 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	runtimeOnly 'com.oracle.database.jdbc:ojdbc11'
 	
-	compileOnly 'org.projectlombok:lombok'
-	
+//	compileOnly 'org.projectlombok:lombok'
+	    // --- MapStruct ---
+    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+
+    // (선택) Lombok 사용 시
+    compileOnly 'org.projectlombok:lombok:1.18.26'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    annotationProcessor 'org.projectlombok:lombok:1.18.26'
+    // Lombok-MapStruct 호환 바인딩
+    annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+	
 	
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-	annotationProcessor 'org.projectlombok:lombok'
 	
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	
 }
+// --- 여기에 추가 ---
+sourceSets {
+    main {
+        java {
+            // Gradle이 annotationProcessor 에서 만든 소스파일을 컴파일 대상에 포함하도록
+            srcDir "$buildDir/generated/sources/annotationProcessor/java/main"
+        }
+    }
+}
+
+
 compileJava {  
 	options.compilerArgs << '-parameters'
 }

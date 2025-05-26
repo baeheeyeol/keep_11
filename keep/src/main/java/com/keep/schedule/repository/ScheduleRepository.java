@@ -1,5 +1,4 @@
 package com.keep.schedule.repository;
-
 import com.keep.schedule.entity.ScheduleEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

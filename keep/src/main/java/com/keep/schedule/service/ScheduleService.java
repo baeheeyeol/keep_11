@@ -1,6 +1,8 @@
 package com.keep.schedule.service;
 
+import com.keep.schedule.dto.ScheduleDTO;
 import com.keep.schedule.entity.ScheduleEntity;
+import com.keep.schedule.mapper.ScheduleMapper;
 import com.keep.schedule.repository.ScheduleRepository;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -14,6 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,27 +24,29 @@ import java.util.List;
 public class ScheduleService {
 
 	private final ScheduleRepository repository;
-
+  private final ScheduleMapper mapper;
 	/**
 	 * 새로운 일정을 저장합니다.
 	 */
 	@Transactional
-	public ScheduleEntity create(ScheduleEntity schedule) {
-		return repository.save(schedule);
-	}
+	public Long createAndReturnId(ScheduleDTO dto) {
+		ScheduleEntity scheduleEntity = repository.save(mapper.toEntity(dto));
+		return mapper.toDto(scheduleEntity).getUserId();
+	} 
 
 	/**
 	 * userId 사용자의 주어진 날짜(date)에 속하는 일정 목록을 반환합니다. (daily 뷰에 사용)
 	 */
-	public List<ScheduleEntity> getEventsByDate(Long userId, LocalDate date) {
+	public List<ScheduleDTO> getEventsByDate(Long userId, LocalDate date) {
 		// 그날 00:00부터 23:59:59까지
 		LocalDateTime startOfDay = date.atStartOfDay();
 		LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
 
-		return repository.findAllByUserIdAndStartTsLessThanEqualAndEndTsGreaterThanEqualOrderByStartTs(userId, // 사용자
+    List<ScheduleEntity> entities =repository.findAllByUserIdAndStartTsLessThanEqualAndEndTsGreaterThanEqualOrderByStartTs(userId, // 사용자
 				endOfDay, // startTs ≤ 이 값
 				startOfDay // endTs ≥ 이 값
 		);
+    return entities.stream().map(mapper::toDto).collect(Collectors.toList());
 	}
 
 	/**

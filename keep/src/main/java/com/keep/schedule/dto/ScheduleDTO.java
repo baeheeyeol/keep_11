@@ -21,6 +21,9 @@ import java.time.LocalTime;
 @Builder
 public class ScheduleDTO {
 
+		private Long userId;	
+		private String fileUrl;	
+		
     @NotBlank(message = "제목은 반드시 입력해야 합니다.")
     @Size(max = 30, message = "최대 10자까지 입력 가능합니다")
     @Column(name = "title", length = 30)
@@ -66,14 +69,18 @@ public class ScheduleDTO {
     /**
      * 편의 메서드: 시작 일시 조합
      */
-    public LocalDateTime getStartDateTime() {
+    public LocalDateTime startTs;
+    
+    public LocalDateTime getStartTs() {
         return LocalDateTime.of(startDay, LocalTime.of(startHour, startMin));
     }
 
     /**
      * 편의 메서드: 종료 일시 조합
      */
-    public LocalDateTime getEndDateTime() {
+    public LocalDateTime endTs;
+    
+    public LocalDateTime getEndTs() {
         return LocalDateTime.of(endDay, LocalTime.of(endHour, endMin));
     }
 }
