@@ -1,29 +1,83 @@
 /* daily.css */
 :root {
+  /* 시간 슬롯 높이 */
   --hour-height: 60px;
+  /* 종일 이벤트 카드 최소 너비 */
+  --all-day-card-width: 150px;
+  /* 일반 이벤트 최대 컬럼 수 */
+  --normal-event-col-count: 9;
+  --normal-event-width: calc(100% / var(--normal-event-col-count));
 }
 
-.daily-schedule-container {
-  border-radius: 1rem;
-  background: #ffffff;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  overflow: hidden;
-  font-family: 'Noto Sans KR', sans-serif;
-}
-.daily-schedule-header {
-  padding: 0.75rem 1.25rem;
+
+/* 종일 이벤트 영역 */
+.events-all-day-wrapper {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  background: #f9fafb;
   border-bottom: 1px solid #e5e7eb;
-  background: #f8f9fa;
+  overflow-x: auto;
+  white-space: nowrap;
 }
-.daily-schedule-header h2 {
-  margin: 0;
-  font-size: 1.125rem;
+
+/* "종일" 레이블 */
+.all-day-label {
+  flex: 0 0 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-weight: 600;
   color: #333;
+  margin-right: 8px;
 }
-.daily-schedule {
+
+/* 종일 이벤트 카드 리스트 */
+.events-all-day-list {
   display: flex;
+  gap: 8px;
 }
+
+/* 종일 이벤트 카드 */
+.event-card {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  min-width: var(--all-day-card-width);
+  padding: 8px 12px;
+  background-color: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  font-size: 0.875rem;
+  color: #333;
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+.event-card:hover {
+  background-color: #f8f9fa;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+/* +더보기 버튼 (종일) */
+.all-day-toggle {
+  flex: 0 0 auto;
+  margin-left: auto;
+  padding: 4px 8px;
+  background: transparent;
+  border: none;
+  font-size: 0.875rem;
+  color: #3b82f6;
+  cursor: pointer;
+}
+
+/* 시간축 컬럼 */
 .time-column {
   width: 60px;
   background: #f1f3f5;
@@ -43,28 +97,70 @@
   color: #555;
   white-space: nowrap;
 }
+
+/* 스케줄 그리드 */
 .schedule-grid {
   flex: 1;
   position: relative;
   background: #fff;
+  /* 24시간 높이 고정 및 내부 스크롤 */
+  height: calc(24 * var(--hour-height));
 }
 .hour-slot {
   height: var(--hour-height);
   border-bottom: 1px solid #e5e7eb;
   box-sizing: border-box;
 }
+
+/* 일반 이벤트 컨테이너 */
 .events-container {
+  position: relative;
   transition: opacity 0.2s ease;
 }
+
+/* 일반 이벤트 블록 */
 .event {
   position: absolute;
   padding: 4px;
   border-radius: 4px;
   box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-  margin-right: 2px;
-  margin-bottom: 2px;
   box-sizing: border-box;
+  margin-bottom: 2px;
+  font-size: 0.875rem;
+  color: #fff;
+  cursor: pointer;
 }
+
+/* 일반 이벤트 +더보기 블록 */
+.event.normal-more {
+  position: absolute;
+  right: 0;
+  width: var(--normal-event-width);
+  height: var(--hour-height);
+  background: #e5e7eb;
+  border: 1px dashed #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: #555;
+  cursor: default;
+}
+.daily-schedule {
+  display: flex;
+}
+
+/* 전체 일정 컨테이너 */
+.daily-schedule-container {
+  border-radius: 1rem;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  font-family: 'Noto Sans KR', sans-serif;
+  /* 이벤트 및 타임라인이 컨테이너 바깥으로 넘어가도 보이도록 overflow visible */
+  overflow: visible;
+}
+
+/* 현재 시간선 */
 .current-time-line {
   position: absolute;
   left: 0;
@@ -73,30 +169,27 @@
   background-color: #ef4444;
   z-index: 10;
 }
-/* 현재 시간선 위에 마우스 올리면 뜨는 툴팁 */
 .current-time-line[data-time]:hover::after {
   content: attr(data-time);
   position: absolute;
-  top: -28px;              /* 선 위쪽으로 띄우기 */
+  top: -28px;
   left: 0;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(0,0,0,0.75);
   color: #fff;
   padding: 2px 6px;
   border-radius: 4px;
   font-size: 0.75rem;
   white-space: nowrap;
-  pointer-events: none;     /* 툴팁 위에 마우스 이벤트 무시 */
+  pointer-events: none;
   z-index: 20;
 }
-
-/* (옵션) 작은 삼각형 화살표 */
 .current-time-line[data-time]:hover::before {
   content: '';
   position: absolute;
-  top: -6px;               /* 툴팁 박스 바로 아래 */
+  top: -6px;
   left: 8px;
   border: 4px solid transparent;
-  border-top-color: rgba(0, 0, 0, 0.75);
+  border-top-color: rgba(0,0,0,0.75);
   pointer-events: none;
   z-index: 20;
 }

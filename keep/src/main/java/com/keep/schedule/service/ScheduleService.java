@@ -8,6 +8,7 @@ import com.keep.schedule.repository.ScheduleRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
+import org.hibernate.internal.build.AllowSysOut;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,15 +26,17 @@ import java.util.stream.Collectors;
 public class ScheduleService {
 
 	private final ScheduleRepository repository;
-  private final ScheduleMapper mapper;
+	private final ScheduleMapper mapper;
+
 	/**
 	 * 새로운 일정을 저장합니다.
 	 */
 	@Transactional
 	public Long createAndReturnId(ScheduleDTO dto) {
-		ScheduleEntity scheduleEntity = repository.save(mapper.toEntity(dto));
+		ScheduleEntity se = mapper.toEntity(dto);
+		ScheduleEntity scheduleEntity = repository.save(se);
 		return mapper.toDto(scheduleEntity).getUserId();
-	} 
+	}
 
 	/**
 	 * userId 사용자의 주어진 날짜(date)에 속하는 일정 목록을 반환합니다. (daily 뷰에 사용)
@@ -42,11 +46,19 @@ public class ScheduleService {
 		LocalDateTime startOfDay = date.atStartOfDay();
 		LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
 
-    List<ScheduleEntity> entities =repository.findAllByUserIdAndStartTsLessThanEqualAndEndTsGreaterThanEqualOrderByStartTs(userId, // 사용자
-				endOfDay, // startTs ≤ 이 값
-				startOfDay // endTs ≥ 이 값
-		);
-    return entities.stream().map(mapper::toDto).collect(Collectors.toList());
+		List<ScheduleEntity> entities = repository
+				.findAllByUserIdAndStartTsLessThanEqualAndEndTsGreaterThanEqualOrderByStartTs(userId, // 사용자
+						endOfDay, // startTs ≤ 이 값
+						startOfDay // endTs ≥ 이 값
+				);
+		List<ScheduleDTO> t = entities.stream().map(entity -> {
+			ScheduleDTO dto = mapper.toDto(entity);
+
+			long daysBetween = ChronoUnit.DAYS.between(entity.getStartTs().toLocalDate(), entity.getEndTs().toLocalDate());
+			dto.setFullDay(daysBetween >= 1);
+			return dto;
+		}).collect(Collectors.toList());
+		return t;
 	}
 
 	/**
@@ -72,8 +84,6 @@ public class ScheduleService {
 		// 4) 엔티티에 반영
 		event.setStartTs(newStart);
 		event.setEndTs(newEnd);
-		event.setLastUpdateDate(LocalDateTime.now());
-		event.setLastUpdatedBy(userId);
 
 		// 5) 저장
 		repository.save(event);

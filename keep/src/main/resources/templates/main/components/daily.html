@@ -1,51 +1,44 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+	xmlns:th="http://www.thymeleaf.org">
 
 <!-- templates/main/components/daily.html -->
 <div th:fragment="content" class="daily-schedule-container">
-  <div class="daily-schedule">
-    <!-- 시간축 -->
-    <div class="time-column">
-      <div class="hour-label" th:each="h : ${#numbers.sequence(0,23)}">
-        <span class="hour-text"
-              th:text="${h < 12
+	<!-- 종일 이벤트 영역 -->
+	<div class="events-all-day-wrapper">
+		<div class="all-day-label">종일</div>
+		<div class="events-all-day-list">
+			<!-- 종일 이벤트 카드들이 렌더링됩니다 (최대 10개까지) -->
+			<!-- 넘으면 마지막에 "+더보기" 고정 카드 -->
+			<div class="event-card all-day-more">+더보기</div>
+		</div>
+		<button class="all-day-toggle">+ 더보기</button>
+	</div>
+
+	<!-- 일반 일정 영역 -->
+	<div class="daily-schedule">
+		<!-- 시간축 -->
+		<div class="time-column">
+			<div class="hour-label" th:each="h : ${#numbers.sequence(0,23)}">
+				<span class="hour-text"
+					th:text="${h < 12
                        ? '오전 ' + (h==0?12:h) + '시'
                        : '오후 ' + ((h-12)==0?12:(h-12)) + '시'}">
-          오전 12시
-        </span>
-      </div>
-    </div>
+					오전 12시 </span>
+			</div>
+		</div>
 
-    <!-- 스케줄 그리드 -->
-    <div class="schedule-grid">
-      <!-- 각 시간 슬롯(클릭하면 등록 모달) -->
-      <div class="hour-slot" th:each="h : ${#numbers.sequence(0,23)}"></div>
+		<!-- 스케줄 그리드 -->
+		<div class="schedule-grid">
+			<div class="hour-slot" th:each="h : ${#numbers.sequence(0,23)}"></div>
 
-      <!-- 렌더링된 이벤트 블록들이 들어갑니다 -->
-      <div class="events-container"></div>
+			<div class="events-container">
+				<div class="event normal-more">+더보기</div>
+			</div>
 
-      <!-- 현재 시간선 (daily.js에서 그립니다) -->
-      <div class="current-time-line"></div>
-    </div>
-  </div>
+			<div class="current-time-line"></div>
+		</div>
+	</div>
 </div>
 </html>
 
-<!-- create table schedules -->
-<!-- ( -->
-<!--   schedules_id            NUMBER not null, -->
-<!--   user_id         NUMBER not null, -->
-<!--   title           VARCHAR2(30), -->
-<!--  start_ts          TIMESTAMP        NOT NULL,       -- 시작 일시 -->
-<!-- end_ts            TIMESTAMP        NOT NULL,       -- 종료 일시 -->
-<!-- location          VARCHAR2(200),                   -- 장소 -->
-<!-- description       CLOB,                            -- 상세 설명 -->
-<!-- category          VARCHAR2(50),                    -- 범주(색상명/코드) -->
-<!-- file_url          VARCHAR2(4000),    -->
-<!--   CREATED_BY        NUMBER not null, -->
-<!--   CREATION_DATE     DATE not null, -->
-<!--   LAST_UPDATED_BY   NUMBER not null, -->
-<!--   LAST_UPDATE_DATE  DATE not null, -->
-<!--   LAST_UPDATE_LOGIN NUMBER -->
-<!-- ) -->

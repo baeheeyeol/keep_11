@@ -21,66 +21,63 @@ import java.time.LocalTime;
 @Builder
 public class ScheduleDTO {
 
-		private Long userId;	
-		private String fileUrl;	
-		
-    @NotBlank(message = "제목은 반드시 입력해야 합니다.")
-    @Size(max = 30, message = "최대 10자까지 입력 가능합니다")
-    @Column(name = "title", length = 30)
-    private String title;
+	private Long userId;
 
-    @NotNull(message = "시작 일자는 반드시 입력해야 합니다.")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate startDay;
+	private Long scheduleId;
 
-    @NotNull(message = "시작 시(hour)는 반드시 입력해야 합니다.")
-    @Min(value = 0, message = "시(hour)는 0~23 사이여야 합니다.")
-    @Max(value = 23, message = "시(hour)는 0~23 사이여야 합니다.")
-    private Integer startHour;
+	private String fileUrl;
 
-    @NotNull(message = "시작 분(minute)는 반드시 입력해야 합니다.")
-    @Min(value = 0, message = "분(minute)는 0~59 사이여야 합니다.")
-    @Max(value = 59, message = "분(minute)는 0~59 사이여야 합니다.")
-    private Integer startMin;
+	@NotBlank(message = "제목은 반드시 입력해야 합니다.")
+	@Size(max = 30, message = "최대 10자까지 입력 가능합니다")
+	@Column(name = "title", length = 30)
+	private String title;
 
-    @NotNull(message = "종료 일자는 반드시 입력해야 합니다.")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate endDay;
+	@NotNull(message = "시작 일자는 반드시 입력해야 합니다.")
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private LocalDate startDay;
 
-    @NotNull(message = "종료 시(hour)는 반드시 입력해야 합니다.")
-    @Min(value = 0, message = "시(hour)는 0~23 사이여야 합니다.")
-    @Max(value = 23, message = "시(hour)는 0~23 사이여야 합니다.")
-    private Integer endHour;
+	@NotNull(message = "시작 시(hour)는 반드시 입력해야 합니다.")
+	@Min(value = 0, message = "시(hour)는 0~23 사이여야 합니다.")
+	@Max(value = 23, message = "시(hour)는 0~23 사이여야 합니다.")
+	private int startHour;
 
-    @NotNull(message = "종료 분(minute)는 반드시 입력해야 합니다.")
-    @Min(value = 0, message = "분(minute)는 0~59 사이여야 합니다.")
-    @Max(value = 59, message = "분(minute)는 0~59 사이여야 합니다.")
-    private Integer endMin;
+	@NotNull(message = "시작 분(minute)는 반드시 입력해야 합니다.")
+	@Min(value = 0, message = "분(minute)는 0~59 사이여야 합니다.")
+	@Max(value = 59, message = "분(minute)는 0~59 사이여야 합니다.")
+	private int startMin;
 
-    private String location;
+	@NotNull(message = "종료 일자는 반드시 입력해야 합니다.")
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private LocalDate endDay;
 
-    private String description;
+	@NotNull(message = "종료 시(hour)는 반드시 입력해야 합니다.")
+	@Min(value = 0, message = "시(hour)는 0~23 사이여야 합니다.")
+	@Max(value = 23, message = "시(hour)는 0~23 사이여야 합니다.")
+	private int endHour;
 
-    @NotBlank(message = "범주(색상)를 선택하세요.")
-    private String color;
+	@NotNull(message = "종료 분(minute)는 반드시 입력해야 합니다.")
+	@Min(value = 0, message = "분(minute)는 0~59 사이여야 합니다.")
+	@Max(value = 59, message = "분(minute)는 0~59 사이여야 합니다.")
+	private int endMin;
 
-    private MultipartFile file;
+	private String location;
 
-    /**
-     * 편의 메서드: 시작 일시 조합
-     */
-    public LocalDateTime startTs;
-    
-    public LocalDateTime getStartTs() {
-        return LocalDateTime.of(startDay, LocalTime.of(startHour, startMin));
-    }
+	private String description;
 
-    /**
-     * 편의 메서드: 종료 일시 조합
-     */
-    public LocalDateTime endTs;
-    
-    public LocalDateTime getEndTs() {
-        return LocalDateTime.of(endDay, LocalTime.of(endHour, endMin));
-    }
+	@NotBlank(message = "범주(색상)를 선택하세요.")
+	private String category;
+
+	private MultipartFile file;
+
+	/**
+	 * 편의 메서드: 시작 일시 조합
+	 */
+	public LocalDateTime startTs;
+
+	/**
+	 * 편의 메서드: 종료 일시 조합
+	 */
+	public LocalDateTime endTs;
+
+	public boolean isFullDay;
 }

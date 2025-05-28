@@ -33,7 +33,7 @@ dependencies {
 	runtimeOnly 'com.oracle.database.jdbc:ojdbc11'
 	
 //	compileOnly 'org.projectlombok:lombok'
-	    // --- MapStruct ---
+	    // --- MapStruct --- 왜 안되냐
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 

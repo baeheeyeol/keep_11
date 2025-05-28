@@ -1,93 +1,104 @@
 // static/js/main/components/daily.js
 (function() {
-	let draggingEvt      = null;
+	let draggingEvt = null;
 	let startY, origTop;
 	let H, STEP;
 
 	function onDrag(e) {
-	  if (!draggingEvt) return;
-	  const dy = e.clientY - startY;
-	  const contTop = origTop + dy;
-	  const snapped = Math.round(contTop / STEP) * STEP;
-	  draggingEvt.style.top = `${snapped}px`;
+		if (!draggingEvt) return;
+		const dy = e.clientY - startY;
+		const contTop = origTop + dy;
+		const snapped = Math.round(contTop / STEP) * STEP;
+		draggingEvt.style.top = `${snapped}px`;
 	}
 
 	function onDrop(e) {
-	    // 1) 리스너 해제
-	    document.removeEventListener('pointermove', onDrag);
-	    document.removeEventListener('pointerup',   onDrop);
+		document.removeEventListener('pointermove', onDrag);
+		document.removeEventListener('pointerup', onDrop);
 
-	    // 2) 스냅된 최종 top 위치(px)
-	    const snappedTop = parseFloat(draggingEvt.style.top);
-	    // 3) 이동량: (새위치 – 원위치) 픽셀
-	    const dy = snappedTop - origTop;
-	    // 4) 시간 단위로 변환 (px → 시간)
-	    const deltaHours = dy / H;
-	    // 5) 30분 단위로 반올림
-	    const deltaSnapped = Math.round(deltaHours * 2) / 2;
+		const snappedTop = parseFloat(draggingEvt.style.top);
+		const dy = snappedTop - origTop;
+		const deltaHours = dy / H;
+		const deltaSnapped = Math.round(deltaHours * 2) / 2;
 
-	    // 6) 서버에 전송
-	    updateEventTime(draggingEvt.dataset.id, deltaSnapped);
+		updateEventTime(draggingEvt.dataset.id, deltaSnapped);
+	}
 
-	    // 7) 원래 left 복원
-	    draggingEvt.style.left = draggingEvt._origLeft;
-	    delete draggingEvt._origLeft;
-
-	    draggingEvt = null;
-	  }
 	async function updateEventTime(id, deltaHours) {
-	  try {
-	    const res = await fetch(`/api/schedules/${id}`, {
-	      method: 'PATCH',
-	      headers: {
-	        'Content-Type': 'application/json'
-	      },
-	      body: JSON.stringify({ deltaHours })
-	    });
-	    if (!res.ok) {
-	      // 에러 메시지 파싱 (서버에서 {errors:…} 형태로 보낼 경우)
-	      const err = await res.json().catch(()=>null);
-	      const msg = err?.message || `HTTP ${res.status}`;
-	      alert(`일정 이동에 실패했습니다: ${msg}`);
-	      return;
-	    }
-	    // 이동 성공 시, 화면 다시 그리기
-	    await initDailySchedule();  
-	  }
-	  catch (e) {
-	    console.error(e);
-	    alert('일정 이동 중 예외가 발생했습니다.');
-	  }
+		try {
+			const res = await fetch(`/api/schedules/${id}`, {
+				method: 'PATCH',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ deltaHours })
+			});
+			if (!res.ok) {
+				const err = await res.json().catch(() => null);
+				const msg = err?.message || `HTTP ${res.status}`;
+				alert(`일정 이동에 실패했습니다: ${msg}`);
+				return;
+			}
+			await initDailySchedule();
+		} catch (e) {
+			console.error(e);
+			alert('일정 이동 중 예외가 발생했습니다.');
+		}
 	}
 
 	function initDragAndDrop() {
-	  const grid = document.querySelector('.schedule-grid');
-	  if (!grid) return;
+		const grid = document.querySelector('.schedule-grid');
+		if (!grid) return;
 
-	  H    = parseFloat(getComputedStyle(document.documentElement)
-	                   .getPropertyValue('--hour-height'));
-	  STEP = H / 2;  // 30분 단위
+		H = parseFloat(getComputedStyle(document.documentElement)
+			.getPropertyValue('--hour-height'));
+		STEP = H / 2;
 
-	  grid.addEventListener('pointerdown', e => {
-	    const evEl = e.target.closest('.event');
-	    if (!evEl) return;
-	    e.preventDefault();
+		grid.addEventListener('pointerdown', e => {
+			const evEl = e.target.closest('.event');
+			if (!evEl) return;
+			e.preventDefault();
 
-	    draggingEvt = evEl;
-	    startY      = e.clientY;
-	    origTop     = parseFloat(getComputedStyle(evEl).top);
+			draggingEvt = evEl;
+			startY = e.clientY;
+			origTop = parseFloat(getComputedStyle(evEl).top);
 
-	    // **원래 left 저장하고, 드래그 중엔 왼쪽에 붙이기**
-	    draggingEvt._origLeft = getComputedStyle(evEl).left;
-	    draggingEvt.style.left = '0px';
-		draggingEvt.style.zIndex = '9999';
-	    document.addEventListener('pointermove', onDrag);
-	    document.addEventListener('pointerup',   onDrop);
-	  });
+			draggingEvt._origLeft = getComputedStyle(evEl).left;
+			draggingEvt.style.left = '0px';
+			draggingEvt.style.zIndex = '9999';
+
+			document.addEventListener('pointermove', onDrag);
+			document.addEventListener('pointerup', onDrop);
+		});
 	}
-	/**
-	 * 일간 일정 렌더s링 + 현재시간선 그리기
-	 */
+
+	function renderAllDayEvents(allDayEvents) {
+		const wrapperEl = document.querySelector('.events-all-day-wrapper');
+		const listEl = wrapperEl.querySelector('.events-all-day-list');
+		const toggleEl = wrapperEl.querySelector('.all-day-toggle');
+		const MAX_SHOW = 5;
+
+		function updateList() {
+			listEl.innerHTML = '';
+			const slice = allDayEvents.slice(0, MAX_SHOW);
+
+			slice.forEach(evt => {
+				const card = document.createElement('div');
+				card.className = 'event-card';
+				card.textContent = evt.title;
+				card.style.backgroundColor = evt.category;
+				card.dataset.id = evt.scheduleId;
+				listEl.appendChild(card);
+			});
+
+			if (allDayEvents.length <= MAX_SHOW) {
+				toggleEl.style.display = 'none';
+			} else {
+				toggleEl.style.display = '';
+				toggleEl.textContent = `+ 더보기 (${allDayEvents.length - MAX_SHOW})`;
+			}
+		}
+		updateList();
+	}
+
 	async function initDailySchedule() {
 		const grid = document.querySelector('.schedule-grid');
 		if (!grid) return;
@@ -97,7 +108,6 @@
 		const [year, month, day] = dateInput.value.split('-').map(n => +n);
 		const dateParam = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
-		// 1) API에서 일정 목록 가져오기
 		let events = [];
 		try {
 			const res = await fetch(`/api/schedules?date=${dateParam}`);
@@ -106,82 +116,95 @@
 			console.error('일정 로드 실패', err);
 		}
 
-		// 2) 기존 이벤트 클리어
-		const container = grid.querySelector('.events-container');
-		container.innerHTML = '';
+		const allDayEvents = events.filter(e => e.isFullDay);
+		events = events.filter(e => !e.isFullDay);
+		renderAllDayEvents(allDayEvents);
 
-		// 3) CSS 변수에서 1시간 높이(px) 가져오기
-		const H = parseFloat(getComputedStyle(document.documentElement)
-			.getPropertyValue('--hour-height'));
-
-		// 2) 빈 컬럼 리스트
-		const columns = [];  // columns[i] = 해당 컬럼 마지막 이벤트의 endTs (숫자: ms)
-
-		// 3) 각 이벤트에 colIndex 할당
 		events.forEach(evt => {
-			const start = new Date(evt.startTs).getTime();
-			const end = new Date(evt.endTs).getTime();
+			evt._start = new Date(evt.startTs).getTime();
+			evt._end = new Date(evt.endTs).getTime();
+		});
+		events.sort((a, b) => a._start - b._start);
 
-			// 빈 칸 찾기
-			let placed = false;
-			for (let i = 0; i < columns.length; i++) {
-				if (start >= columns[i]) {
-					// i번 컬럼에 배치
-					evt.colIndex = i;
-					columns[i] = end;  // 이 컬럼의 마지막 종료 시각 갱신
-					placed = true;
-					break;
-				}
+		const clusters = [];
+		const seen = new Set();
+		events.forEach(evt => {
+			if (seen.has(evt)) return;
+			const queue = [evt];
+			const comp = [];
+			seen.add(evt);
+			while (queue.length) {
+				const cur = queue.shift();
+				comp.push(cur);
+				events.forEach(other => {
+					if (!seen.has(other) && other._start < cur._end && other._end > cur._start) {
+						seen.add(other);
+						queue.push(other);
+					}
+				});
 			}
-			if (!placed) {
-				// 새 컬럼 추가
-				evt.colIndex = columns.length;
-				columns.push(end);
-			}
+			clusters.push(comp);
 		});
 
-		// 블록 사이에 줄 간격으로 사용할 픽셀 수
-		const GAP = 2;  // 원하시는 만큼 조정하세요
-		const totalCols = columns.length;
-		const colPct = 100 / totalCols;
-		events.forEach(evt => {
-			const start = new Date(evt.startTs);
-			const end = new Date(evt.endTs);
-			const durationHours = (end - start) / 1000 / 60 / 60;     // 시간 단위 길이
-			const offsetHours = start.getHours() + start.getMinutes() / 60;
+		clusters.forEach(cluster => {
+			const cols = [];
+			cluster.sort((a, b) => a._start - b._start);
+			cluster.forEach(evt => {
+				let placed = false;
+				for (let i = 0; i < cols.length; i++) {
+					if (evt._start >= cols[i]) {
+						evt.colIndex = i;
+						cols[i] = evt._end;
+						placed = true;
+						break;
+					}
+				}
+				if (!placed) {
+					evt.colIndex = cols.length;
+					cols.push(evt._end);
+				}
+			});
+			const clusterMax = cols.length;
+			cluster.forEach(evt => {
+				evt.clusterMaxCols = clusterMax;
+			});
+		});
 
-			// 위쪽 위치 (px)
-			const offsetPx = offsetHours * H;
-			// 높이 (px)
-			const heightPx = durationHours * H;
+		const container = grid.querySelector('.events-container');
+		container.innerHTML = '';
+		const H = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hour-height'));
+		const GAP = 2;
+
+		// 렌더링 최대 9개, 초과 시 더보기 블록
+		const MAX_NORMAL = 9;
+		events.slice(0, MAX_NORMAL).forEach(evt => {
+			
+			const startDate = new Date(evt.startTs);
+			const durationHrs = (evt._end - evt._start) / 36e5;
+			const offsetHrs = startDate.getHours() + startDate.getMinutes() / 60;
+
+			const colPct = 100 / evt.clusterMaxCols;
+			const left = evt.colIndex * colPct;
+			const width = colPct;
 
 			const div = document.createElement('div');
 			div.className = 'event';
-
-			// left/width 계산 (예전 대로)
-
-			div.style.left = `calc(${evt.colIndex * colPct}% + ${GAP * evt.colIndex}px)`;
-			div.style.width = `calc(${colPct}% - ${GAP}px)`;
-
-			// **height에도 GAP을 빼 줍니다**
-			div.style.top = `calc(${offsetPx}px)`;               // top 은 그대로
-			div.style.height = `calc(${heightPx}px - ${GAP}px)`;   // 높이에서 GAP만큼 빼기
-
+			div.style.left = `calc(${left}% + ${GAP * evt.colIndex}px)`;
+			div.style.width = `calc(${width}% - ${GAP}px)`;
+			div.style.top = `${offsetHrs * H}px`;
+			div.style.height = `calc(${durationHrs * H}px - ${GAP}px)`;
 			div.style.backgroundColor = evt.category;
-			div.dataset.id = evt.schedulesId;
-			// 내용 세팅...
-			div.innerHTML = `
-		    <span class="event-title">${evt.title}</span>
-		  `;
-		  container.style.opacity = 0;
-		  		  setTimeout(() => {
-		  		    container.appendChild(div);
-		  		    container.style.opacity = 1;
-		  		  }, 200);
-
+			div.dataset.id = evt.scheduleId;
+			div.innerHTML = `<span class="event-title">${evt.title}</span>`;
+			container.appendChild(div);
 		});
 		
-		// 5) 현재 시간선 그리기 함수
+		if (events.length > MAX_NORMAL) {
+			const moreBlock = document.createElement('div');
+			moreBlock.className = 'event normal-more';
+			moreBlock.textContent = `+더보기 (${events.length - MAX_NORMAL})`;
+			container.appendChild(moreBlock);
+		}
 		function drawTimeLine() {
 			let line = grid.querySelector('.current-time-line');
 			if (!line) {
@@ -215,10 +238,9 @@
 			drawTimeLine();
 			setInterval(drawTimeLine, 60 * 1000);
 		}, delay);
-		
+
 		initDragAndDrop();
 	}
 
-	// 전역에 노출
 	window.initDailySchedule = initDailySchedule;
 })();
