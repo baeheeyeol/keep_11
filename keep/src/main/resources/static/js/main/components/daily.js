@@ -5,8 +5,7 @@
 	let H, STEP;
 	let isDragging = false;               // 실제 드래그 중인지 플래그
 	const DRAG_THRESHOLD = 5;
-	let gridEl;
-	
+
 	function onDrag(e) {
 		if (!draggingEvt) return;
 		const dy = e.clientY - startY;
@@ -21,16 +20,12 @@
 			draggingEvt.style.left = '0px';
 			draggingEvt.style.zIndex = '9999';
 		}
-		let contTop = origTop + dy;
-		const evtH = draggingEvt.offsetHeight;
-		const gridH = gridEl.clientHeight;
-		contTop = Math.max(0, Math.min(contTop, gridH - evtH));
-		const snapped = Math.round(contTop / STEP) * STEP;
-		// 3) 실제 드래그 중에는 위치 업데이트
+		const contTop = origTop + dy;
+		const snapped = Math.min(1380,Math.max(0,Math.round(contTop / STEP) * STEP));
 		draggingEvt.style.top = `${snapped}px`;
 	}
-	
-	
+
+
 	function onDrop(e) {
 		e.preventDefault();
 		document.removeEventListener('pointermove', onDrag);
@@ -54,7 +49,6 @@
 		isDragging = false;
 
 	}
-
 	async function updateEventTime(id, deltaHours) {
 		try {
 			const res = await fetch(`/api/schedules/${id}`, {
@@ -76,7 +70,6 @@
 	}
 
 	function initDragAndDrop() {
-		gridEl = document.getElementById('schedule-grid');
 		const grid = document.querySelector('.schedule-grid');
 		if (!grid) return;
 
@@ -229,12 +222,12 @@
 			div.innerHTML = `<span class="event-title">${evt.title}</span>`;
 			container.appendChild(div);
 		});
-//		if (events.length > MAX_NORMAL) {
-//			const moreBlock = document.createElement('div');
-//			moreBlock.className = 'event normal-more';
-//			moreBlock.textContent = `+더보기 (${events.length - MAX_NORMAL})`;
-//			container.appendChild(moreBlock);
-//		}
+		//		if (events.length > MAX_NORMAL) {
+		//			const moreBlock = document.createElement('div');
+		//			moreBlock.className = 'event normal-more';
+		//			moreBlock.textContent = `+더보기 (${events.length - MAX_NORMAL})`;
+		//			container.appendChild(moreBlock);
+		//		}
 		//시간선 그리기 
 		function drawTimeLine() {
 			let line = grid.querySelector('.current-time-line');

@@ -54,8 +54,8 @@ public class ScheduleService {
 		List<ScheduleDTO> t = entities.stream().map(entity -> {
 			ScheduleDTO dto = mapper.toDto(entity);
 
-			long daysBetween = ChronoUnit.DAYS.between(entity.getStartTs().toLocalDate(), entity.getEndTs().toLocalDate());
-			dto.setFullDay(daysBetween >= 1);
+			long hoursBetween = ChronoUnit.HOURS.between(entity.getStartTs(), entity.getEndTs());
+			dto.setFullDay(hoursBetween >= 24);
 			return dto;
 		}).collect(Collectors.toList());
 		return t;
