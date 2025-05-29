@@ -77,6 +77,7 @@
 
 			openModal();
 		});
+		
 		// ❶ 폼 submit 이벤트 가로채기 (REST API용)
 		form.addEventListener('submit', async e => {
 			e.preventDefault();
@@ -125,10 +126,48 @@
 				alert('네트워크 에러로 일정 저장에 실패했습니다.');
 			}
 		}); 
-		
-
 	}
+	// ❶ 스케줄 ID로 단건 조회 후 모달 폼에 자동으로 채워 넣고 모달 열기
+	async function loadAndOpenScheduleModal(scheduleId) {
+	   try {
+	        const res = await fetch(`/api/schedules/${scheduleId}`);
+	        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+	        const data = await res.json();
 
+	        // 날짜/시간 분리용 헬퍼
+	        const pad = n => String(n).padStart(2, '0');
+	        const start = new Date(data.startTs);
+	        const end   = new Date(data.endTs);
+
+	        // 모달 제목 변경
+//	        document.getElementById('modal-title-text').textContent = '일정 수정';
+
+	        // 폼 요소에 값 채우기
+	        document.getElementById('sched-title').value       = data.title;
+	        document.getElementById('sched-start-day').value   = `${start.getFullYear()}-${pad(start.getMonth()+1)}-${pad(start.getDate())}`;
+	        document.getElementById('sched-start-hour').value  = pad(start.getHours());
+	        document.getElementById('sched-start-min').value   = pad(start.getMinutes());
+	        document.getElementById('sched-end-day').value     = `${end.getFullYear()}-${pad(end.getMonth()+1)}-${pad(end.getDate())}`;
+	        document.getElementById('sched-end-hour').value    = pad(end.getHours());
+	        document.getElementById('sched-end-min').value     = pad(end.getMinutes());
+	        document.getElementById('sched-location').value    = data.location || '';
+	        document.getElementById('sched-desc').value        = data.description || '';
+	        document.getElementById('sched-color').value       = data.category;
+	        document.getElementById('sched-id').value       = data.schedulesId;
+
+	        // 카테고리 버튼 선택 상태 동기화
+	        document.querySelectorAll('.cat-color').forEach(btn => {
+	            btn.classList.toggle('selected', btn.dataset.color === data.category);
+	        });
+
+	        // 모달 열기
+	        openModal();
+	    } catch (err) {
+	        console.error(err);
+	        alert('일정을 불러오는 데 실패했습니다.');
+	    }
+	}
+	// ────────────────────────────────────────────────────────────────────────
 	function openModal() {
 		document.getElementById('schedule-modal-overlay').classList.remove('hidden');
 		document.getElementById('schedule-modal').classList.remove('hidden');
@@ -143,9 +182,11 @@
 		document.getElementById('schedule-modal-overlay').classList.add('hidden');
 		document.getElementById('schedule-modal').classList.add('hidden');
 		document.getElementById('schedule-form').reset();
+		document.getElementById('sched-id').value ='';
 		document.querySelectorAll('.cat-color').forEach(b => b.classList.remove('selected'));
 	}
 
 	// 전역 호출용 및 초기화
 	window.initScheduleModal = initScheduleModal;
+	window.loadAndOpenScheduleModal =loadAndOpenScheduleModal;
 })();

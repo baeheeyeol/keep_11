@@ -43,16 +43,16 @@ public class ScheduleEntity {
 	@Column(name = "FILE_URL", length = 4000)
 	private String fileUrl;
 
-	@Column(name = "CREATED_BY", nullable = false)
+	@Column(name = "CREATED_BY")
 	private Long createdBy;
 
-	@Column(name = "CREATION_DATE", nullable = false)
+	@Column(name = "CREATION_DATE")
 	private LocalDateTime creationDate;
 
-	@Column(name = "LAST_UPDATED_BY", nullable = false)
+	@Column(name = "LAST_UPDATED_BY")
 	private Long lastUpdatedBy;
 
-	@Column(name = "LAST_UPDATE_DATE", nullable = false)
+	@Column(name = "LAST_UPDATE_DATE")
 	private LocalDateTime lastUpdateDate;
 
 	@Column(name = "LAST_UPDATE_LOGIN")

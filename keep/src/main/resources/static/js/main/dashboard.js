@@ -4,8 +4,14 @@ document.addEventListener('DOMContentLoaded', () => {
 	if (!dateInput) {
 		return;
 	}
-
-	// 1) current-date 에 달력 모달 바인딩
+//	['current-date', 'sched-start-day', 'sched-end-day'].forEach(id => {
+//	  const el = document.getElementById(id);
+//	  if (!el) return;  // 해당 ID가 없으면 스킵
+//	  el.addEventListener('click', () => {
+//	    // 클릭된 element의 id를 인자로 전달
+//	    window.initCalendarModal(id);
+//	  });
+//	});	// 1) current-date 에 달력 모달 바인딩
 	if (window.initCalendarModal) {
 		window.initCalendarModal('current-date');
 		window.initCalendarModal('sched-start-day');

@@ -29,7 +29,7 @@
 		</div>
 
 		<!-- 스케줄 그리드 -->
-		<div class="schedule-grid">
+		<div class="schedule-grid" id ="chedule-grid">
 			<div class="hour-slot" th:each="h : ${#numbers.sequence(0,23)}"></div>
 
 			<div class="events-container">

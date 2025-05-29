@@ -3,25 +3,56 @@
 	let draggingEvt = null;
 	let startY, origTop;
 	let H, STEP;
-
+	let isDragging = false;               // 실제 드래그 중인지 플래그
+	const DRAG_THRESHOLD = 5;
+	let gridEl;
+	
 	function onDrag(e) {
 		if (!draggingEvt) return;
 		const dy = e.clientY - startY;
-		const contTop = origTop + dy;
+		// 1) threshold 미만이면 아무 동작도 하지 않고 리턴
+		if (!isDragging) {
+			if (Math.abs(dy) < DRAG_THRESHOLD) return;
+
+			// 2) 임계치 넘으면 진짜 드래그 시작!
+			isDragging = true;
+			// 드래그 중 스타일 변경
+			draggingEvt._origLeft = getComputedStyle(draggingEvt).left;
+			draggingEvt.style.left = '0px';
+			draggingEvt.style.zIndex = '9999';
+		}
+		let contTop = origTop + dy;
+		const evtH = draggingEvt.offsetHeight;
+		const gridH = gridEl.clientHeight;
+		contTop = Math.max(0, Math.min(contTop, gridH - evtH));
 		const snapped = Math.round(contTop / STEP) * STEP;
+		// 3) 실제 드래그 중에는 위치 업데이트
 		draggingEvt.style.top = `${snapped}px`;
 	}
-
+	
+	
 	function onDrop(e) {
+		e.preventDefault();
 		document.removeEventListener('pointermove', onDrag);
 		document.removeEventListener('pointerup', onDrop);
 
-		const snappedTop = parseFloat(draggingEvt.style.top);
-		const dy = snappedTop - origTop;
-		const deltaHours = dy / H;
-		const deltaSnapped = Math.round(deltaHours * 2) / 2;
+		if (isDragging) {
+			const snappedTop = parseFloat(draggingEvt.style.top);
+			const dy = snappedTop - origTop;
+			const deltaHours = dy / H;
+			const deltaSnapped = Math.round(deltaHours * 2) / 2;
+			updateEventTime(draggingEvt.dataset.id, deltaSnapped);
+		} else {
+			const card = e.target.closest('.event');
+			window.loadAndOpenScheduleModal(card.dataset.id);
+		}
 
-		updateEventTime(draggingEvt.dataset.id, deltaSnapped);
+		// 스타일 원복 및 상태 초기화
+		draggingEvt.style.left = draggingEvt._origLeft;
+		draggingEvt.style.zIndex = '';
+		draggingEvt = null;
+		isDragging = false;
+
 	}
 
 	async function updateEventTime(id, deltaHours) {
@@ -45,6 +76,7 @@
 	}
 
 	function initDragAndDrop() {
+		gridEl = document.getElementById('schedule-grid');
 		const grid = document.querySelector('.schedule-grid');
 		if (!grid) return;
 
@@ -58,12 +90,9 @@
 			e.preventDefault();
 
 			draggingEvt = evEl;
+			isDragging = false;                    // 아직 드래그 안 함
 			startY = e.clientY;
 			origTop = parseFloat(getComputedStyle(evEl).top);
-
-			draggingEvt._origLeft = getComputedStyle(evEl).left;
-			draggingEvt.style.left = '0px';
-			draggingEvt.style.zIndex = '9999';
 
 			document.addEventListener('pointermove', onDrag);
 			document.addEventListener('pointerup', onDrop);
@@ -85,7 +114,7 @@
 				card.className = 'event-card';
 				card.textContent = evt.title;
 				card.style.backgroundColor = evt.category;
-				card.dataset.id = evt.scheduleId;
+				card.dataset.id = evt.schedulesId;
 				listEl.appendChild(card);
 			});
 
@@ -96,6 +125,11 @@
 				toggleEl.textContent = `+ 더보기 (${allDayEvents.length - MAX_SHOW})`;
 			}
 		}
+		listEl.addEventListener('click', e => {
+			const card = e.target.closest('.event-card');
+			if (!card) return;
+			loadAndOpenScheduleModal(card.dataset.id);
+		});
 		updateList();
 	}
 
@@ -118,13 +152,13 @@
 
 		const allDayEvents = events.filter(e => e.isFullDay);
 		events = events.filter(e => !e.isFullDay);
+		//종일 일정 설정
 		renderAllDayEvents(allDayEvents);
 
 		events.forEach(evt => {
 			evt._start = new Date(evt.startTs).getTime();
 			evt._end = new Date(evt.endTs).getTime();
 		});
-		events.sort((a, b) => a._start - b._start);
 
 		const clusters = [];
 		const seen = new Set();
@@ -175,10 +209,8 @@
 		const H = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hour-height'));
 		const GAP = 2;
 
-		// 렌더링 최대 9개, 초과 시 더보기 블록
-		const MAX_NORMAL = 9;
-		events.slice(0, MAX_NORMAL).forEach(evt => {
-			
+		events.forEach(evt => {
+
 			const startDate = new Date(evt.startTs);
 			const durationHrs = (evt._end - evt._start) / 36e5;
 			const offsetHrs = startDate.getHours() + startDate.getMinutes() / 60;
@@ -186,25 +218,24 @@
 			const colPct = 100 / evt.clusterMaxCols;
 			const left = evt.colIndex * colPct;
 			const width = colPct;
-
 			const div = document.createElement('div');
 			div.className = 'event';
-			div.style.left = `calc(${left}% + ${GAP * evt.colIndex}px)`;
+			div.style.left = `calc(${left}% + ${GAP}px)`;
 			div.style.width = `calc(${width}% - ${GAP}px)`;
 			div.style.top = `${offsetHrs * H}px`;
 			div.style.height = `calc(${durationHrs * H}px - ${GAP}px)`;
 			div.style.backgroundColor = evt.category;
-			div.dataset.id = evt.scheduleId;
+			div.dataset.id = evt.schedulesId;
 			div.innerHTML = `<span class="event-title">${evt.title}</span>`;
 			container.appendChild(div);
 		});
-		
-		if (events.length > MAX_NORMAL) {
-			const moreBlock = document.createElement('div');
-			moreBlock.className = 'event normal-more';
-			moreBlock.textContent = `+더보기 (${events.length - MAX_NORMAL})`;
-			container.appendChild(moreBlock);
-		}
+//		if (events.length > MAX_NORMAL) {
+//			const moreBlock = document.createElement('div');
+//			moreBlock.className = 'event normal-more';
+//			moreBlock.textContent = `+더보기 (${events.length - MAX_NORMAL})`;
+//			container.appendChild(moreBlock);
+//		}
+		//시간선 그리기 
 		function drawTimeLine() {
 			let line = grid.querySelector('.current-time-line');
 			if (!line) {

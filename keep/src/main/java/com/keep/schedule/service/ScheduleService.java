@@ -88,4 +88,11 @@ public class ScheduleService {
 		// 5) 저장
 		repository.save(event);
 	}
+   public ScheduleDTO getScheduleById(Long userId, Long scheduleId) {
+       // 1) 엔티티 조회
+       ScheduleEntity entity = repository.findById(scheduleId).orElseThrow(() -> new EntityNotFoundException("해당 일정이 존재하지 않습니다."));
+       // 3) DTO 매핑 후 반환
+       return mapper.toDto(entity);
+   }
+
 }

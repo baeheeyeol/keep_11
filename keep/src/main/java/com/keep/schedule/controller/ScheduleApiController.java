@@ -28,18 +28,17 @@ public class ScheduleApiController {
 
 	private final ScheduleService scheduleService;
 	private final FileStorageService fileStorageService;
-	
+
 	/**
 	 * 일정 생성
 	 */
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> createSchedule(Authentication authentication, @Valid @ModelAttribute ScheduleDTO dto,BindingResult bindingResult) {
+	public ResponseEntity<?> createSchedule(Authentication authentication, @Valid @ModelAttribute ScheduleDTO dto,	BindingResult bindingResult) {
 		if (bindingResult.hasErrors()) {
 			Map<String, String> errors = bindingResult.getFieldErrors().stream()
 					.collect(Collectors.toMap(fe -> fe.getField(), fe -> fe.getDefaultMessage()));
 			return ResponseEntity.badRequest().body(Map.of("errors", errors));
 		}
-
 		// 파일 저장
 		String fileUrl = null;
 		if (dto.getFile() != null && !dto.getFile().isEmpty()) {
@@ -48,8 +47,7 @@ public class ScheduleApiController {
 		dto.setUserId(Long.parseLong(authentication.getName()));
 		Long scheduleId = scheduleService.createAndReturnId(dto);
 
-		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(scheduleId)
-				.toUri();
+		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(scheduleId).toUri();
 
 		return ResponseEntity.created(location).body(Map.of("id", scheduleId));
 	}
@@ -83,6 +81,15 @@ public class ScheduleApiController {
 
 		return ResponseEntity.ok().build();
 	}
+
+	@GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ScheduleDTO> getScheduleById(Authentication authentication,	@PathVariable("id") Long scheduleId) {
+		Long userId = Long.valueOf(authentication.getName());
+		ScheduleDTO dto = scheduleService.getScheduleById(userId, scheduleId);
+		if (dto == null) {
+			return ResponseEntity.notFound().build();
+		}
+		return ResponseEntity.ok(dto);
+	}
+
 }
-
-

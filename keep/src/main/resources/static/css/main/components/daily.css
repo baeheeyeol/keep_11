@@ -103,6 +103,7 @@
   flex: 1;
   position: relative;
   background: #fff;
+    overflow: hidden; 
   /* 24시간 높이 고정 및 내부 스크롤 */
   height: calc(24 * var(--hour-height));
 }
@@ -114,7 +115,6 @@
 
 /* 일반 이벤트 컨테이너 */
 .events-container {
-  position: relative;
   transition: opacity 0.2s ease;
 }
 

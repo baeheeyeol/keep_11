@@ -17,7 +17,7 @@ public interface ScheduleMapper {
 
 	// 예: DTO → Entity 매핑
 	@Mapping(target = "lastUpdatedBy", source = "userId")
-	@Mapping(target = "createdBy", source = "userId")
+	@Mapping(target = "createdBy", source = "userId")	
 	ScheduleEntity toEntity(ScheduleDTO dto);
 
 	@AfterMapping
@@ -27,7 +27,6 @@ public interface ScheduleMapper {
 	}
 
 	// Entity → DTO 매핑
-	@Mapping(target="scheduleId", source="schedulesId")
 	ScheduleDTO toDto(ScheduleEntity entity);
 
 	@AfterMapping

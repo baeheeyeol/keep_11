@@ -23,7 +23,7 @@ public class ScheduleDTO {
 
 	private Long userId;
 
-	private Long scheduleId;
+	private Long schedulesId;
 
 	private String fileUrl;
 
