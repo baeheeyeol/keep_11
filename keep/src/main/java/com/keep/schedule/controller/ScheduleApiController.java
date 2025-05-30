@@ -33,7 +33,8 @@ public class ScheduleApiController {
 	 * 일정 생성
 	 */
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> createSchedule(Authentication authentication, @Valid @ModelAttribute ScheduleDTO dto,	BindingResult bindingResult) {
+	public ResponseEntity<?> createSchedule(Authentication authentication, @Valid @ModelAttribute ScheduleDTO dto,
+			BindingResult bindingResult) {
 		if (bindingResult.hasErrors()) {
 			Map<String, String> errors = bindingResult.getFieldErrors().stream()
 					.collect(Collectors.toMap(fe -> fe.getField(), fe -> fe.getDefaultMessage()));
@@ -65,7 +66,7 @@ public class ScheduleApiController {
 	}
 
 	/**
-	 * ❸ 일정 시간 이동 (30분 단위 델타)
+	 * 일정 시간 이동 (30분 단위 델타)
 	 */
 	@PatchMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> moveSchedule(Authentication authentication, @PathVariable("id") Long schedulesId,
@@ -82,8 +83,12 @@ public class ScheduleApiController {
 		return ResponseEntity.ok().build();
 	}
 
+	/**
+	 * 일정 단건 조회
+	 */
 	@GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ScheduleDTO> getScheduleById(Authentication authentication,	@PathVariable("id") Long scheduleId) {
+	public ResponseEntity<ScheduleDTO> getScheduleById(Authentication authentication,
+			@PathVariable("id") Long scheduleId) {
 		Long userId = Long.valueOf(authentication.getName());
 		ScheduleDTO dto = scheduleService.getScheduleById(userId, scheduleId);
 		if (dto == null) {
@@ -92,4 +97,17 @@ public class ScheduleApiController {
 		return ResponseEntity.ok(dto);
 	}
 
+	/**
+	 * 주간 일정 조회 GET /api/schedules?start=2025-05-25&end=2025-05-31
+	 */
+	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, params = { "start", "end" })
+	public ResponseEntity<List<ScheduleDTO>> getSchedulesByRange(Authentication authentication,
+			@RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate start,
+			@RequestParam("end") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end) {
+
+		Long userId = Long.valueOf(authentication.getName());
+		// ScheduleService 에 getEventsByDateRange 메서드를 구현해야 합니다.
+		List<ScheduleDTO> list = scheduleService.getEventsByDateRange(userId, start, end);
+		return ResponseEntity.ok(list);
+	}
 }

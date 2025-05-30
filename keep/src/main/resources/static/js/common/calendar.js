@@ -1,13 +1,13 @@
 (function() {
 	function initCalendarModal(dateSource) {
-	  // ➊ dateSpan 엘리먼트 결정
-	  let dateSpan;
-	  if (typeof dateSource === 'string') {
-	    dateSpan = document.getElementById(dateSource);
-	  } else if (dateSource instanceof HTMLElement) {
-	    dateSpan = dateSource;
-	  }
-	  if (!dateSpan) return;  // 없으면 종료
+		// ➊ dateSpan 엘리먼트 결정
+		let dateSpan;
+		if (typeof dateSource === 'string') {
+			dateSpan = document.getElementById(dateSource);
+		} else if (dateSource instanceof HTMLElement) {
+			dateSpan = dateSource;
+		}
+		if (!dateSpan) return;  // 없으면 종료
 		//달력	
 		const overlay = document.getElementById('calendar-overlay');
 		const modal = document.getElementById('calendar-modal');
@@ -96,10 +96,50 @@
 				}
 				// 날짜 선택 시
 				cell.addEventListener('click', () => {
-					//String(today.getDate()).padStart(2, '0');
-					dateSpan.value = `${year}-${String(month + 1).padStart(2,'0')}-${String(d).padStart(2, '0')}`;
+					const selectedDate = new Date(year, month, d);
+					const view = dateSpan.dataset.view;
+					const zeroPad = num => String(num).padStart(2, '0');
+					let formattedValue;
+
+					if (view === 'weekly') {
+						// 주간 포맷
+						const dayIndex = selectedDate.getDay();
+						const weekStart = new Date(selectedDate);
+						const weekEnd = new Date(selectedDate);
+						weekStart.setDate(selectedDate.getDate() - dayIndex);
+						weekEnd.setDate(selectedDate.getDate() + (6 - dayIndex));
+
+						const sMM = zeroPad(weekStart.getMonth() + 1);
+						const sDD = zeroPad(weekStart.getDate());
+						const eMM = zeroPad(weekEnd.getMonth() + 1);
+						const eDD = zeroPad(weekEnd.getDate());
+
+						formattedValue = `${sMM}.${sDD}-${eMM}.${eDD}`;
+						// 선택한 날짜 (주간의 기준일) 저장
+						dateSpan.dataset.selectDate = [
+							selectedDate.getFullYear(),
+							zeroPad(selectedDate.getMonth() + 1),
+							zeroPad(selectedDate.getDate())
+						].join('-');
+
+						window.updateWeekDateNumbers();
+					} else {
+						// 일간 및 기타 포맷 공통
+						const yyyy = selectedDate.getFullYear();
+						const mm = zeroPad(selectedDate.getMonth() + 1);
+						const dd = zeroPad(selectedDate.getDate());
+						if (view === 'daily') {
+							formattedValue = `${yyyy}.${mm}.${dd}`;
+							dateSpan.dataset.selectDate = `${yyyy}-${mm}-${dd}`;
+						}else{
+							formattedValue = `${yyyy}-${mm}-${dd}`;
+						}
+					}
+
+					dateSpan.value = formattedValue;
 					closeCalendar();
 				});
+
 				row.appendChild(cell);
 			}
 			// 마지막 줄 빈 칸 채우기
@@ -108,7 +148,6 @@
 			}
 			bodyTbody.appendChild(row);
 		}
-
 		// 모달 열기/닫기
 		function openCalendar() {
 			// 모달 위치

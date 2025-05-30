@@ -121,7 +121,7 @@
 		listEl.addEventListener('click', e => {
 			const card = e.target.closest('.event-card');
 			if (!card) return;
-			loadAndOpenScheduleModal(card.dataset.id);
+			window.loadAndOpenScheduleModal(card.dataset.id);
 		});
 		updateList();
 	}
@@ -130,14 +130,12 @@
 		const grid = document.querySelector('.schedule-grid');
 		if (!grid) return;
 
-		const dateInput = document.getElementById('current-date');
+		const dateInput = document.getElementById('current-date').dataset.selectDate;
 		if (!dateInput) return;
-		const [year, month, day] = dateInput.value.split('-').map(n => +n);
-		const dateParam = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-
+		const [year, month, day] = dateInput.split('.').map(n => +n);
 		let events = [];
 		try {
-			const res = await fetch(`/api/schedules?date=${dateParam}`);
+			const res = await fetch(`/api/schedules?date=${dateInput}`);
 			if (res.ok) events = await res.json();
 		} catch (err) {
 			console.error('일정 로드 실패', err);
@@ -203,11 +201,9 @@
 		const GAP = 2;
 
 		events.forEach(evt => {
-
 			const startDate = new Date(evt.startTs);
 			const durationHrs = (evt._end - evt._start) / 36e5;
 			const offsetHrs = startDate.getHours() + startDate.getMinutes() / 60;
-
 			const colPct = 100 / evt.clusterMaxCols;
 			const left = evt.colIndex * colPct;
 			const width = colPct;
@@ -222,46 +218,8 @@
 			div.innerHTML = `<span class="event-title">${evt.title}</span>`;
 			container.appendChild(div);
 		});
-		//		if (events.length > MAX_NORMAL) {
-		//			const moreBlock = document.createElement('div');
-		//			moreBlock.className = 'event normal-more';
-		//			moreBlock.textContent = `+더보기 (${events.length - MAX_NORMAL})`;
-		//			container.appendChild(moreBlock);
-		//		}
 		//시간선 그리기 
-		function drawTimeLine() {
-			let line = grid.querySelector('.current-time-line');
-			if (!line) {
-				line = document.createElement('div');
-				line.className = 'current-time-line';
-				grid.appendChild(line);
-			}
-			const now = new Date();
-			// 날짜가 다르면 숨기기
-			if (now.getFullYear() !== year
-				|| now.getMonth() + 1 !== month
-				|| now.getDate() !== day) {
-				line.style.display = 'none';
-				return;
-			}
-			line.style.display = '';
-			const offset = (now.getHours() + now.getMinutes() / 60) * H;
-			line.style.top = `${offset}px`;
-			// 툴팁에 시간 갱신
-			const ampm = now.getHours() < 12 ? '오전' : '오후';
-			const h12 = now.getHours() % 12 === 0 ? 12 : now.getHours() % 12;
-			const mm = String(now.getMinutes()).padStart(2, '0');
-			line.setAttribute('data-time', `${ampm} ${h12}:${mm}`);
-		}
-
-		// 즉시 + 매분 갱신
-		drawTimeLine();
-		const now = new Date();
-		const delay = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
-		setTimeout(() => {
-			drawTimeLine();
-			setInterval(drawTimeLine, 60 * 1000);
-		}, delay);
+		
 
 		initDragAndDrop();
 	}

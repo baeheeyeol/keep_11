@@ -1,11 +1,72 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"	xmlns:th="http://www.thymeleaf.org"	>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
 
-<div th:fragment="content">
-  <!-- Daily Header -->
- test1
+<!-- templates/main/components/weekly.html -->
+<div th:fragment="content" class="daily-schedule-container">
+
+  <!-- ① 요일 헤더 (종일 위, 스크롤 시 최상단에 고정) -->
+  <div class="weekday-header">
+    <div class="day-label header-label">요일</div>
+    <div class="day-label sun">
+      <span class="date-number"></span>
+      <span class="weekday-text">일</span>
+    </div>
+    <div class="day-label">
+      <span class="date-number"></span>
+      <span class="weekday-text">월</span>
+    </div>
+    <div class="day-label">
+      <span class="date-number"></span>
+      <span class="weekday-text">화</span>
+    </div>
+    <div class="day-label">
+      <span class="date-number"></span>
+      <span class="weekday-text">수</span>
+    </div>
+    <div class="day-label">
+      <span class="date-number"></span>
+      <span class="weekday-text">목</span>
+    </div>
+    <div class="day-label">
+      <span class="date-number"></span>
+      <span class="weekday-text">금</span>
+    </div>
+    <div class="day-label sat">
+      <span class="date-number"></span>
+      <span class="weekday-text">토</span>
+    </div>
+  </div>
+  <!-- ② 종일 이벤트 영역 (요일 헤더 아래, 스크롤 시 헤더 바로 아래 고정) -->
+  <div class="events-all-day-wrapper">
+    <div class="all-day-label">종일</div>
+    <div class="events-all-day-list">
+      <!-- 종일 이벤트 카드들 -->
+    </div>
+  </div>
+
+  <!-- ③ 일반 일정 영역 -->
+  <div class="daily-schedule">
+    <!-- 시간축 -->
+    <div class="time-column">
+      <div class="hour-label" th:each="h : ${#numbers.sequence(0,23)}">
+        <span class="hour-text"
+              th:text="${h < 12
+                         ? '오전 ' + (h==0?12:h) + '시'
+                         : '오후 ' + ((h-12)==0?12:(h-12)) + '시'}">
+          오전 12시
+        </span>
+      </div>
+    </div>
+
+    <!-- 스케줄 그리드 -->
+    <div class="schedule-grid" id="schedule-grid">
+      <div class="hour-slot" th:each="h : ${#numbers.sequence(0,167)}" th:id="'hour-slot-' + ${h}"></div>
+      <div class="events-container"></div>
+      <div class="current-time-line"></div>
+    </div>
+  </div>
 </div>
-
 </html>
 
- 
+

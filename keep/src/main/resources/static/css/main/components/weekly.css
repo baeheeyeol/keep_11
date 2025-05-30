@@ -1,19 +1,63 @@
-/* daily.css */
+/* weekly.css */
+
 :root {
   /* 시간 슬롯 높이 */
   --hour-height: 60px;
   /* 종일 이벤트 카드 최소 너비 */
   --all-day-card-width: 150px;
-  /* 일반 이벤트 최대 컬럼 수 */
-  --normal-event-col-count: 9;
-  --normal-event-width: calc(100% / var(--normal-event-col-count));
+  /* 요일 컬럼 수 */
+  --weekday-count: 7;
+  /* 요일 헤더 높이 */
+  --weekday-header-height: 40px;
 }
 
-
-/* 종일 이벤트 영역 */
-.events-all-day-wrapper {
+/* — 요일 헤더 — */
+.weekday-header {
   position: sticky;
   top: 0;
+  z-index: 30;
+  display: grid;
+  /* 시간축(60px) + 7일 */
+  grid-template-columns: 60px repeat(var(--weekday-count), 1fr);
+  width: 100%;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.weekday-header .day-label {
+  height: var(--weekday-header-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #333;
+  border-right: 1px solid #e5e7eb;
+}
+
+/* 첫 컬럼: "요일" 레이블 */
+.weekday-header .day-label.header-label {
+  font-size: 0.875rem;
+}
+
+/* 마지막 컬럼 우측 경계선 제거 */
+.weekday-header .day-label:last-child {
+  border-right: none;
+}
+
+/* 일·토요일만 빨강 강조 */
+.weekday-header .day-label.sun,
+.weekday-header .day-label.sat {
+  color: #ef4444;
+}
+.weekday-header .date-number {
+  font-size: 0.75rem;
+  color: #555;
+  margin-right: 4px;
+}
+/* — 종일 이벤트 영역 — */
+.events-all-day-wrapper {
+  position: sticky;
+  top: var(--weekday-header-height);
   z-index: 20;
   display: flex;
   align-items: center;
@@ -65,16 +109,10 @@
   box-shadow: 0 2px 4px rgba(0,0,0,0.15);
 }
 
-/* +더보기 버튼 (종일) */
-.all-day-toggle {
-  flex: 0 0 auto;
-  margin-left: auto;
-  padding: 4px 8px;
-  background: transparent;
-  border: none;
-  font-size: 0.875rem;
-  color: #3b82f6;
-  cursor: pointer;
+/* — 메인 일정 영역 — */
+.daily-schedule {
+  display: flex;
+  height: calc(var(--weekday-header-height) + 24 * var(--hour-height));
 }
 
 /* 시간축 컬럼 */
@@ -97,27 +135,35 @@
   color: #555;
   white-space: nowrap;
 }
-
-/* 스케줄 그리드 */
-.schedule-grid {
-  flex: 1;
-  position: relative;
-  background: #fff;
-    overflow: hidden; 
-  height: calc(24 * var(--hour-height));
-}
 .hour-slot {
   height: var(--hour-height);
   border-bottom: 1px solid #e5e7eb;
+  border-right : 1px solid #e5e7eb;
   box-sizing: border-box;
 }
+/* — 스케줄 그리드 (시간×요일) — */
+.schedule-grid {
+  flex: 1;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--weekday-count), 1fr);
+  grid-template-rows: repeat(24, var(--hour-height));
+  width: calc(100% - 60px);
+  overflow-y: auto;
+  background: #fff;
+}
 
-/* 일반 이벤트 컨테이너 */
+
+/* 이벤트 컨테이너 */
 .events-container {
+  position: absolute;
+  top: var(--weekday-header-height);
+  left: 0;
+  right: 0;
   transition: opacity 0.2s ease;
 }
 
-/* 일반 이벤트 블록 */
+/* 이벤트 블록 스타일 */
 .event {
   position: absolute;
   padding: 4px;
@@ -130,36 +176,16 @@
   cursor: pointer;
 }
 
-/* 일반 이벤트 +더보기 블록 */
-.event.normal-more {
-  position: absolute;
-  right: 0;
-  width: var(--normal-event-width);
-  height: var(--hour-height);
-  background: #e5e7eb;
-  border: 1px dashed #ccc;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  color: #555;
-  cursor: default;
-}
-.daily-schedule {
-  display: flex;
-}
-
-/* 전체 일정 컨테이너 */
+/* — 전체 컨테이너 — */
 .daily-schedule-container {
   border-radius: 1rem;
   background: #ffffff;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   font-family: 'Noto Sans KR', sans-serif;
-  /* 이벤트 및 타임라인이 컨테이너 바깥으로 넘어가도 보이도록 overflow visible */
   overflow: visible;
 }
 
-/* 현재 시간선 */
+/* — 현재 시간선 — */
 .current-time-line {
   position: absolute;
   left: 0;

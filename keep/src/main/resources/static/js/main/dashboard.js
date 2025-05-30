@@ -1,17 +1,10 @@
 // static/js/main/dashboard.js
 document.addEventListener('DOMContentLoaded', () => {
-	const dateInput = document.getElementById('current-date');
+	let dateInput = document.getElementById('current-date');
 	if (!dateInput) {
 		return;
 	}
-//	['current-date', 'sched-start-day', 'sched-end-day'].forEach(id => {
-//	  const el = document.getElementById(id);
-//	  if (!el) return;  // 해당 ID가 없으면 스킵
-//	  el.addEventListener('click', () => {
-//	    // 클릭된 element의 id를 인자로 전달
-//	    window.initCalendarModal(id);
-//	  });
-//	});	// 1) current-date 에 달력 모달 바인딩
+	// 1) current-date 에 달력 모달 바인딩
 	if (window.initCalendarModal) {
 		window.initCalendarModal('current-date');
 		window.initCalendarModal('sched-start-day');
@@ -22,41 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
 	const yyyy = today.getFullYear();
 	const mm = String(today.getMonth() + 1).padStart(2, '0');
 	const dd = String(today.getDate()).padStart(2, '0');
-	dateInput.value = `${yyyy}-${mm}-${dd}`;
 
-	// 3) 숫자 외 문자 제거 + 최대 8자리(YMD 8자리) 제한
-	dateInput.addEventListener('input', e => {
-		let v = e.target.value.replace(/[^0-9]/g, '');
-		if (v.length > 8) {
-			v = v.slice(0, 8)
-		};
-		e.target.value = v;
-	});
+	dateInput.dataset.view = 'weekly';
 
-	// 4) YYYYMMDD → YYYY-MM-DD 포맷 함수
-	function formatYYYYMMDD(v) {
-		if (v.length !== 8) {
-			return v;
-		}
-		const y = v.slice(0, 4);
-		const m = v.slice(4, 6);
-		const d = v.slice(6, 8);
-		if (m >= '01' && m <= '12' && d >= '01' && d <= '31') {
-			return `${y}-${m}-${d}`;
-		}
-		return v;
-	}
-
-	// 5) 포커스 아웃 혹은 Enter 키 시 포맷 적용
-	dateInput.addEventListener('blur', e => {
-		e.target.value = formatYYYYMMDD(e.target.value);
-	});
-	dateInput.addEventListener('keydown', e => {
-		if (e.key === 'Enter') {
-			e.preventDefault();
-			dateInput.blur();
-		}
-	});
 
 	const fragmentContainer = document.getElementById('fragment-container');
 	const viewBtns = document.querySelectorAll('.view-btn');
@@ -71,6 +32,34 @@ document.addEventListener('DOMContentLoaded', () => {
 			.then(html => {
 				fragmentContainer.innerHTML = html;
 
+				document.getElementById('daily-css').disabled = (view !== 'daily');
+				document.getElementById('weekly-css').disabled = (view !== 'weekly');
+				dateInput.dataset.view = view;
+				if (dateInput.dataset.view === 'daily') {
+					dateInput.value = `${yyyy}.${mm}.${dd}`;
+				} else if (dateInput.dataset.view === 'weekly') {
+					// 오늘의 요일 인덱스 (0:일요일, 1:월요일, …, 6:토요일)
+					const dayIndex = today.getDay();
+
+					// 주 시작(일요일) 계산
+					const weekStart = new Date(today);
+					weekStart.setDate(today.getDate() - dayIndex);
+
+					// 주 끝(토요일) 계산
+					const weekEnd = new Date(today);
+					weekEnd.setDate(today.getDate() + (6 - dayIndex));
+
+					// 포맷팅
+					const startMM = String(weekStart.getMonth() + 1).padStart(2, '0');
+					const startDD = String(weekStart.getDate()).padStart(2, '0');
+					const endMM = String(weekEnd.getMonth() + 1).padStart(2, '0');
+					const endDD = String(weekEnd.getDate()).padStart(2, '0');
+
+					// 예: "05.25-05.31"
+					dateInput.value = `${startMM}.${startDD}-${endMM}.${endDD}`;
+				}
+				dateInput.dataset.selectDate = `${yyyy}-${mm}-${dd}`;
+
 				if (view === 'daily') {
 					// daily 전용 초기화
 					if (window.initDailySchedule) {
@@ -80,14 +69,21 @@ document.addEventListener('DOMContentLoaded', () => {
 						window.initScheduleModal();
 					};
 
-
+				}
+				else if (view == 'weekly') {
+					if (window.window.initScheduleModal) {
+						window.initWeeklySchedule();
+					}
+					if (window.initScheduleModal) {
+						window.initScheduleModal();
+					}
 				}
 			})
 			.catch(err => console.error(err));
 	}
 
 	// 초기 로드: daily
-	loadView('daily');
+	loadView('weekly');
 
 	// 뷰 버튼 이벤트
 	viewBtns.forEach(btn => {

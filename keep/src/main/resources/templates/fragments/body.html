@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 </head>
-<body th:fragment="main-body"  id="body" class="app-body">
+<body th:fragment="main-body" id="body" class="app-body">
 
 	<div id="container">
 		<div class="content">
@@ -12,14 +12,14 @@
 			<th:block layout:fragment="content"></th:block>
 		</div>
 	</div>
-	
-	<!-- 	footer -->
-	<footer>&copy; <span>2025</span> Your Company</footer>
-	
-	<script type="text/javascript">
-	document.addEventListener('DOMContentLoaded', function() {
-	});
 
+	<!-- 	footer -->
+	<footer class="main-footer">&copy; <span>2025</span> 포트폴리오	</footer>
+
+
+	<script type="text/javascript">
+		document.addEventListener('DOMContentLoaded', function() {
+		});
 	</script>
 	<th:block layout:fragment="script"></th:block>
 </body>

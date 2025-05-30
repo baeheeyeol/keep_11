@@ -9,7 +9,10 @@
 <th:block layout:fragment="add-css">
 	<link rel="stylesheet" th:href="@{/css/common/calendar.css}" />
 	<link rel="stylesheet" th:href="@{/css/main/dashboard.css}" />
-	<link rel="stylesheet" th:href="@{/css/main/components/daily.css}" />
+<!-- dash.html head -->
+<link id="daily-css"  rel="stylesheet" th:href="@{/css/main/components/daily.css}"  disabled="false" />
+<link id="weekly-css" rel="stylesheet" th:href="@{/css/main/components/weekly.css}" disabled="true" />
+
 	<link rel="stylesheet" th:href="@{/css/main/components/modal/schedule-modal.css}" />
 </th:block>
 <!--/* content */-->
@@ -20,14 +23,14 @@
 		<!-- 중앙: 날짜 내비게이션 -->
 		<div class="dashboard-header-center">
 			<button id="prev-date" class="date-nav">&lt;</button>
-			<input  type="text" id="current-date" readonly/>
+			<input  type="text" id="current-date" data-view ="weekly" data-select-date="" readonly/>
 			<button id="next-date" class="date-nav">&gt;</button>
 		</div>
 		<!-- 우측: 뷰 토글 버튼 -->
 		<div class="dashboard-header-right">
 			<button class="view-btn" data-view="today">오늘</button>
-			<button class="view-btn active" data-view="daily">일간</button>
-			<button class="view-btn" data-view="weekly">주간</button>
+			<button class="view-btn" data-view="daily">일간</button>
+			<button class="view-btn active" data-view="weekly">주간</button>
 			<button class="view-btn" data-view="monthly">월간</button>
 			<button class="view-btn" data-view="yearly">년간</button>
 		</div>
@@ -36,18 +39,18 @@
 	
 	<!-- 	daily.html 등록 모달 -->	
 
-	     <div th:replace="main/components/modal/schedule-modal :: schedule-modal"></div>
-	     <div th:replace="common/calendar-modal :: calendar-modal"></div>      
+	     <div th:replace="~{main/components/modal/schedule-modal :: schedule-modal}"></div>
+	     <div th:replace="~{common/calendar-modal :: calendar-modal}"></div>      
 
 </th:block>
-
 <!--/* script */-->
 <th:block layout:fragment="script">
 	<script th:src="@{/js/main/dashboard.js}"></script>
 	<script th:src="@{/js/common/calendar.js}"></script>
 	<script th:src="@{/js/main/components/modal/schedule-modal.js}"></script>
 	<script th:src="@{/js/main/components/daily.js}"></script>
+	<script th:src="@{/js/main/components/weekly.js}"></script>
 </th:block>
 
 </html>
-
+  

@@ -88,11 +88,23 @@ public class ScheduleService {
 		// 5) 저장
 		repository.save(event);
 	}
-   public ScheduleDTO getScheduleById(Long userId, Long scheduleId) {
-       // 1) 엔티티 조회
-       ScheduleEntity entity = repository.findById(scheduleId).orElseThrow(() -> new EntityNotFoundException("해당 일정이 존재하지 않습니다."));
-       // 3) DTO 매핑 후 반환
-       return mapper.toDto(entity);
-   }
+
+	public ScheduleDTO getScheduleById(Long userId, Long scheduleId) {
+		// 1) 엔티티 조회
+		ScheduleEntity entity = repository.findById(scheduleId)
+				.orElseThrow(() -> new EntityNotFoundException("해당 일정이 존재하지 않습니다."));
+		// 3) DTO 매핑 후 반환
+		return mapper.toDto(entity);
+	}
+
+	public List<ScheduleDTO> getEventsByDateRange(Long userId, LocalDate start, LocalDate end) {
+		// start 는 00:00:00, end 는 23:59:59 로 설정
+		LocalDateTime startDateTime = start.atStartOfDay();
+		LocalDateTime endDateTime = end.atTime(LocalTime.MAX);
+
+		List<ScheduleEntity> entitiy = repository.findAllByUserIdAndStartTsLessThanEqualAndEndTsGreaterThanEqualOrderByStartTs(userId, endDateTime, startDateTime);
+
+		return entitiy.stream().map(mapper::toDto).collect(Collectors.toList());
+	}
 
 }
