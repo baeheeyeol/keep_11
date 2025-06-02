@@ -155,7 +155,6 @@
   background: #ffffff;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   font-family: 'Noto Sans KR', sans-serif;
-  /* 이벤트 및 타임라인이 컨테이너 바깥으로 넘어가도 보이도록 overflow visible */
   overflow: visible;
 }
 

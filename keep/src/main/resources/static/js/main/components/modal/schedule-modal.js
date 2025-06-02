@@ -1,8 +1,6 @@
 (function() {
 
 	function initScheduleModal() {
-
-
 		const overlay = document.getElementById('schedule-modal-overlay');
 		const modal = document.getElementById('schedule-modal');
 		const cancel = document.getElementById('modal-cancel');
@@ -10,7 +8,6 @@
 		const hiddenColorInput = document.getElementById('sched-color');
 		const form = document.getElementById('schedule-form');
 		const grid = document.querySelector('.schedule-grid');
-
 		const startHour = document.getElementById('sched-start-hour');
 		const startMin = document.getElementById('sched-start-min');
 		const endHour = document.getElementById('sched-end-hour');
@@ -163,6 +160,7 @@
 
 				// ❸ 저장 성공 시 모달 닫기 및 뷰 갱신
 				closeModal();
+				alert(view)
 				if (view === 'weekly') {
 					window.initWeeklySchedule();
 				} else {
@@ -179,7 +177,6 @@
 	// ❶ 스케줄 ID로 단건 조회 후 모달 폼에 자동으로 채워 넣고 모달 열기
 	async function loadAndOpenScheduleModal(scheduleId) {
 		try {
-			console.log(scheduleId)
 			const res = await fetch(`/api/schedules/${scheduleId}`);
 			if (!res.ok) throw new Error(`HTTP ${res.status}`);
 			const data = await res.json();

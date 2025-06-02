@@ -66,7 +66,7 @@ public class ScheduleApiController {
 	}
 
 	/**
-	 * 일정 시간 이동 (30분 단위 델타)
+	 * 일간 일정 시간 이동 (30분 단위 델타)
 	 */
 	@PatchMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> moveSchedule(Authentication authentication, @PathVariable("id") Long schedulesId,
@@ -110,4 +110,36 @@ public class ScheduleApiController {
 		List<ScheduleDTO> list = scheduleService.getEventsByDateRange(userId, start, end);
 		return ResponseEntity.ok(list);
 	}
+	
+	/**
+	 * 주간 일정 드래그 이동 (하루 단위 및 30분 단위 델타)
+	 *
+	 * 요청 바디 예시:
+	 * {
+	 *   "deltaDays": 1.0,   // 양수면 오른쪽(다음 날), 음수면 왼쪽(이전 날)
+	 *   "deltaHours": 0.5   // 양수면 아래(뒤 시간), 음수면 위(앞 시간)
+	 * }
+	 */
+	@PatchMapping(path = "/{id}/moveWeekly", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> moveWeeklySchedule(
+	        Authentication authentication,
+	        @PathVariable("id") Long schedulesId,
+	        @RequestBody Map<String, Double> body) {
+
+	    // deltaDays, deltaHours 두 값이 모두 제공되어야 합니다.
+	    Double deltaDays = body.get("deltaDays");
+	    Double deltaHours = body.get("deltaHours");
+	    if (deltaDays == null || deltaHours == null) {
+	        return ResponseEntity
+	                .badRequest()
+	                .body(Map.of("error", "deltaDays and deltaHours must both be provided"));
+	    }
+
+	    Long userId = Long.valueOf(authentication.getName());
+	    // 서비스 레이어에 "주간 이동" 로직을 위임합니다.
+	    scheduleService.moveWeeklyEvent(schedulesId, userId, deltaDays, deltaHours);
+
+	    return ResponseEntity.ok().build();
+	}
+
 }

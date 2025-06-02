@@ -5,7 +5,7 @@
 <!-- templates/main/components/weekly.html -->
 <div th:fragment="content" class="daily-schedule-container">
 
-  <!-- ① 요일 헤더 (종일 위, 스크롤 시 최상단에 고정) -->
+  <!-- ① 요일 헤더 -->
   <div class="weekday-header">
     <div class="day-label header-label">요일</div>
     <div class="day-label sun">
@@ -37,7 +37,8 @@
       <span class="weekday-text">토</span>
     </div>
   </div>
-  <!-- ② 종일 이벤트 영역 (요일 헤더 아래, 스크롤 시 헤더 바로 아래 고정) -->
+
+  <!-- ② 종일 이벤트 영역 -->
   <div class="events-all-day-wrapper">
     <div class="all-day-label">종일</div>
     <div class="events-all-day-list">
@@ -47,26 +48,32 @@
 
   <!-- ③ 일반 일정 영역 -->
   <div class="daily-schedule">
-    <!-- 시간축 -->
+
+    <!-- 시간축 컬럼: 0시부터 24시(다음 날 0시)까지, 총 25개 행 -->
     <div class="time-column">
-      <div class="hour-label" th:each="h : ${#numbers.sequence(0,23)}">
+      <div class="hour-label" th:each="h : ${#numbers.sequence(0,24)}">
         <span class="hour-text"
-              th:text="${h < 12
-                         ? '오전 ' + (h==0?12:h) + '시'
-                         : '오후 ' + ((h-12)==0?12:(h-12)) + '시'}">
+              th:text="${
+                h == 24
+                  ? '오전 12시'
+                  : (
+                      h < 12
+                        ? '오전 ' + (h == 0 ? 12 : h) + '시'
+                        : '오후 ' + ((h - 12) == 0 ? 12 : (h - 12)) + '시'
+                    )
+              }">
           오전 12시
         </span>
       </div>
     </div>
 
-    <!-- 스케줄 그리드 -->
+    <!-- 스케줄 그리드: 25행 × 7열 -->
     <div class="schedule-grid" id="schedule-grid">
-      <div class="hour-slot" th:each="h : ${#numbers.sequence(0,167)}" th:id="'hour-slot-' + ${h}"></div>
+      <div class="hour-slot" th:each="h : ${#numbers.sequence(0,174)}" th:id="'hour-slot-' + ${h}"></div>
       <div class="events-container"></div>
       <div class="current-time-line"></div>
     </div>
+
   </div>
 </div>
 </html>
-
-

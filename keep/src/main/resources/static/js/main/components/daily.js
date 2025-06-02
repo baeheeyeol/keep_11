@@ -25,7 +25,6 @@
 		draggingEvt.style.top = `${snapped}px`;
 	}
 
-
 	function onDrop(e) {
 		e.preventDefault();
 		document.removeEventListener('pointermove', onDrag);
