@@ -152,8 +152,9 @@
 		function openCalendar() {
 			// 모달 위치
 			const rect = dateSpan.getBoundingClientRect();
-			modal.style.top = `${rect.bottom + window.scrollY + 4}px`;
-			modal.style.left = `${rect.left + window.scrollX}px`;
+//			modal.style.top = `${rect.bottom + window.scrollY + 4}px`;
+			modal.style.top = `${rect.bottom + 4}px`;
+			modal.style.left = `${rect.left}px`;
 
 			renderCalendar(viewYear, viewMonth);
 			overlay.classList.remove('hidden');
