@@ -12,6 +12,7 @@
 <!-- dash.html head -->
 <link id="daily-css"  rel="stylesheet" th:href="@{/css/main/components/daily.css}"  disabled="false" />
 <link id="weekly-css" rel="stylesheet" th:href="@{/css/main/components/weekly.css}" disabled="true" />
+<link id="monthly-css" rel="stylesheet" th:href="@{/css/main/components/monthly.css}" disabled="true" />
 
 	<link rel="stylesheet" th:href="@{/css/main/components/modal/schedule-modal.css}" />
 </th:block>
@@ -47,9 +48,10 @@
 <th:block layout:fragment="script">
 	<script th:src="@{/js/main/dashboard.js}"></script>
 	<script th:src="@{/js/common/calendar.js}"></script>
-	<script th:src="@{/js/main/components/daily.js}"></script>
-	<script th:src="@{/js/main/components/weekly.js}"></script>
-	<script th:src="@{/js/main/components/modal/schedule-modal.js}"></script>
+        <script th:src="@{/js/main/components/daily.js}"></script>
+        <script th:src="@{/js/main/components/weekly.js}"></script>
+        <script th:src="@{/js/main/components/monthly.js}"></script>
+        <script th:src="@{/js/main/components/modal/schedule-modal.js}"></script>
 </th:block>
 
 </html>

@@ -1,0 +1,101 @@
+// static/js/main/components/monthly.js
+(function() {
+  function formatYMD(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+
+  async function initMonthlySchedule() {
+    const input = document.getElementById('current-date');
+    if (!input) return;
+
+    const [yearStr, monthStr] = input.dataset.selectDate.split('-');
+    const year = parseInt(yearStr, 10);
+    const month = parseInt(monthStr, 10) - 1;
+    const first = new Date(year, month, 1);
+    const last = new Date(year, month + 1, 0);
+
+    const res = await fetch(`/api/schedules?start=${formatYMD(first)}&end=${formatYMD(last)}`);
+    const events = res.ok ? await res.json() : [];
+
+    renderCalendar(first, events);
+  }
+
+  function renderCalendar(firstDate, events) {
+    const calendar = document.querySelector('.monthly-calendar');
+    if (!calendar) return;
+    calendar.innerHTML = '';
+
+    const year = firstDate.getFullYear();
+    const month = firstDate.getMonth();
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    const eventMap = {};
+    events.forEach(e => {
+      const d = new Date(e.startTs).getDate();
+      if (!eventMap[d]) eventMap[d] = [];
+      eventMap[d].push(e);
+    });
+
+    // fill blanks before first day
+    for (let i = 0; i < firstDay; i++) {
+      calendar.appendChild(createBlankCell());
+    }
+    // days
+    for (let d = 1; d <= daysInMonth; d++) {
+      const cell = createDayCell(year, month, d, eventMap[d] || []);
+      calendar.appendChild(cell);
+    }
+  }
+
+  function createBlankCell() {
+    const div = document.createElement('div');
+    div.className = 'day-cell empty';
+    return div;
+  }
+
+  function createDayCell(year, month, date, events) {
+    const dayIdx = new Date(year, month, date).getDay();
+    const cell = document.createElement('div');
+    cell.className = 'day-cell';
+    if (dayIdx === 0) cell.classList.add('sun');
+    if (dayIdx === 6) cell.classList.add('sat');
+    cell.dataset.date = `${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
+
+    const num = document.createElement('span');
+    num.className = 'day-number';
+    num.textContent = date;
+    cell.appendChild(num);
+
+    const list = document.createElement('div');
+    list.className = 'events-container';
+    const MAX = 3;
+    events.slice(0, MAX).forEach(evt => {
+      const bar = document.createElement('div');
+      bar.className = 'event-bar';
+      bar.style.backgroundColor = evt.category;
+      bar.textContent = evt.title;
+      bar.dataset.id = evt.schedulesId;
+      list.appendChild(bar);
+    });
+    if (events.length > MAX) {
+      const more = document.createElement('div');
+      more.className = 'more-link';
+      more.textContent = `+${events.length - MAX}`;
+      list.appendChild(more);
+    }
+    cell.appendChild(list);
+    list.addEventListener('click', e => {
+      const bar = e.target.closest('.event-bar');
+      if (bar) {
+        window.loadAndOpenScheduleModal(bar.dataset.id);
+      }
+    });
+    return cell;
+  }
+
+  window.initMonthlySchedule = initMonthlySchedule;
+})();

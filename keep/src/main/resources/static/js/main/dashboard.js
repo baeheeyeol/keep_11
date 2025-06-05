@@ -32,12 +32,13 @@ document.addEventListener('DOMContentLoaded', () => {
 			.then(html => {
 				fragmentContainer.innerHTML = html;
 
-				document.getElementById('daily-css').disabled = (view !== 'daily');
-				document.getElementById('weekly-css').disabled = (view !== 'weekly');
-				dateInput.dataset.view = view;
-				if (dateInput.dataset.view === 'daily') {
-					dateInput.value = `${yyyy}.${mm}.${dd}`;
-				} else if (dateInput.dataset.view === 'weekly') {
+                                document.getElementById('daily-css').disabled = (view !== 'daily');
+                                document.getElementById('weekly-css').disabled = (view !== 'weekly');
+                                document.getElementById('monthly-css').disabled = (view !== 'monthly');
+                                dateInput.dataset.view = view;
+                                if (dateInput.dataset.view === 'daily') {
+                                        dateInput.value = `${yyyy}.${mm}.${dd}`;
+                                } else if (dateInput.dataset.view === 'weekly') {
 					// 오늘의 요일 인덱스 (0:일요일, 1:월요일, …, 6:토요일)
 					const dayIndex = today.getDay();
 
@@ -57,27 +58,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
 					// 예: "05.25-05.31"
 					dateInput.value = `${startMM}.${startDD}-${endMM}.${endDD}`;
-				}
-				dateInput.dataset.selectDate = `${yyyy}-${mm}-${dd}`;
+                                } else if (dateInput.dataset.view === 'monthly') {
+                                        dateInput.value = `${yyyy}-${mm}`;
+                                }
+                                if (view === 'monthly') {
+                                        dateInput.dataset.selectDate = `${yyyy}-${mm}-01`;
+                                } else {
+                                        dateInput.dataset.selectDate = `${yyyy}-${mm}-${dd}`;
+                                }
 
-				if (view === 'daily') {
-					// daily 전용 초기화
-					if (window.initDailySchedule) {
-						window.initDailySchedule();
-					};
-					if (window.initScheduleModal) {
-						window.initScheduleModal();
-					};
-
-				}
-				else if (view == 'weekly') {
-					if (window.window.initScheduleModal) {
-						window.initWeeklySchedule();
-					}
-					if (window.initScheduleModal) {
-						window.initScheduleModal();
-					}
-				}
+                                if (view === 'daily') {
+                                        // daily 전용 초기화
+                                        if (window.initDailySchedule) {
+                                                window.initDailySchedule();
+                                        };
+                                        if (window.initScheduleModal) {
+                                                window.initScheduleModal();
+                                        };
+                                } else if (view == 'weekly') {
+                                        if (window.initWeeklySchedule) {
+                                                window.initWeeklySchedule();
+                                        }
+                                        if (window.initScheduleModal) {
+                                                window.initScheduleModal();
+                                        }
+                                } else if (view == 'monthly') {
+                                        if (window.initMonthlySchedule) {
+                                                window.initMonthlySchedule();
+                                        }
+                                        if (window.initScheduleModal) {
+                                                window.initScheduleModal();
+                                        }
+                                }
 			})
 			.catch(err => console.error(err));
 	}
