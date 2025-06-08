@@ -129,9 +129,9 @@
 		const grid = document.querySelector('.schedule-grid');
 		if (!grid) return;
 
-		const dateInput = document.getElementById('current-date').dataset.selectDate;
-		if (!dateInput) return;
-		const [year, month, day] = dateInput.split('.').map(n => +n);
+                const dateInput = document.getElementById('current-date').dataset.selectDate;
+                if (!dateInput) return;
+                const [year, month, day] = dateInput.split('-').map(n => +n);
 		let events = [];
 		try {
 			const res = await fetch(`/api/schedules?date=${dateInput}`);

@@ -235,6 +235,7 @@
 	}
 
 	// 전역 호출용 및 초기화
-	window.initScheduleModal = initScheduleModal;
-	window.loadAndOpenScheduleModal = loadAndOpenScheduleModal;
+        window.initScheduleModal = initScheduleModal;
+        window.loadAndOpenScheduleModal = loadAndOpenScheduleModal;
+        window.openScheduleModal = openModal;
 })();
