@@ -91,10 +91,11 @@
 					cell.classList.add('weekend');
 				}
 				// 오늘 강조
-				if (year === today.getFullYear() && month === today.getMonth() && d === today.getDate()) {
-					cell.style.backgroundColor = '#d0d7ff';
-				}
+//				if (year === today.getFullYear() && month === today.getMonth() && d === today.getDate()) {
+//					cell.style.backgroundColor = '#d0d7ff';
+//				}
 				// 날짜 선택 시
+				
 				cell.addEventListener('click', () => {
 					const selectedDate = new Date(year, month, d);
 					const view = dateSpan.dataset.view;
