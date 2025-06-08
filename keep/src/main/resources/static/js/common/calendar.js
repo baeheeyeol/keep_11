@@ -101,7 +101,7 @@
 					const zeroPad = num => String(num).padStart(2, '0');
 					let formattedValue;
 
-					if (view === 'weekly') {
+                                        if (view === 'weekly') {
 						// 주간 포맷
 						const dayIndex = selectedDate.getDay();
 						const weekStart = new Date(selectedDate);
@@ -123,21 +123,29 @@
 						].join('-');
 
 						window.updateWeekDateNumbers();
-					} else {
-						// 일간 및 기타 포맷 공통
-						const yyyy = selectedDate.getFullYear();
-						const mm = zeroPad(selectedDate.getMonth() + 1);
-						const dd = zeroPad(selectedDate.getDate());
-						if (view === 'daily') {
-							formattedValue = `${yyyy}.${mm}.${dd}`;
-							dateSpan.dataset.selectDate = `${yyyy}-${mm}-${dd}`;
-						}else{
-							formattedValue = `${yyyy}-${mm}-${dd}`;
-						}
-					}
+                                        } else if (view === 'monthly') {
+                                                const yyyy = selectedDate.getFullYear();
+                                                const mm = zeroPad(selectedDate.getMonth() + 1);
+                                                const dd = zeroPad(selectedDate.getDate());
+                                                formattedValue = `${yyyy}-${mm}`;
+                                                dateSpan.dataset.selectDate = `${yyyy}-${mm}-${dd}`;
+                                                if (window.initMonthlySchedule) {
+                                                        window.initMonthlySchedule();
+                                                }
+                                        } else {
+                                                // 일간 포맷
+                                                const yyyy = selectedDate.getFullYear();
+                                                const mm = zeroPad(selectedDate.getMonth() + 1);
+                                                const dd = zeroPad(selectedDate.getDate());
+                                                formattedValue = `${yyyy}.${mm}.${dd}`;
+                                                dateSpan.dataset.selectDate = `${yyyy}-${mm}-${dd}`;
+                                       }
 
-					dateSpan.value = formattedValue;
-					closeCalendar();
+                                        dateSpan.value = formattedValue;
+                                        if (window.updateDisplay) {
+                                                window.updateDisplay(view);
+                                        }
+                                        closeCalendar();
 				});
 
 				row.appendChild(cell);

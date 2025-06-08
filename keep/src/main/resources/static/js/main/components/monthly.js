@@ -79,6 +79,11 @@
       bar.style.backgroundColor = evt.category;
       bar.textContent = evt.title;
       bar.dataset.id = evt.schedulesId;
+      bar.dataset.date = cell.dataset.date;
+      bar.draggable = true;
+      bar.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text/plain', JSON.stringify({ id: evt.schedulesId, date: bar.dataset.date }));
+      });
       list.appendChild(bar);
     });
     if (events.length > MAX) {
@@ -94,6 +99,47 @@
         window.loadAndOpenScheduleModal(bar.dataset.id);
       }
     });
+
+    cell.addEventListener('click', e => {
+      if (e.target.closest('.event-bar')) return;
+      const startDay = document.getElementById('sched-start-day');
+      const endDay = document.getElementById('sched-end-day');
+      if (startDay && endDay && window.openScheduleModal) {
+        const currentInput = document.getElementById('current-date');
+        currentInput.dataset.selectDate = cell.dataset.date;
+        if (window.updateDisplay) window.updateDisplay(currentInput.dataset.view);
+        startDay.value = cell.dataset.date;
+        endDay.value = cell.dataset.date;
+        document.getElementById('sched-start-hour').value = '00';
+        document.getElementById('sched-start-min').value = '00';
+        document.getElementById('sched-end-hour').value = '01';
+        document.getElementById('sched-end-min').value = '00';
+        window.openScheduleModal();
+      }
+    });
+
+    cell.addEventListener('dragover', e => e.preventDefault());
+    cell.addEventListener('drop', async e => {
+      e.preventDefault();
+      const data = e.dataTransfer.getData('text/plain');
+      if (!data) return;
+      const info = JSON.parse(data);
+      const from = new Date(info.date);
+      const to = new Date(cell.dataset.date);
+      const deltaDays = (to - from) / (86400000);
+      if (isNaN(deltaDays)) return;
+      try {
+        await fetch(`/api/schedules/${info.id}/moveWeekly`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ deltaDays, deltaHours: 0 })
+        });
+      } catch (err) {
+        console.error(err);
+      }
+      initMonthlySchedule();
+    });
+
     return cell;
   }
 
