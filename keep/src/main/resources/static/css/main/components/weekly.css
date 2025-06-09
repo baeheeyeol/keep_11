@@ -71,7 +71,7 @@
   top: var(--weekday-header-height);
   z-index: 20;
   display: grid;
-  grid-template-columns: var(--time-column-width) 1fr auto;
+  grid-template-columns: var(--time-column-width) 1fr;
   padding: 8px;
   background: #f9fafb;
   border-bottom: 1px solid #e5e7eb;
@@ -108,7 +108,8 @@
 }
 
 .all-day-toggle {
-  margin-left: 8px;
+  grid-column: 1 / -1;
+  margin-top: 4px;
   padding: 4px 8px;
   background: transparent;
   border: none;
