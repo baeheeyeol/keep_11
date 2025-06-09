@@ -1,6 +1,6 @@
 /* static/js/main/components/weekly.js 
-*/ 
- 
+*/
+
 (function() {
 	/**
 	 * initWeeklySchedule:
@@ -22,26 +22,26 @@
 		const weekStart = new Date(year, sMM - 1, sDD);
 		const weekEnd = new Date(year, eMM - 1, eDD);
 		// 2) API 호출
-                const res = await fetch(
-                        `/api/schedules?start=${formatYMD(weekStart)}&end=${formatYMD(weekEnd)}`
-                );
-                const schedules = await res.json(); // [{ schedulesId, title, startTs, endTs, category, ... }, ...]
+		const res = await fetch(
+			`/api/schedules?start=${formatYMD(weekStart)}&end=${formatYMD(weekEnd)}`
+		);
+		const schedules = await res.json(); // [{ schedulesId, title, startTs, endTs, category, ... }, ...]
 
-                const ALL_DAY_MS = 24 * 60 * 60 * 1000;
-                const allDayEvents = [];
-                const normalSchedules = [];
+		const ALL_DAY_MS = 24 * 60 * 60 * 1000;
+		const allDayEvents = [];
+		const normalSchedules = [];
 
-                schedules.forEach(sch => {
-                        const s = new Date(sch.startTs);
-                        const e = new Date(sch.endTs);
-                        if (e - s >= ALL_DAY_MS) {
-                                allDayEvents.push(sch);
-                        } else {
-                                normalSchedules.push(sch);
-                        }
-                });
+		schedules.forEach(sch => {
+			const s = new Date(sch.startTs);
+			const e = new Date(sch.endTs);
+			if (e - s >= ALL_DAY_MS) {
+				allDayEvents.push(sch);
+			} else {
+				normalSchedules.push(sch);
+			}
+		});
 
-                renderAllDayEvents(allDayEvents, weekStart, weekEnd);
+		renderAllDayEvents(allDayEvents, weekStart, weekEnd);
 
 		// 3) 기존 이벤트 제거 & 현재시간선 업데이트
 		const container = document.querySelector('.events-container');
@@ -55,10 +55,10 @@
 
 		attachGridClick();
 
-                // 4) 블록 데이터 생성 (단일/크로스데이 모두 모아서 한 리스트로)
-                //    startMin/endMin: “분 단위”로 정렬 및 배치 판단에 사용
-                const blocks = [];
-                normalSchedules.forEach(evt => {
+		// 4) 블록 데이터 생성 (단일/크로스데이 모두 모아서 한 리스트로)
+		//    startMin/endMin: “분 단위”로 정렬 및 배치 판단에 사용
+		const blocks = [];
+		normalSchedules.forEach(evt => {
 			const start = new Date(evt.startTs);
 			const end = new Date(evt.endTs);
 			const startHourFrac = start.getHours() + start.getMinutes() / 60;
@@ -353,110 +353,110 @@
 	}
 
 	// Date → "YYYY-MM-DD" 형식 문자열
-        function formatYMD(date) {
-                const y = date.getFullYear();
-                const m = String(date.getMonth() + 1).padStart(2, '0');
-                const d = String(date.getDate()).padStart(2, '0');
-                return `${y}-${m}-${d}`;
-        }
+	function formatYMD(date) {
+		const y = date.getFullYear();
+		const m = String(date.getMonth() + 1).padStart(2, '0');
+		const d = String(date.getDate()).padStart(2, '0');
+		return `${y}-${m}-${d}`;
+	}
 
-        function renderAllDayEvents(events, weekStart, weekEnd) {
-                const wrapper = document.querySelector('.events-all-day-wrapper');
-                if (!wrapper) return;
-                const list = wrapper.querySelector('.events-all-day-list');
-                list.innerHTML = '';
-                const oldToggle = wrapper.querySelector('.all-day-toggle');
-                if (oldToggle) oldToggle.remove();
+	function renderAllDayEvents(events, weekStart, weekEnd) {
+		const wrapper = document.querySelector('.events-all-day-wrapper');
+		if (!wrapper) return;
+		const list = wrapper.querySelector('.events-all-day-list');
+		list.innerHTML = '';
+		const oldToggle = wrapper.querySelector('.all-day-toggle');
+		if (oldToggle) oldToggle.remove();
 
-                const ROW_HEIGHT = parseFloat(
-                        getComputedStyle(document.documentElement).getPropertyValue('--all-day-row-height') || 20
-                );
-                const percentPerDay = 100 / 7;
+		const ROW_HEIGHT = parseFloat(
+			getComputedStyle(document.documentElement).getPropertyValue('--all-day-row-height') || 20
+		);
+		const percentPerDay = 100 / 7;
 
-                const items = events
-                        .map(e => ({
-                                id: e.schedulesId,
-                                title: e.title,
-                                category: e.category,
-                                start: new Date(e.startTs),
-                                end: new Date(e.endTs)
-                        }))
-                        .sort((a, b) => a.start - b.start);
+		const items = events
+			.map(e => ({
+				id: e.schedulesId,
+				title: e.title,
+				category: e.category,
+				start: new Date(e.startTs),
+				end: new Date(e.endTs)
+			}))
+			.sort((a, b) => a.start - b.start);
 
-                const rows = [];
-                const placed = [];
+		const rows = [];
+		const placed = [];
 
-                items.forEach(evt => {
-                        const startIdx = Math.floor((evt.start - weekStart) / 86400000);
-                        const endIdx = Math.floor((evt.end - weekStart) / 86400000);
-                        const obj = {
-                                ...evt,
-                                startIdx: Math.max(0, startIdx),
-                                endIdx: Math.min(6, endIdx),
-                                arrowLeft: startIdx < 0,
-                                arrowRight: endIdx > 6
-                        };
+		items.forEach(evt => {
+			const startIdx = Math.floor((evt.start - weekStart) / 86400000);
+			const endIdx = Math.floor((evt.end - weekStart) / 86400000);
+			const obj = {
+				...evt,
+				startIdx: Math.max(0, startIdx),
+				endIdx: Math.min(6, endIdx),
+				arrowLeft: startIdx < 0,
+				arrowRight: endIdx > 6
+			};
 
-                        let placedRow = -1;
-                        for (let r = 0; r < rows.length; r++) {
-                                if (rows[r] < obj.startIdx) {
-                                        placedRow = r;
-                                        break;
-                                }
-                        }
-                        if (placedRow === -1) {
-                                placedRow = rows.length;
-                                rows.push(obj.endIdx);
-                        } else {
-                                rows[placedRow] = obj.endIdx;
-                        }
-                        obj.row = placedRow;
-                        placed.push(obj);
-                });
+			let placedRow = -1;
+			for (let r = 0; r < rows.length; r++) {
+				if (rows[r] < obj.startIdx) {
+					placedRow = r;
+					break;
+				}
+			}
+			if (placedRow === -1) {
+				placedRow = rows.length;
+				rows.push(obj.endIdx);
+			} else {
+				rows[placedRow] = obj.endIdx;
+			}
+			obj.row = placedRow;
+			placed.push(obj);
+		});
 
-                const totalRows = rows.length;
-                let visible = Math.min(2, totalRows);
-                list.style.height = `${ROW_HEIGHT * visible}px`;
+		const totalRows = rows.length;
+		let visible = Math.min(2, totalRows);
+		list.style.height = `${ROW_HEIGHT * visible}px`;
 
-                placed.forEach(evt => {
-                        const div = document.createElement('div');
-                        div.className = 'all-day-event';
-                        let txt = evt.title;
-                        if (evt.arrowLeft) txt = '◀ ' + txt;
-                        if (evt.arrowRight) txt = txt + ' ▶';
-                        div.textContent = txt;
-                        div.style.backgroundColor = evt.category;
-                        div.style.left = `calc(${percentPerDay * evt.startIdx}% )`;
-                        const widthPct = percentPerDay * (evt.endIdx - evt.startIdx + 1);
-                        div.style.width = `calc(${widthPct}% )`;
-                        div.style.top = `${evt.row * ROW_HEIGHT}px`;
-                        div.dataset.id = evt.id;
-                        if (evt.row >= visible) div.style.display = 'none';
-                        div.addEventListener('click', () => {
-                                if (window.loadAndOpenScheduleModal) window.loadAndOpenScheduleModal(evt.id);
-                        });
-                        list.appendChild(div);
-                });
+		placed.forEach(evt => {
+			const div = document.createElement('div');
+			div.className = 'all-day-event';
+			let txt = evt.title;
+			if (evt.arrowLeft) txt = '◀ ' + txt;
+			if (evt.arrowRight) txt = txt + ' ▶';
+			div.textContent = txt;
+			div.style.backgroundColor = evt.category;
+			div.style.left = `calc(${percentPerDay * evt.startIdx}% )`;
+			const widthPct = percentPerDay * (evt.endIdx - evt.startIdx + 1);
+			div.style.width = `calc(${widthPct}% )`;
+			div.style.top = `${evt.row * ROW_HEIGHT}px`;
+			div.dataset.id = evt.id;
+			if (evt.row >= visible) div.style.display = 'none';
+			div.addEventListener('click', () => {
+				if (window.loadAndOpenScheduleModal) window.loadAndOpenScheduleModal(evt.id);
+			});
+			list.appendChild(div);
+		});
 
-                if (totalRows > 2) {
-                        const btn = document.createElement('button');
-                        btn.className = 'all-day-toggle';
-                        btn.textContent = `+${totalRows - 2}개 더보기`;
-                        let expanded = false;
-                        btn.addEventListener('click', () => {
-                                expanded = !expanded;
-                                visible = expanded ? totalRows : 2;
-                                list.style.height = `${ROW_HEIGHT * visible}px`;
-                                Array.from(list.children).forEach(el => {
-                                        if (!el.classList.contains('all-day-event')) return;
-                                        const rowIdx = parseInt(el.style.top) / ROW_HEIGHT;
-                                        el.style.display = rowIdx < visible ? '' : 'none';
-                                });
-                                btn.textContent = expanded ? '접기' : `+${totalRows - 2}개 더보기`;
-                        });
-                        wrapper.appendChild(btn);
-                }
-        }
+		if (totalRows > 2) {
+			const btn = document.createElement('button');
+			btn.className = 'all-day-toggle';
+			btn.textContent = `+${totalRows - 2}개 더보기`;
+			let expanded = false;
+			btn.addEventListener('click', () => {
+				expanded = !expanded;
+				visible = expanded ? totalRows : 2;
+				list.style.height = `${ROW_HEIGHT * visible}px`;
+				Array.from(list.children).forEach(el => {
+					if (!el.classList.contains('all-day-event')) return;
+					const rowIdx = parseInt(el.style.top) / ROW_HEIGHT;
+					el.style.display = rowIdx < visible ? '' : 'none';
+				});
+				btn.textContent = expanded ? '접기' : `+${totalRows - 2}개 더보기`;
+			});
+			wrapper.appendChild(btn);
+		}
+	}
 
 	// 현재 시간선 위치 및 헤더의 날짜 숫자 업데이트
 	function updateCurrentTimeLine() {
@@ -488,7 +488,6 @@
 			if (numSpan) numSpan.textContent = days[idx] + '';
 		});
 	}
-weekly.js 에서 
 	function attachGridClick() {
 		const grid = document.getElementById('schedule-grid');
 		if (!grid || grid.dataset.modalClickAttached) return;
