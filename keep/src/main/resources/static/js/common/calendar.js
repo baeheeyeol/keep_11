@@ -95,7 +95,6 @@
 				//					cell.style.backgroundColor = '#d0d7ff';
 				//				}
 				// 날짜 선택 시
-
 				cell.addEventListener('click', () => {
 					const selectedDate = new Date(year, month, d);
 					const view = dateSpan.dataset.view;

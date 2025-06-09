@@ -13,9 +13,10 @@
 		const endHour = document.getElementById('sched-end-hour');
 		const endMin = document.getElementById('sched-end-min');
 		const currentDateInput = document.getElementById('current-date');
+		const view = currentDateInput.dataset.view;
+
 		// 필수 요소 체크
 		if (!overlay || !modal || !cancel || !form || !grid) return;
-
 		// 시 옵션 채우기 (00~23)
 		for (let h = 0; h < 24; h++) {
 			const hh = String(h).padStart(2, '0');
@@ -54,7 +55,6 @@
 
 		// 그리드 클릭 시 모달 열기 및 시간 세팅
 		// 그리드 클릭 시 모달 열기 및 시간 세팅 (일간/주간 공용)
-
 		grid.addEventListener('click', e => {
 			const slot = e.target.closest('.hour-slot');
 			if (!slot) return;
@@ -63,7 +63,7 @@
 
 			// "daily" or "weekly"
 			let dateStr;
-			if (currentDateInput.dataset.view === 'weekly') {
+			if (view === 'weekly') {
 				// 주간: 슬롯 id로 요일별 날짜 계산 (yyyy-MM-dd)
 				dateStr = getDateForSlot(slot.id);
 				idx = (idx / 7) | 0;
@@ -118,6 +118,7 @@
 			const dd = String(result.getDate()).padStart(2, '0');
 			return `${yyyy}-${mm}-${dd}`;
 		}
+
 		if (form.dataset.listenerAttached) return;
 		// ❶ 폼 submit 이벤트 가로채기 (REST API용)
 		form.addEventListener('submit', async e => {
@@ -156,23 +157,14 @@
 					}
 					return;
 				}
-
 				// ❸ 저장 성공 시 모달 닫기 및 뷰 갱신
 				closeModal();
 				if (view === 'weekly') {
 					window.initWeeklySchedule();
-				} else if (view === 'daily') {
+				} else if(view ==='daily'){
 					window.initDailySchedule();
-				} else if (view === 'monthly') {
+				} else if(view ==='monthly'){
 					window.initMonthlySchedule();
-				}
-				// ❸ 저장 성공 시 모달 닫기 및 뷰 갱신
-				closeModal();
-				const curView = currentDateInput.dataset.view;
-				if (curView === 'weekly') {
-					window.initWeeklySchedule();
-				} else {
-					window.initDailySchedule();
 				}
 			}
 			catch (err) {
@@ -182,9 +174,9 @@
 		});
 		form.dataset.listenerAttached = 'true';
 	}
-	
 	// ❶ 스케줄 ID로 단건 조회 후 모달 폼에 자동으로 채워 넣고 모달 열기
 	async function loadAndOpenScheduleModal(scheduleId) {
+		
 		try {
 			const res = await fetch(`/api/schedules/${scheduleId}`);
 			if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -228,7 +220,6 @@
 	function openModal() {
 		document.getElementById('schedule-modal-overlay').classList.remove('hidden');
 		document.getElementById('schedule-modal').classList.remove('hidden');
-
 		// 기본 색상 표시
 		const hiddenColorInput = document.getElementById('sched-color');
 		document.querySelector('.cat-color[data-color="' + hiddenColorInput.value + '"]')
@@ -244,7 +235,7 @@
 	}
 
 	// 전역 호출용 및 초기화
-	window.initScheduleModal = initScheduleModal;
-	window.loadAndOpenScheduleModal = loadAndOpenScheduleModal;
-	window.openScheduleModal = openModal;
+        window.initScheduleModal = initScheduleModal;
+        window.loadAndOpenScheduleModal = loadAndOpenScheduleModal;
+        window.openScheduleModal = openModal;
 })();
