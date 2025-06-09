@@ -53,6 +53,7 @@
 		overlay.addEventListener('click', closeModal);
 
 
+<<<<<<< HEAD
 		// 그리드 클릭 시 모달 열기 및 시간 세팅
 		// 그리드 클릭 시 모달 열기 및 시간 세팅 (일간/주간 공용)
 		grid.addEventListener('click', e => {
@@ -119,6 +120,8 @@
 			return `${yyyy}-${mm}-${dd}`;
 		}
 
+=======
+>>>>>>> branch 'master' of https://github.com/baeheeyeol/keep_11.git
 		if (form.dataset.listenerAttached) return;
 		// ❶ 폼 submit 이벤트 가로채기 (REST API용)
 		form.addEventListener('submit', async e => {
