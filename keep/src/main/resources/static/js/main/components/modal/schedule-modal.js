@@ -7,13 +7,12 @@
 		const colors = document.querySelectorAll('.cat-color');
 		const hiddenColorInput = document.getElementById('sched-color');
 		const form = document.getElementById('schedule-form');
-		const grid = document.querySelector('.schedule-grid');
-		const startHour = document.getElementById('sched-start-hour');
-		const startMin = document.getElementById('sched-start-min');
-		const endHour = document.getElementById('sched-end-hour');
-		const endMin = document.getElementById('sched-end-min');
-		const currentDateInput = document.getElementById('current-date');
-		const view = currentDateInput.dataset.view;
+                const grid = document.querySelector('.schedule-grid');
+                const startHour = document.getElementById('sched-start-hour');
+                const startMin = document.getElementById('sched-start-min');
+                const endHour = document.getElementById('sched-end-hour');
+                const endMin = document.getElementById('sched-end-min');
+                const currentDateInput = document.getElementById('current-date');
 		// 필수 요소 체크
 		if (!overlay || !modal || !cancel || !form || !grid) return;
 
@@ -63,8 +62,8 @@
 			let idx = Array.from(slot.parentNode.children).indexOf(slot);
 
 			// "daily" or "weekly"
-			let dateStr;
-			if (view === 'weekly') {
+                        let dateStr;
+                        if (currentDateInput.dataset.view === 'weekly') {
 				// 주간: 슬롯 id로 요일별 날짜 계산 (yyyy-MM-dd)
 				dateStr = getDateForSlot(slot.id);
 				idx = (idx / 7) | 0;
@@ -158,14 +157,14 @@
 					return;
 				}
 
-				// ❸ 저장 성공 시 모달 닫기 및 뷰 갱신
-				closeModal();
-				alert(view)
-				if (view === 'weekly') {
-					window.initWeeklySchedule();
-				} else {
-					window.initDailySchedule();
-				}
+                                // ❸ 저장 성공 시 모달 닫기 및 뷰 갱신
+                                closeModal();
+                                const curView = currentDateInput.dataset.view;
+                                if (curView === 'weekly') {
+                                        window.initWeeklySchedule();
+                                } else {
+                                        window.initDailySchedule();
+                                }
 			}
 			catch (err) {
 				console.error(err);
