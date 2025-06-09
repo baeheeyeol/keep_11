@@ -2,7 +2,7 @@
 (function() {
 	let draggingEvt = null;
 	let startY, origTop;
-	let H, STEP;
+        let H, STEP;
 	let isDragging = false;               // 실제 드래그 중인지 플래그
 	const DRAG_THRESHOLD = 5;
 
@@ -21,7 +21,8 @@
 			draggingEvt.style.zIndex = '9999';
 		}
 		const contTop = origTop + dy;
-		const snapped = Math.min(1380,Math.max(0,Math.round(contTop / STEP) * STEP));
+                const maxTop = 24 * H - STEP;
+                const snapped = Math.min(maxTop, Math.max(0, Math.round(contTop / STEP) * STEP));
 		draggingEvt.style.top = `${snapped}px`;
 	}
 
@@ -34,7 +35,7 @@
 			const snappedTop = parseFloat(draggingEvt.style.top);
 			const dy = snappedTop - origTop;
 			const deltaHours = dy / H;
-			const deltaSnapped = Math.round(deltaHours * 2) / 2;
+                        const deltaSnapped = Math.round(deltaHours * 4) / 4;
 			updateEventTime(draggingEvt.dataset.id, deltaSnapped);
 		} else {
 			const card = e.target.closest('.event');
@@ -74,7 +75,7 @@
 
 		H = parseFloat(getComputedStyle(document.documentElement)
 			.getPropertyValue('--hour-height'));
-		STEP = H / 2;
+                STEP = H / 4;
 
 		grid.addEventListener('pointerdown', e => {
 			const evEl = e.target.closest('.event');
@@ -98,6 +99,7 @@
                const toggleEl = wrapperEl.querySelector('.all-day-toggle');
 
                const ROW_HEIGHT = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--all-day-row-height') || 20);
+               const ROW_GAP = 2;
 
                const dayStart = new Date(dateStr + 'T00:00:00');
                const dayEnd = new Date(dayStart);
@@ -116,7 +118,7 @@
                listEl.innerHTML = '';
                const totalRows = items.length;
                let visible = Math.min(2, totalRows);
-               listEl.style.height = `${ROW_HEIGHT * visible}px`;
+               listEl.style.height = `${ROW_HEIGHT * visible + ROW_GAP * Math.max(0, visible - 1)}px`;
 
                items.forEach((evt, idx) => {
                        const div = document.createElement('div');
@@ -126,7 +128,7 @@
                        if (evt.end > dayEnd) txt = txt + ' ▶';
                        div.textContent = txt;
                        div.style.backgroundColor = evt.category;
-                       div.style.top = `${idx * ROW_HEIGHT}px`;
+                       div.style.top = `${idx * (ROW_HEIGHT + ROW_GAP)}px`;
                        div.dataset.id = evt.id;
                        if (idx >= visible) div.style.display = 'none';
                        div.addEventListener('click', () => {
@@ -142,7 +144,7 @@
                        toggleEl.onclick = () => {
                                expanded = !expanded;
                                visible = expanded ? totalRows : 2;
-                               listEl.style.height = `${ROW_HEIGHT * visible}px`;
+                               listEl.style.height = `${ROW_HEIGHT * visible + ROW_GAP * Math.max(0, visible - 1)}px`;
                                Array.from(listEl.children).forEach((el, idx) => {
                                        el.style.display = idx < visible ? '' : 'none';
                                });
@@ -253,14 +255,14 @@
                const grid = document.querySelector('.schedule-grid');
                if (!grid || grid.dataset.modalClickAttached) return;
                const H = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hour-height'));
-               const STEP = H / 2;
+               const STEP = H / 4;
                let selecting = false;
                let startY = 0;
                let selectDiv = null;
 
                function formatTime(pos) {
                        let minutes = Math.round((pos / H) * 60);
-                       minutes = Math.max(0, Math.min(24 * 60, Math.round(minutes / 30) * 30));
+                       minutes = Math.max(0, Math.min(24 * 60, Math.round(minutes / 15) * 15));
                        const h = Math.floor(minutes / 60);
                        const m = minutes % 60;
                        return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
