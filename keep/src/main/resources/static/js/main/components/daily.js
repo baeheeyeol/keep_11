@@ -1,4 +1,4 @@
-// static/js/main/components/daily.js
+// static/js/main/components/daily.js 
 (function() {
 	let draggingEvt = null;
 	let startY, origTop;
@@ -217,11 +217,7 @@
 			div.innerHTML = `<span class="event-title">${evt.title}</span>`;
 			container.appendChild(div);
 		});
-		//시간선 그리기 
-		
-
                 initDragAndDrop();
-
                 attachGridClick();
        }
 

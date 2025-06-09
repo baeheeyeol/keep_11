@@ -1,4 +1,6 @@
-// static/js/main/components/weekly.js
+/* static/js/main/components/weekly.js 
+*/ 
+ 
 (function() {
 	/**
 	 * initWeeklySchedule:
@@ -372,7 +374,7 @@
 			if (numSpan) numSpan.textContent = days[idx] + '';
 		});
 	}
-
+weekly.js 에서 
 	function attachGridClick() {
 		const grid = document.getElementById('schedule-grid');
 		if (!grid || grid.dataset.modalClickAttached) return;

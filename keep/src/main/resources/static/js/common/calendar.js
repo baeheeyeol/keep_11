@@ -67,6 +67,7 @@
             if (dayOfWeek === 0 || dayOfWeek === 6) {
                 cell.classList.add('weekend');
             }
+			
             cell.addEventListener('click', () => {
                 if (!activeInput) return;
                 const selectedDate = new Date(year, month, d);
