@@ -4,6 +4,8 @@
   --hour-height: 60px;
   /* 종일 이벤트 카드 최소 너비 */
   --all-day-card-width: 150px;
+  /* 종일 이벤트 한 줄 높이 */
+  --all-day-row-height: 20px;
   /* 일반 이벤트 최대 컬럼 수 */
   --normal-event-col-count: 9;
   --normal-event-width: calc(100% / var(--normal-event-col-count));
@@ -27,7 +29,7 @@
   flex: 0 0 60px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   font-weight: 600;
   color: #333;
   margin-right: 8px;
@@ -35,10 +37,23 @@
 
 /* 종일 이벤트 카드 리스트 */
 .events-all-day-list {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
+  position: relative;
+  height: calc(var(--all-day-row-height) * 2);
+}
+
+.all-day-event {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: var(--all-day-row-height);
+  padding: 0 4px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  color: #fff;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
 }
 
 /* 종일 이벤트 카드 */
@@ -67,7 +82,8 @@
 
 /* +더보기 버튼 (종일) */
 .all-day-toggle {
-  grid-column: 1 / -1;
+  grid-column: 1 / 2;
+  justify-self: start;
   margin-top: 4px;
   padding: 4px 8px;
   background: transparent;
@@ -190,4 +206,26 @@
   border-top-color: rgba(0,0,0,0.75);
   pointer-events: none;
   z-index: 20;
+}
+
+/* 드래그 선택 영역 */
+.drag-select {
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: rgba(59, 130, 246, 0.3);
+  pointer-events: none;
+  z-index: 5;
+}
+.drag-select::after {
+  content: attr(data-time);
+  position: absolute;
+  top: -18px;
+  left: 0;
+  background: rgba(59, 130, 246, 0.9);
+  color: #fff;
+  font-size: 0.75rem;
+  padding: 2px 4px;
+  border-radius: 4px;
+  white-space: nowrap;
 }
