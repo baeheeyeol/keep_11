@@ -184,8 +184,9 @@
 		div.classList.add('event');
 
 		// 위치 및 크기 설정
-		div.style.left = `calc(${leftPct}% )`;
-		div.style.width = `calc(${widthPct}% )`;
+                const GAP = 2; // events 간격
+                div.style.left = `calc(${leftPct}% + ${GAP}px)`;
+                div.style.width = `calc(${widthPct}% - ${GAP}px)`;
 		div.style.top = `${topPx}px`;
 		div.style.height = `${heightPx}px`;
 		div.style.backgroundColor = category;
@@ -215,10 +216,10 @@
 
 	/**
 	 * makeDraggable(eventBlocks):
-	 *  - eventBlocks: [HTMLElement, ...] 하나 또는 두 개(크로스데이) 블록
-	 *  → 각 블록을 위아래(30분 단위), 좌우(1일 단위)로 드래그 가능하게 한다.
-	 *  → 그리드 바깥으로 벗어나지 않도록 경계를 제한.
-	 *  → 드래그 끝나면 fetch PATCH 요청( deltaDays, deltaHours ) 후 전체 다시 렌더링.
+         *  - eventBlocks: [HTMLElement, ...] 하나 또는 두 개(크로스데이) 블록
+         *  → 각 블록을 위아래(15분 단위)로 드래그 가능하며 같은 요일 내에서만 이동한다.
+         *  → 그리드 바깥으로 벗어나지 않도록 경계를 제한.
+         *  → 드래그 끝나면 fetch PATCH 요청( deltaDays, deltaHours ) 후 전체 다시 렌더링.
 	 */
 	function makeDraggable(eventBlocks) {
 		const grid = document.getElementById('schedule-grid');
@@ -233,7 +234,7 @@
 		const slotHeight = parseFloat(
 			getComputedStyle(document.documentElement).getPropertyValue('--hour-height')
 		);
-		const halfSlot = slotHeight / 2;                     // 30분 단위
+                const quarterSlot = slotHeight / 4;                     // 15분 단위
 		const bottomSlotHeight = parseFloat(
 			getComputedStyle(document.documentElement).getPropertyValue('--bottom-slot-height')
 		);
@@ -280,27 +281,23 @@
 
 			const deltaX = eMove.clientX - startX;
 			const deltaY = eMove.clientY - startY;
-			const dayWidthPx = gridRect.width / 7;
-			// 좌우 이동 시 “하루 단위” 이동량
-			const deltaDays = Math.round(deltaX / dayWidthPx);
+                        const dayWidthPx = gridRect.width / 7;
+                        // 같은 요일에서만 이동하므로 deltaDays는 항상 0
+                        const deltaDays = 0;
 
-			originals.forEach(o => {
-				// 1) 세로 이동: 원본 top + deltaY → 30분 단위로 스냅
-				let rawTop = o.origTopPx + deltaY;
-				const minTop = 0;
-				const maxTop = totalGridHeight - o.el.clientHeight;
-				if (rawTop < minTop) rawTop = minTop;
-				if (rawTop > maxTop) rawTop = maxTop;
-				const snappedTop = Math.round(rawTop / halfSlot) * halfSlot;
-				o.el.style.top = `${snappedTop}px`;
+                        originals.forEach(o => {
+                                // 1) 세로 이동: 원본 top + deltaY → 15분 단위로 스냅
+                                let rawTop = o.origTopPx + deltaY;
+                                const minTop = 0;
+                                const maxTop = totalGridHeight - o.el.clientHeight;
+                                if (rawTop < minTop) rawTop = minTop;
+                                if (rawTop > maxTop) rawTop = maxTop;
+                                const snappedTop = Math.round(rawTop / quarterSlot) * quarterSlot;
+                                o.el.style.top = `${snappedTop}px`;
 
-				// 2) 가로 이동: origDayIdx + deltaDays → 0~6 범위로 제한
-				let newDayIdx = o.origDayIdx + deltaDays;
-				if (newDayIdx < 0) newDayIdx = 0;
-				if (newDayIdx > 6) newDayIdx = 6;
-				// 항상 “칼럼 왼쪽”에 딱 붙이기
-				o.el.style.left = `calc(${newDayIdx * percentPerDay}% )`;
-			});
+                                // 2) 가로 이동 제한: 같은 요일 안에서만 이동
+                                o.el.style.left = `calc(${o.origDayIdx * percentPerDay}% )`;
+                        });
 		}
 
 		async function pointerUpHandler(eUp) {
@@ -418,17 +415,18 @@
 		let visible = Math.min(2, totalRows);
 		list.style.height = `${ROW_HEIGHT * visible}px`;
 
-		placed.forEach(evt => {
-			const div = document.createElement('div');
-			div.className = 'all-day-event';
+                const GAP = 2;
+                placed.forEach(evt => {
+                        const div = document.createElement('div');
+                        div.className = 'all-day-event';
 			let txt = evt.title;
 			if (evt.arrowLeft) txt = '◀ ' + txt;
 			if (evt.arrowRight) txt = txt + ' ▶';
 			div.textContent = txt;
 			div.style.backgroundColor = evt.category;
-			div.style.left = `calc(${percentPerDay * evt.startIdx}% )`;
-			const widthPct = percentPerDay * (evt.endIdx - evt.startIdx + 1);
-			div.style.width = `calc(${widthPct}% )`;
+                        div.style.left = `calc(${percentPerDay * evt.startIdx}% + ${GAP}px)`;
+                        const widthPct = percentPerDay * (evt.endIdx - evt.startIdx + 1);
+                        div.style.width = `calc(${widthPct}% - ${GAP}px)`;
 			div.style.top = `${evt.row * ROW_HEIGHT}px`;
 			div.dataset.id = evt.id;
 			if (evt.row >= visible) div.style.display = 'none';
