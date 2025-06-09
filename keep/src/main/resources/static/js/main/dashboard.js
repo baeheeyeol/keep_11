@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			const eDD = pad(weekEnd.getDate());
 			dateInput.value = `${sMM}.${sDD}-${eMM}.${eDD}`;
 		} else if (view === 'monthly') {
-			dateInput.value = `${y}-${pad(m)}`;
+			dateInput.value = `${y}.${pad(m)}`;
 		}
 	}
 

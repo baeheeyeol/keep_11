@@ -61,6 +61,7 @@
 				monthDropdown.appendChild(li);
 			}
 		}
+		
 		// 달력 렌더링
 		function renderCalendar(year, month) {
 			// 헤더 표시
@@ -95,7 +96,9 @@
 				//					cell.style.backgroundColor = '#d0d7ff';
 				//				}
 				// 날짜 선택 시
+				console.log(dateSpan)
 				cell.addEventListener('click', () => {
+					
 					const selectedDate = new Date(year, month, d);
 					const view = dateSpan.dataset.view;
 					const zeroPad = num => String(num).padStart(2, '0');
@@ -131,12 +134,18 @@
 						if (window.initMonthlySchedule) {
 							window.initMonthlySchedule();
 						}
-					} else {
+					} else if (view === 'daily') {
 						// 일간 포맷
 						const yyyy = selectedDate.getFullYear();
 						const mm = zeroPad(selectedDate.getMonth() + 1);
 						const dd = zeroPad(selectedDate.getDate());
 						formattedValue = `${yyyy}.${mm}.${dd}`;
+						dateSpan.dataset.selectDate = `${yyyy}-${mm}-${dd}`;
+					} else {
+						const yyyy = selectedDate.getFullYear();
+						const mm = zeroPad(selectedDate.getMonth() + 1);
+						const dd = zeroPad(selectedDate.getDate());
+						formattedValue = `${yyyy}-${mm}-${dd}`;
 						dateSpan.dataset.selectDate = `${yyyy}-${mm}-${dd}`;
 					}
 
@@ -155,6 +164,7 @@
 			}
 			bodyTbody.appendChild(row);
 		}
+		
 		// 모달 열기/닫기
 		function openCalendar() {
 			// 모달 위치

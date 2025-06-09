@@ -33,9 +33,9 @@
 		const slotHeight = parseFloat(
 			getComputedStyle(document.documentElement).getPropertyValue('--hour-height')
 		);
-                const percentPerDay = 100 / 7;
+		const percentPerDay = 100 / 7;
 
-                attachGridClick();
+		attachGridClick();
 
 		// 4) 블록 데이터 생성 (단일/크로스데이 모두 모아서 한 리스트로)
 		//    startMin/endMin: “분 단위”로 정렬 및 배치 판단에 사용
@@ -355,7 +355,7 @@
 	}
 
 	// 요일 헤더의 .date-number에 실제 날짜(숫자) 채우기
-function updateWeekDateNumbers() {
+	function updateWeekDateNumbers() {
 		const currentDateInput = document.getElementById('current-date');
 		const val = currentDateInput.value; // "MM.DD-MM.DD"
 		const m = val.match(/^(\d{2})\.(\d{2})-(\d{2})\.(\d{2})$/);
@@ -371,50 +371,50 @@ function updateWeekDateNumbers() {
 			const numSpan = el.querySelector('.date-number');
 			if (numSpan) numSpan.textContent = days[idx] + '';
 		});
-}
+	}
 
-function attachGridClick() {
-        const grid = document.getElementById('schedule-grid');
-        if (!grid || grid.dataset.modalClickAttached) return;
-        grid.addEventListener('click', e => {
-                const slot = e.target.closest('.hour-slot');
-                if (!slot) return;
+	function attachGridClick() {
+		const grid = document.getElementById('schedule-grid');
+		if (!grid || grid.dataset.modalClickAttached) return;
+		grid.addEventListener('click', e => {
+			const slot = e.target.closest('.hour-slot');
+			if (!slot) return;
 
-                let idx = Array.from(slot.parentNode.children).indexOf(slot);
-                const dateStr = getDateForSlot(slot.id);
-                idx = (idx / 7) | 0;
+			let idx = Array.from(slot.parentNode.children).indexOf(slot);
+			const dateStr = getDateForSlot(slot.id);
+			idx = (idx / 7) | 0;
 
-                const [y, m, d] = dateStr.split('-').map(v => v.padStart(2, '0'));
-                document.getElementById('sched-start-day').value = `${y}-${m}-${d}`;
-                document.getElementById('sched-end-day').value = `${y}-${m}-${d}`;
-                document.getElementById('sched-start-hour').value = String(idx).padStart(2, '0');
-                document.getElementById('sched-start-min').value = '00';
-                document.getElementById('sched-end-hour').value = String(idx + 1).padStart(2, '0');
-                document.getElementById('sched-end-min').value = '00';
-                if (window.openScheduleModal) window.openScheduleModal();
-        });
-        grid.dataset.modalClickAttached = 'true';
-}
+			const [y, m, d] = dateStr.split('-').map(v => v.padStart(2, '0'));
+			document.getElementById('sched-start-day').value = `${y}-${m}-${d}`;
+			document.getElementById('sched-end-day').value = `${y}-${m}-${d}`;
+			document.getElementById('sched-start-hour').value = String(idx).padStart(2, '0');
+			document.getElementById('sched-start-min').value = '00';
+			document.getElementById('sched-end-hour').value = String(idx + 1).padStart(2, '0');
+			document.getElementById('sched-end-min').value = '00';
+			if (window.openScheduleModal) window.openScheduleModal();
+		});
+		grid.dataset.modalClickAttached = 'true';
+	}
 
-function getDateForSlot(slotId) {
-        const currentDateInput = document.getElementById('current-date');
-        const [y, m, d] = currentDateInput.dataset.selectDate.split('-').map(Number);
-        const selectedDate = new Date(y, m - 1, d);
-        const dayIdx = selectedDate.getDay();
-        const weekStart = new Date(selectedDate);
-        weekStart.setDate(selectedDate.getDate() - dayIdx);
+	function getDateForSlot(slotId) {
+		const currentDateInput = document.getElementById('current-date');
+		const [y, m, d] = currentDateInput.dataset.selectDate.split('-').map(Number);
+		const selectedDate = new Date(y, m - 1, d);
+		const dayIdx = selectedDate.getDay();
+		const weekStart = new Date(selectedDate);
+		weekStart.setDate(selectedDate.getDate() - dayIdx);
 
-        const slotNum = parseInt(slotId.replace(/\D/g, ''), 10);
-        const colIdx = slotNum % 7;
+		const slotNum = parseInt(slotId.replace(/\D/g, ''), 10);
+		const colIdx = slotNum % 7;
 
-        const result = new Date(weekStart);
-        result.setDate(weekStart.getDate() + colIdx);
+		const result = new Date(weekStart);
+		result.setDate(weekStart.getDate() + colIdx);
 
-        const yyyy = result.getFullYear();
-        const mm = String(result.getMonth() + 1).padStart(2, '0');
-        const dd = String(result.getDate()).padStart(2, '0');
-        return `${yyyy}-${mm}-${dd}`;
-}
+		const yyyy = result.getFullYear();
+		const mm = String(result.getMonth() + 1).padStart(2, '0');
+		const dd = String(result.getDate()).padStart(2, '0');
+		return `${yyyy}-${mm}-${dd}`;
+	}
 
 	// 전역에 바인딩
 	window.initWeeklySchedule = initWeeklySchedule;
