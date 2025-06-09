@@ -13,7 +13,6 @@
 		const endHour = document.getElementById('sched-end-hour');
 		const endMin = document.getElementById('sched-end-min');
 		const currentDateInput = document.getElementById('current-date');
-		const view = currentDateInput.dataset.view;
 		// 필수 요소 체크
 		if (!overlay || !modal || !cancel || !form || !grid) return;
 
@@ -64,7 +63,7 @@
 
 			// "daily" or "weekly"
 			let dateStr;
-			if (view === 'weekly') {
+			if (currentDateInput.dataset.view === 'weekly') {
 				// 주간: 슬롯 id로 요일별 날짜 계산 (yyyy-MM-dd)
 				dateStr = getDateForSlot(slot.id);
 				idx = (idx / 7) | 0;
@@ -162,10 +161,18 @@
 				closeModal();
 				if (view === 'weekly') {
 					window.initWeeklySchedule();
-				} else if(view ==='daily'){
+				} else if (view === 'daily') {
 					window.initDailySchedule();
-				} else if(view ==='monthly'){
+				} else if (view === 'monthly') {
 					window.initMonthlySchedule();
+				}
+				// ❸ 저장 성공 시 모달 닫기 및 뷰 갱신
+				closeModal();
+				const curView = currentDateInput.dataset.view;
+				if (curView === 'weekly') {
+					window.initWeeklySchedule();
+				} else {
+					window.initDailySchedule();
 				}
 			}
 			catch (err) {
@@ -175,6 +182,7 @@
 		});
 		form.dataset.listenerAttached = 'true';
 	}
+	
 	// ❶ 스케줄 ID로 단건 조회 후 모달 폼에 자동으로 채워 넣고 모달 열기
 	async function loadAndOpenScheduleModal(scheduleId) {
 		try {
@@ -236,7 +244,7 @@
 	}
 
 	// 전역 호출용 및 초기화
-        window.initScheduleModal = initScheduleModal;
-        window.loadAndOpenScheduleModal = loadAndOpenScheduleModal;
-        window.openScheduleModal = openModal;
+	window.initScheduleModal = initScheduleModal;
+	window.loadAndOpenScheduleModal = loadAndOpenScheduleModal;
+	window.openScheduleModal = openModal;
 })();
