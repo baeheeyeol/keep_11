@@ -15,7 +15,7 @@
 /* 종일 이벤트 영역 */
 .events-all-day-wrapper {
   position: sticky;
-  top: 0;
+  top: var(--weekday-header-height);
   z-index: 20;
   display: grid;
   grid-template-columns: var(--time-column-width) 1fr;
@@ -26,10 +26,10 @@
 
 /* "종일" 레이블 */
 .all-day-label {
-  flex: 0 0 60px;
+  flex: 0 0 var(--time-column-width);
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   font-weight: 600;
   color: #333;
   margin-right: 8px;
@@ -43,9 +43,8 @@
 
 .all-day-event {
   position: absolute;
-  left: 0;
-  width: 100%;
   height: var(--all-day-row-height);
+  margin-bottom: 2px;
   padding: 0 4px;
   border-radius: 4px;
   font-size: 0.75rem;
@@ -67,7 +66,7 @@
   background-color: #ffffff;
   border: 1px solid #d1d5db;
   border-radius: 4px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   font-size: 0.875rem;
   color: #333;
   cursor: pointer;

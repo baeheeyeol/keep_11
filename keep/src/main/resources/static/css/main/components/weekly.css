@@ -277,3 +277,24 @@
   pointer-events: none;
   z-index: 20;
 }
+/* 드래그 선택 영역 */
+.drag-select {
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: rgba(59, 130, 246, 0.3);
+  pointer-events: none;
+  z-index: 5;
+}
+.drag-select::after {
+  content: attr(data-time);
+  position: absolute;
+  top: -18px;
+  left: 0;
+  background: rgba(59, 130, 246, 0.9);
+  color: #fff;
+  font-size: 0.75rem;
+  padding: 2px 4px;
+  border-radius: 4px;
+  white-space: nowrap;
+}

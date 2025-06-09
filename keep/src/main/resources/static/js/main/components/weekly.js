@@ -1,4 +1,4 @@
-/* static/js/main/components/weekly.js 
+/* static/js/main/components/weekly.js
 */
 
 (function() {
@@ -534,6 +534,8 @@
                         const curY = eMove.clientY - rect.top;
                         const curX = eMove.clientX - rect.left;
                         const colIdx = Math.floor(curX / (rect.width / 7));
+						console.log(colIdx)
+						console.log(startColIdx)
                         if (colIdx !== startColIdx) return;
                         const top = Math.min(startY, curY);
                         const bottom = Math.max(startY, curY);
@@ -567,7 +569,8 @@
                 grid.addEventListener('pointerdown', e => {
                         if (e.target.closest('.event')) return;
                         const slot = e.target.closest('.hour-slot');
-                        if (!slot) return;
+					    if (!slot) return;
+						console.log(slot)
                         const rect = grid.getBoundingClientRect();
                         const idx = Array.from(slot.parentNode.children).indexOf(slot);
                         startColIdx = idx % 7;
@@ -580,6 +583,7 @@
                         selectDiv.style.width = `calc(${dayWidthPct}% )`;
                         selectDiv.style.top = `${startY}px`;
                         grid.appendChild(selectDiv);
+					
                         document.addEventListener('pointermove', pointerMove);
                         document.addEventListener('pointerup', pointerUp);
                 });

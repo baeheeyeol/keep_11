@@ -95,7 +95,7 @@
 				if (curView === 'weekly') {
 					window.initWeeklySchedule();
 				} else if (curView === 'daily') {
-
+					window.initDailySchedule();
 				} else if (curView === 'monthly') {
 					window.initMonthlySchedule();
 				}
