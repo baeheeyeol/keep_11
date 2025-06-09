@@ -91,44 +91,67 @@
 		});
 	}
 
-	function renderAllDayEvents(allDayEvents) {
-		const wrapperEl = document.querySelector('.events-all-day-wrapper');
-		const listEl = wrapperEl.querySelector('.events-all-day-list');
-		const toggleEl = wrapperEl.querySelector('.all-day-toggle');
-                const MAX_SHOW = 5;
-                let expanded = false;
+       function renderAllDayEvents(allDayEvents, dateStr) {
+               const wrapperEl = document.querySelector('.events-all-day-wrapper');
+               if (!wrapperEl) return;
+               const listEl = wrapperEl.querySelector('.events-all-day-list');
+               const toggleEl = wrapperEl.querySelector('.all-day-toggle');
 
-                function updateList() {
-                        listEl.innerHTML = '';
-                        const slice = expanded ? allDayEvents : allDayEvents.slice(0, MAX_SHOW);
+               const ROW_HEIGHT = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--all-day-row-height') || 20);
 
-                        slice.forEach(evt => {
-                                const card = document.createElement('div');
-                                card.className = 'event-card';
-                                card.textContent = evt.title;
-                                card.style.backgroundColor = evt.category;
-                                card.dataset.id = evt.schedulesId;
-                                listEl.appendChild(card);
-                        });
+               const dayStart = new Date(dateStr + 'T00:00:00');
+               const dayEnd = new Date(dayStart);
+               dayEnd.setDate(dayEnd.getDate() + 1);
 
-                        if (allDayEvents.length <= MAX_SHOW) {
-                                toggleEl.style.display = 'none';
-                        } else {
-                                toggleEl.style.display = '';
-                                toggleEl.textContent = expanded ? '접기' : `+ 더보기 (${allDayEvents.length - MAX_SHOW})`;
-                        }
-                }
-                listEl.addEventListener('click', e => {
-                        const card = e.target.closest('.event-card');
-                        if (!card) return;
-                        window.loadAndOpenScheduleModal(card.dataset.id);
-                });
-                toggleEl.onclick = () => {
-                        expanded = !expanded;
-                        updateList();
-                };
-                updateList();
-        }
+               const items = allDayEvents
+                       .map(e => ({
+                               id: e.schedulesId,
+                               title: e.title,
+                               category: e.category,
+                               start: new Date(e.startTs),
+                               end: new Date(e.endTs)
+                       }))
+                       .sort((a, b) => a.start - b.start);
+
+               listEl.innerHTML = '';
+               const totalRows = items.length;
+               let visible = Math.min(2, totalRows);
+               listEl.style.height = `${ROW_HEIGHT * visible}px`;
+
+               items.forEach((evt, idx) => {
+                       const div = document.createElement('div');
+                       div.className = 'all-day-event';
+                       let txt = evt.title;
+                       if (evt.start < dayStart) txt = '◀ ' + txt;
+                       if (evt.end > dayEnd) txt = txt + ' ▶';
+                       div.textContent = txt;
+                       div.style.backgroundColor = evt.category;
+                       div.style.top = `${idx * ROW_HEIGHT}px`;
+                       div.dataset.id = evt.id;
+                       if (idx >= visible) div.style.display = 'none';
+                       div.addEventListener('click', () => {
+                               window.loadAndOpenScheduleModal(evt.id);
+                       });
+                       listEl.appendChild(div);
+               });
+
+               if (totalRows > 2) {
+                       toggleEl.style.display = '';
+                       let expanded = false;
+                       toggleEl.textContent = `+${totalRows - 2}개 더보기`;
+                       toggleEl.onclick = () => {
+                               expanded = !expanded;
+                               visible = expanded ? totalRows : 2;
+                               listEl.style.height = `${ROW_HEIGHT * visible}px`;
+                               Array.from(listEl.children).forEach((el, idx) => {
+                                       el.style.display = idx < visible ? '' : 'none';
+                               });
+                               toggleEl.textContent = expanded ? '접기' : `+${totalRows - 2}개 더보기`;
+                       };
+               } else {
+                       toggleEl.style.display = 'none';
+               }
+       }
 
 	async function initDailySchedule() {
 		const grid = document.querySelector('.schedule-grid');
@@ -145,10 +168,10 @@
 			console.error('일정 로드 실패', err);
 		}
 
-		const allDayEvents = events.filter(e => e.isFullDay);
-		events = events.filter(e => !e.isFullDay);
-		//종일 일정 설정
-		renderAllDayEvents(allDayEvents);
+               const allDayEvents = events.filter(e => e.isFullDay);
+               events = events.filter(e => !e.isFullDay);
+               // 종일 일정 설정
+               renderAllDayEvents(allDayEvents, dateInput);
 
 		events.forEach(evt => {
 			evt._start = new Date(evt.startTs).getTime();
@@ -226,27 +249,96 @@
                 attachGridClick();
        }
 
-        function attachGridClick() {
-                const grid = document.querySelector('.schedule-grid');
-                if (!grid || grid.dataset.modalClickAttached) return;
-                grid.addEventListener('click', e => {
-                        const slot = e.target.closest('.hour-slot');
-                        if (!slot) return;
+       function attachGridClick() {
+               const grid = document.querySelector('.schedule-grid');
+               if (!grid || grid.dataset.modalClickAttached) return;
+               const H = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hour-height'));
+               const STEP = H / 2;
+               let selecting = false;
+               let startY = 0;
+               let selectDiv = null;
 
-                        let idx = Array.from(slot.parentNode.children).indexOf(slot);
+               function formatTime(pos) {
+                       let minutes = Math.round((pos / H) * 60);
+                       minutes = Math.max(0, Math.min(24 * 60, Math.round(minutes / 30) * 30));
+                       const h = Math.floor(minutes / 60);
+                       const m = minutes % 60;
+                       return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+               }
 
-                        const dateStr = document.getElementById('current-date').dataset.selectDate;
-                        const [y, m, d] = dateStr.split('-').map(v => v.padStart(2, '0'));
-                        document.getElementById('sched-start-day').value = `${y}-${m}-${d}`;
-                        document.getElementById('sched-end-day').value = `${y}-${m}-${d}`;
-                        document.getElementById('sched-start-hour').value = String(idx).padStart(2, '0');
-                        document.getElementById('sched-start-min').value = '00';
-                        document.getElementById('sched-end-hour').value = String(idx + 1).padStart(2, '0');
-                        document.getElementById('sched-end-min').value = '00';
-                        if (window.openScheduleModal) window.openScheduleModal();
-                });
-                grid.dataset.modalClickAttached = 'true';
-        }
+               function openModalWithRange(topPx, bottomPx) {
+                       const startMinTot = Math.round((topPx / H) * 60);
+                       const endMinTot = Math.round((bottomPx / H) * 60);
+                       const startHour = Math.floor(startMinTot / 60);
+                       const startMin = startMinTot % 60;
+                       const endHour = Math.floor(endMinTot / 60);
+                       const endMin = endMinTot % 60;
+                       const dateStr = document.getElementById('current-date').dataset.selectDate;
+                       const [y, m, d] = dateStr.split('-').map(v => v.padStart(2, '0'));
+                       document.getElementById('sched-start-day').value = `${y}-${m}-${d}`;
+                       document.getElementById('sched-end-day').value = `${y}-${m}-${d}`;
+                       document.getElementById('sched-start-hour').value = String(startHour).padStart(2, '0');
+                       document.getElementById('sched-start-min').value = String(startMin).padStart(2, '0');
+                       document.getElementById('sched-end-hour').value = String(endHour).padStart(2, '0');
+                       document.getElementById('sched-end-min').value = String(endMin).padStart(2, '0');
+                       if (window.openScheduleModal) window.openScheduleModal();
+               }
+
+               function pointerMove(eMove) {
+                       if (!selecting) return;
+                       const cur = eMove.clientY - grid.getBoundingClientRect().top;
+                       const top = Math.min(startY, cur);
+                       const bottom = Math.max(startY, cur);
+                       selectDiv.style.top = `${top}px`;
+                       selectDiv.style.height = `${bottom - top}px`;
+                       selectDiv.dataset.time = `${formatTime(top)} - ${formatTime(bottom)}`;
+               }
+
+               function pointerUp(eUp) {
+                       if (!selecting) return;
+                       document.removeEventListener('pointermove', pointerMove);
+                       document.removeEventListener('pointerup', pointerUp);
+                       const cur = eUp.clientY - grid.getBoundingClientRect().top;
+                       let top = Math.min(startY, cur);
+                       let bottom = Math.max(startY, cur);
+                       top = Math.max(0, Math.round(top / STEP) * STEP);
+                       bottom = Math.min(24 * H, Math.round(bottom / STEP) * STEP);
+                       selectDiv.remove();
+                       selecting = false;
+                       openModalWithRange(top, bottom);
+               }
+
+               grid.addEventListener('pointerdown', e => {
+                       if (e.target.closest('.event')) return;
+                       const slot = e.target.closest('.hour-slot');
+                       if (!slot) return;
+                       selecting = true;
+                       startY = e.clientY - grid.getBoundingClientRect().top;
+                       selectDiv = document.createElement('div');
+                       selectDiv.className = 'drag-select';
+                       selectDiv.style.top = `${startY}px`;
+                       grid.appendChild(selectDiv);
+                       document.addEventListener('pointermove', pointerMove);
+                       document.addEventListener('pointerup', pointerUp);
+               });
+
+               grid.addEventListener('click', e => {
+                       if (selecting) return; // drag selection handled separately
+                       const slot = e.target.closest('.hour-slot');
+                       if (!slot) return;
+                       let idx = Array.from(slot.parentNode.children).indexOf(slot);
+                       const dateStr = document.getElementById('current-date').dataset.selectDate;
+                       const [y, m, d] = dateStr.split('-').map(v => v.padStart(2, '0'));
+                       document.getElementById('sched-start-day').value = `${y}-${m}-${d}`;
+                       document.getElementById('sched-end-day').value = `${y}-${m}-${d}`;
+                       document.getElementById('sched-start-hour').value = String(idx).padStart(2, '0');
+                       document.getElementById('sched-start-min').value = '00';
+                       document.getElementById('sched-end-hour').value = String(idx + 1).padStart(2, '0');
+                       document.getElementById('sched-end-min').value = '00';
+                       if (window.openScheduleModal) window.openScheduleModal();
+               });
+               grid.dataset.modalClickAttached = 'true';
+       }
 
 	window.initDailySchedule = initDailySchedule;
 })();
