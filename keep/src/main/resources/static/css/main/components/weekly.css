@@ -5,6 +5,8 @@
   --bottom-slot-height: 40px;
   /* 종일 이벤트 카드 최소 너비 */
   --all-day-card-width: 150px;
+  /* 종일 이벤트 한 줄 높이 */
+  --all-day-row-height: 20px;
   /* 요일 컬럼 수 */
   --weekday-count: 7;
   /* 요일 헤더 높이 */
@@ -68,13 +70,11 @@
   position: sticky;
   top: var(--weekday-header-height);
   z-index: 20;
-  display: flex;
-  align-items: center;
+  display: grid;
+  grid-template-columns: var(--time-column-width) 1fr auto;
   padding: 8px;
   background: #f9fafb;
   border-bottom: 1px solid #e5e7eb;
-  overflow-x: auto;
-  white-space: nowrap;
 }
 
 /* “종일” 레이블 */
@@ -90,8 +90,31 @@
 
 /* 종일 이벤트 카드 리스트 */
 .events-all-day-list {
-  display: flex;
-  gap: 8px;
+  position: relative;
+  height: calc(var(--all-day-row-height) * 2);
+}
+
+.all-day-event {
+  position: absolute;
+  height: var(--all-day-row-height);
+  padding: 0 4px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
+}
+
+.all-day-toggle {
+  margin-left: 8px;
+  padding: 4px 8px;
+  background: transparent;
+  border: none;
+  font-size: 0.875rem;
+  color: #3b82f6;
+  cursor: pointer;
 }
 
 .event-card {
