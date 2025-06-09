@@ -220,8 +220,32 @@
 		//시간선 그리기 
 		
 
-		initDragAndDrop();
-	}
+                initDragAndDrop();
+
+                attachGridClick();
+       }
+
+        function attachGridClick() {
+                const grid = document.querySelector('.schedule-grid');
+                if (!grid || grid.dataset.modalClickAttached) return;
+                grid.addEventListener('click', e => {
+                        const slot = e.target.closest('.hour-slot');
+                        if (!slot) return;
+
+                        let idx = Array.from(slot.parentNode.children).indexOf(slot);
+
+                        const dateStr = document.getElementById('current-date').dataset.selectDate;
+                        const [y, m, d] = dateStr.split('-').map(v => v.padStart(2, '0'));
+                        document.getElementById('sched-start-day').value = `${y}-${m}-${d}`;
+                        document.getElementById('sched-end-day').value = `${y}-${m}-${d}`;
+                        document.getElementById('sched-start-hour').value = String(idx).padStart(2, '0');
+                        document.getElementById('sched-start-min').value = '00';
+                        document.getElementById('sched-end-hour').value = String(idx + 1).padStart(2, '0');
+                        document.getElementById('sched-end-min').value = '00';
+                        if (window.openScheduleModal) window.openScheduleModal();
+                });
+                grid.dataset.modalClickAttached = 'true';
+        }
 
 	window.initDailySchedule = initDailySchedule;
 })();
