@@ -95,35 +95,40 @@
 		const wrapperEl = document.querySelector('.events-all-day-wrapper');
 		const listEl = wrapperEl.querySelector('.events-all-day-list');
 		const toggleEl = wrapperEl.querySelector('.all-day-toggle');
-		const MAX_SHOW = 5;
+                const MAX_SHOW = 5;
+                let expanded = false;
 
-		function updateList() {
-			listEl.innerHTML = '';
-			const slice = allDayEvents.slice(0, MAX_SHOW);
+                function updateList() {
+                        listEl.innerHTML = '';
+                        const slice = expanded ? allDayEvents : allDayEvents.slice(0, MAX_SHOW);
 
-			slice.forEach(evt => {
-				const card = document.createElement('div');
-				card.className = 'event-card';
-				card.textContent = evt.title;
-				card.style.backgroundColor = evt.category;
-				card.dataset.id = evt.schedulesId;
-				listEl.appendChild(card);
-			});
+                        slice.forEach(evt => {
+                                const card = document.createElement('div');
+                                card.className = 'event-card';
+                                card.textContent = evt.title;
+                                card.style.backgroundColor = evt.category;
+                                card.dataset.id = evt.schedulesId;
+                                listEl.appendChild(card);
+                        });
 
-			if (allDayEvents.length <= MAX_SHOW) {
-				toggleEl.style.display = 'none';
-			} else {
-				toggleEl.style.display = '';
-				toggleEl.textContent = `+ 더보기 (${allDayEvents.length - MAX_SHOW})`;
-			}
-		}
-		listEl.addEventListener('click', e => {
-			const card = e.target.closest('.event-card');
-			if (!card) return;
-			window.loadAndOpenScheduleModal(card.dataset.id);
-		});
-		updateList();
-	}
+                        if (allDayEvents.length <= MAX_SHOW) {
+                                toggleEl.style.display = 'none';
+                        } else {
+                                toggleEl.style.display = '';
+                                toggleEl.textContent = expanded ? '접기' : `+ 더보기 (${allDayEvents.length - MAX_SHOW})`;
+                        }
+                }
+                listEl.addEventListener('click', e => {
+                        const card = e.target.closest('.event-card');
+                        if (!card) return;
+                        window.loadAndOpenScheduleModal(card.dataset.id);
+                });
+                toggleEl.onclick = () => {
+                        expanded = !expanded;
+                        updateList();
+                };
+                updateList();
+        }
 
 	async function initDailySchedule() {
 		const grid = document.querySelector('.schedule-grid');
