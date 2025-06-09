@@ -160,11 +160,12 @@
 
 				// ❸ 저장 성공 시 모달 닫기 및 뷰 갱신
 				closeModal();
-				alert(view)
 				if (view === 'weekly') {
 					window.initWeeklySchedule();
-				} else {
+				} else if(view ==='daily'){
 					window.initDailySchedule();
+				} else if(view ==='monthly'){
+					window.initMonthlySchedule();
 				}
 			}
 			catch (err) {

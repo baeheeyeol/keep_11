@@ -91,18 +91,17 @@
 					cell.classList.add('weekend');
 				}
 				// 오늘 강조
-//				if (year === today.getFullYear() && month === today.getMonth() && d === today.getDate()) {
-//					cell.style.backgroundColor = '#d0d7ff';
-//				}
+				//				if (year === today.getFullYear() && month === today.getMonth() && d === today.getDate()) {
+				//					cell.style.backgroundColor = '#d0d7ff';
+				//				}
 				// 날짜 선택 시
-				
+
 				cell.addEventListener('click', () => {
 					const selectedDate = new Date(year, month, d);
 					const view = dateSpan.dataset.view;
 					const zeroPad = num => String(num).padStart(2, '0');
 					let formattedValue;
-
-                                        if (view === 'weekly') {
+					if (view === 'weekly') {
 						// 주간 포맷
 						const dayIndex = selectedDate.getDay();
 						const weekStart = new Date(selectedDate);
@@ -124,29 +123,29 @@
 						].join('-');
 
 						window.updateWeekDateNumbers();
-                                        } else if (view === 'monthly') {
-                                                const yyyy = selectedDate.getFullYear();
-                                                const mm = zeroPad(selectedDate.getMonth() + 1);
-                                                const dd = zeroPad(selectedDate.getDate());
-                                                formattedValue = `${yyyy}-${mm}`;
-                                                dateSpan.dataset.selectDate = `${yyyy}-${mm}-${dd}`;
-                                                if (window.initMonthlySchedule) {
-                                                        window.initMonthlySchedule();
-                                                }
-                                        } else {
-                                                // 일간 포맷
-                                                const yyyy = selectedDate.getFullYear();
-                                                const mm = zeroPad(selectedDate.getMonth() + 1);
-                                                const dd = zeroPad(selectedDate.getDate());
-                                                formattedValue = `${yyyy}.${mm}.${dd}`;
-                                                dateSpan.dataset.selectDate = `${yyyy}-${mm}-${dd}`;
-                                       }
+					} else if (view === 'monthly') {
+						const yyyy = selectedDate.getFullYear();
+						const mm = zeroPad(selectedDate.getMonth() + 1);
+						const dd = zeroPad(selectedDate.getDate());
+						formattedValue = `${yyyy}.${mm}`;
+						dateSpan.dataset.selectDate = `${yyyy}-${mm}-${dd}`;
+						if (window.initMonthlySchedule) {
+							window.initMonthlySchedule();
+						}
+					} else {
+						// 일간 포맷
+						const yyyy = selectedDate.getFullYear();
+						const mm = zeroPad(selectedDate.getMonth() + 1);
+						const dd = zeroPad(selectedDate.getDate());
+						formattedValue = `${yyyy}.${mm}.${dd}`;
+						dateSpan.dataset.selectDate = `${yyyy}-${mm}-${dd}`;
+					}
 
-                                        dateSpan.value = formattedValue;
-                                        if (window.updateDisplay) {
-                                                window.updateDisplay(view);
-                                        }
-                                        closeCalendar();
+					dateSpan.value = formattedValue;
+					if (window.updateDisplay) {
+						window.updateDisplay(view);
+					}
+					closeCalendar();
 				});
 
 				row.appendChild(cell);
@@ -161,7 +160,7 @@
 		function openCalendar() {
 			// 모달 위치
 			const rect = dateSpan.getBoundingClientRect();
-//			modal.style.top = `${rect.bottom + window.scrollY + 4}px`;
+			//			modal.style.top = `${rect.bottom + window.scrollY + 4}px`;
 			modal.style.top = `${rect.bottom + 4}px`;
 			modal.style.left = `${rect.left}px`;
 

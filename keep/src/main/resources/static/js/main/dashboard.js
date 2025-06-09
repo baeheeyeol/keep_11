@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		window.initCalendarModal('sched-start-day');
 		window.initCalendarModal('sched-end-day');
 	}
+	
+	window.initScheduleModal();
         // 2) 오늘 날짜를 YYYY-MM-DD 형식으로 세팅
         const today = new Date();
         const yyyy = today.getFullYear();
@@ -69,22 +71,13 @@ document.addEventListener('DOMContentLoaded', () => {
                                         if (window.initDailySchedule) {
                                                 window.initDailySchedule();
                                         };
-                                        if (window.initScheduleModal) {
-                                                window.initScheduleModal();
-                                        };
                                 } else if (view == 'weekly') {
                                         if (window.initWeeklySchedule) {
                                                 window.initWeeklySchedule();
                                         }
-                                        if (window.initScheduleModal) {
-                                                window.initScheduleModal();
-                                        }
                                 } else if (view == 'monthly') {
                                         if (window.initMonthlySchedule) {
                                                 window.initMonthlySchedule();
-                                        }
-                                        if (window.initScheduleModal) {
-                                                window.initScheduleModal();
                                         }
                                 }
 			})
