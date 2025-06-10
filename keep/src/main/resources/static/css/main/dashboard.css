@@ -74,4 +74,6 @@
 /* Fragment 컨테이너 여백 */
 #fragment-container {
   margin-top: 20px;
+  opacity: 1;
+  transition: opacity 0.3s ease;
 }

@@ -50,8 +50,9 @@ document.addEventListener('DOMContentLoaded', () => {
 	updateDisplay(dateInput.dataset.view);
 
 	// 6) 컴포넌트 로드 함수
-	function loadView(view) {
-		fetch(`/dashboard/fragment/${view}`)
+        function loadView(view) {
+                fragmentContainer.style.opacity = 0;
+                fetch(`/dashboard/fragment/${view}`)
 			.then(response => {
 				if (!response.ok) throw new Error('네트워크 에러');
 				return response.text();
@@ -78,10 +79,13 @@ document.addEventListener('DOMContentLoaded', () => {
 						window.initMonthlySchedule();
 					}
 				}
-				window.initScheduleModal();
-			})
-			.catch(err => console.error(err));
-	}
+                                window.initScheduleModal();
+                                requestAnimationFrame(() => {
+                                        fragmentContainer.style.opacity = 1;
+                                });
+                        })
+                        .catch(err => console.error(err));
+        }
 
 	// 초기 로드: daily
 	loadView('weekly');
