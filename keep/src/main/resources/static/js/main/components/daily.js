@@ -28,8 +28,9 @@
 
 	function onDrop(e) {
 		e.preventDefault();
-		document.removeEventListener('pointermove', onDrag);
-		document.removeEventListener('pointerup', onDrop);
+                document.removeEventListener('pointermove', onDrag);
+                document.removeEventListener('pointerup', onDrop);
+                document.removeEventListener('pointercancel', onDrop);
 
 		if (isDragging) {
 			const snappedTop = parseFloat(draggingEvt.style.top);
@@ -106,9 +107,10 @@
 			startY = e.clientY;
 			origTop = parseFloat(getComputedStyle(evEl).top);
 
-			document.addEventListener('pointermove', onDrag);
-			document.addEventListener('pointerup', onDrop);
-		});
+                        document.addEventListener('pointermove', onDrag);
+                        document.addEventListener('pointerup', onDrop);
+                        document.addEventListener('pointercancel', onDrop);
+                });
 	}
 
 	function renderAllDayEvents(allDayEvents, dateStr) {
@@ -319,15 +321,17 @@
                         if (!selecting) return;
                         document.removeEventListener('pointermove', pointerMove);
                         document.removeEventListener('pointerup', pointerUp);
+                        document.removeEventListener('pointercancel', cancelSelection);
                         if (selectDiv) selectDiv.remove();
                         selecting = false;
                 }
 
 		function pointerUp(eUp) {
 			if (!selecting) return;
-			document.removeEventListener('pointermove', pointerMove);
-			document.removeEventListener('pointerup', pointerUp);
-			const cur = eUp.clientY - grid.getBoundingClientRect().top;
+                        document.removeEventListener('pointermove', pointerMove);
+                        document.removeEventListener('pointerup', pointerUp);
+                        document.removeEventListener('pointercancel', cancelSelection);
+                        const cur = eUp.clientY - grid.getBoundingClientRect().top;
 			let top = Math.min(startY, cur);
 			let bottom = Math.max(startY, cur);
 			top = Math.max(0, Math.round(top / STEP) * STEP);
@@ -349,6 +353,7 @@
                         grid.appendChild(selectDiv);
                         document.addEventListener('pointermove', pointerMove);
                         document.addEventListener('pointerup', pointerUp);
+                        document.addEventListener('pointercancel', cancelSelection);
                 });
 
                 grid.addEventListener('contextmenu', e => {

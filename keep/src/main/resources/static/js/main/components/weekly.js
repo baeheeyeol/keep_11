@@ -582,15 +582,17 @@
                         if (!selecting) return;
                         document.removeEventListener('pointermove', pointerMove);
                         document.removeEventListener('pointerup', pointerUp);
+                        document.removeEventListener('pointercancel', cancelSelection);
                         if (selectDiv) selectDiv.remove();
                         selecting = false;
                 }
 
 		function pointerUp(eUp) {
 			if (!selecting) return;
-			document.removeEventListener('pointermove', pointerMove);
-			document.removeEventListener('pointerup', pointerUp);
-			const rect = grid.getBoundingClientRect();
+                        document.removeEventListener('pointermove', pointerMove);
+                        document.removeEventListener('pointerup', pointerUp);
+                        document.removeEventListener('pointercancel', cancelSelection);
+                        const rect = grid.getBoundingClientRect();
 			const curY = eUp.clientY - rect.top;
 			const curX = eUp.clientX - rect.left;
 			const colIdx = Math.floor(curX / (rect.width / 7));
@@ -628,6 +630,7 @@
 
                         document.addEventListener('pointermove', pointerMove);
                         document.addEventListener('pointerup', pointerUp);
+                        document.addEventListener('pointercancel', cancelSelection);
                 });
 
                 grid.addEventListener('contextmenu', e => {
