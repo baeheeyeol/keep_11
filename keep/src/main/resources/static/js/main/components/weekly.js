@@ -570,8 +570,6 @@
 			const curY = eMove.clientY - rect.top;
 			const curX = eMove.clientX - rect.left;
 			const colIdx = Math.floor(curX / (rect.width / 7));
-			console.log(colIdx)
-			console.log(startColIdx)
 			if (colIdx !== startColIdx) return;
 			const top = Math.min(startY, curY);
 			const bottom = Math.max(startY, curY);
