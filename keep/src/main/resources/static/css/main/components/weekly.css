@@ -79,6 +79,8 @@
 
 /* “종일” 레이블 */
 .all-day-label {
+	  grid-row: 1;
+  grid-column: 1;
   flex: 0 0 var(--time-column-width);
   display: flex;
   align-items: center;
