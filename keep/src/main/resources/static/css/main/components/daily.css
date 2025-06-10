@@ -12,12 +12,14 @@
         /* 주간 뷰와 동일한 레이아웃을 위해 추가 */
         --weekday-header-height: 40px;
         --time-column-width: 60px;
+        /* 대시보드 헤더 높이(스크롤 고정 offset) */
+        --dashboard-header-height: 60px;
 }
 
 /* 종일 이벤트 영역 */
 .events-all-day-wrapper {
         position: sticky;
-        top: var(--weekday-header-height);
+        top: calc(var(--dashboard-header-height) + var(--weekday-header-height));
         z-index: 20;
         display: grid;
         grid-template-columns: var(--time-column-width) 1fr;

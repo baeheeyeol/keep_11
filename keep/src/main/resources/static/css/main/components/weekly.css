@@ -13,12 +13,14 @@
   --weekday-header-height: 40px;
   /* 시간축(왼쪽) 컬럼 너비 */
   --time-column-width: 60px;
+  /* 대시보드 헤더 높이(스크롤 고정 offset) */
+  --dashboard-header-height: 60px;
 }
 
 /* — 요일 헤더 — */
 .weekday-header {
   position: sticky;
-  top: 0;
+  top: var(--dashboard-header-height);
   z-index: 30;
   display: grid;
   /* 좌측 시간축(60px) + (나머지 너비를 7등분) */
@@ -68,7 +70,7 @@
 /* — 종일 이벤트 영역 — */
 .events-all-day-wrapper {
   position: sticky;
-  top: var(--weekday-header-height);
+  top: calc(var(--dashboard-header-height) + var(--weekday-header-height));
   z-index: 20;
   display: grid;
   grid-template-columns: var(--time-column-width) 1fr;
