@@ -234,6 +234,14 @@
   font-size: 0.875rem;
   color: #fff;
   cursor: pointer;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.event.show {
+  opacity: 1;
+  transform: none;
 }
 
 /* — 전체 컨테이너 — */
