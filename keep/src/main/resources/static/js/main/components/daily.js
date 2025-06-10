@@ -96,7 +96,8 @@
 		const wrapperEl = document.querySelector('.events-all-day-wrapper');
 		if (!wrapperEl) return;
 		const listEl = wrapperEl.querySelector('.events-all-day-list');
-
+		const oldToggle = wrapperEl.querySelector('.all-day-toggle');
+		if (oldToggle) oldToggle.remove();
 		const ROW_HEIGHT = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--all-day-row-height') || 20);
 		const ROW_GAP = 2;
 

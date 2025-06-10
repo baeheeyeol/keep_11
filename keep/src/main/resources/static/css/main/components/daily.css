@@ -44,6 +44,7 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	box-sizing: border-box;
+	width: 100%;
 }
 
 /* 종일 이벤트 카드 */
@@ -70,7 +71,6 @@
 	background-color: #f8f9fa;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
-
 /* +더보기 버튼 (종일) */
 .all-day-toggle {
         grid-column: 1 / -1;
