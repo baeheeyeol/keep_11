@@ -53,12 +53,14 @@
 
 		if (form.dataset.listenerAttached) return;
 		// ❶ 폼 submit 이벤트 가로채기 (REST API용)
-		form.addEventListener('submit', async e => {
-			e.preventDefault();
+                form.addEventListener('submit', async e => {
+                        e.preventDefault();
 
-			// API 엔드포인트로 변경
-			const url = '/api/schedules';
-			const formData = new FormData(form);
+                        const url = '/api/schedules';
+                        const formData = new FormData(form);
+                        if (window.saveToast && window.saveToast.showSaving) {
+                                window.saveToast.showSaving();
+                        }
 
 			try {
 				const res = await fetch(url, {
@@ -67,7 +69,10 @@
 				});
 				const body = await res.json();
 
-				if (!res.ok) {
+                                if (!res.ok) {
+                                        if (window.saveToast && window.saveToast.hide) {
+                                                window.saveToast.hide();
+                                        }
 					// ❷ 유효성 검사 오류 표시
 					if (body.errors) {
 						// 기존에 출력된 에러 메시지 제거
@@ -89,22 +94,34 @@
 					}
 					return;
 				}
-				// ❸ 저장 성공 시 모달 닫기 및 뷰 갱신
-				closeModal();
-				const curView = currentDateInput.dataset.view;
-				if (curView === 'weekly') {
-					window.initWeeklySchedule();
-				} else if (curView === 'daily') {
-					window.initDailySchedule();
-				} else if (curView === 'monthly') {
-					window.initMonthlySchedule();
-				}
+                                // ❸ 저장 성공 시 모달 닫기 및 뷰 갱신
+                                closeModal();
+                                const curView = currentDateInput.dataset.view;
+                                const refresh = () => {
+                                        if (curView === 'weekly') {
+                                                window.initWeeklySchedule();
+                                        } else if (curView === 'daily') {
+                                                window.initDailySchedule();
+                                        } else if (curView === 'monthly') {
+                                                window.initMonthlySchedule();
+                                        }
+                                };
+                                refresh();
+                                if (window.saveToast && window.saveToast.showSaved) {
+                                        window.saveToast.showSaved(body.id, async (id) => {
+                                                await fetch(`/api/schedules/${id}`, { method: 'DELETE' });
+                                                refresh();
+                                        });
+                                }
 
 			}
-			catch (err) {
-				console.error(err);
-				alert('네트워크 에러로 일정 저장에 실패했습니다.');
-			}
+                       catch (err) {
+                               console.error(err);
+                                if (window.saveToast && window.saveToast.hide) {
+                                        window.saveToast.hide();
+                                }
+                               alert('네트워크 에러로 일정 저장에 실패했습니다.');
+                       }
 		});
 		form.dataset.listenerAttached = 'true';
 	}

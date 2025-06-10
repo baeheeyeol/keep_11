@@ -135,7 +135,7 @@
 
 /* 일반 이벤트 컨테이너 */
 .events-container {
-	transition: opacity 0.2s ease;
+        /* 애니메이션 제거 */
 }
 
 /* 일반 이벤트 블록 */
@@ -149,9 +149,9 @@
         font-size: 0.875rem;
         color: #fff;
         cursor: pointer;
-        opacity: 0;
-        transform: translateY(-4px);
-        transition: opacity 0.3s ease, transform 0.3s ease;
+        opacity: 1;
+        transform: none;
+        transition: none;
 }
 
 .event.show {
