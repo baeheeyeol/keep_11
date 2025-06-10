@@ -7,6 +7,9 @@
   background: #fff;
   border-bottom: 1px solid #e5e7eb;
   border-radius: 10px 10px 0 0;
+  position: sticky;
+  top: 0;
+  z-index: 40;
 }
 
 .dashboard-header-left {

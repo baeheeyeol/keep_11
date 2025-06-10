@@ -140,15 +140,23 @@
 
 /* 일반 이벤트 블록 */
 .event {
-	position: absolute;
-	padding: 4px;
-	border-radius: 4px;
-	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-	box-sizing: border-box;
-	margin-bottom: 2px;
-	font-size: 0.875rem;
-	color: #fff;
-	cursor: pointer;
+        position: absolute;
+        padding: 4px;
+        border-radius: 4px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        box-sizing: border-box;
+        margin-bottom: 2px;
+        font-size: 0.875rem;
+        color: #fff;
+        cursor: pointer;
+        opacity: 0;
+        transform: translateY(-4px);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.event.show {
+        opacity: 1;
+        transform: none;
 }
 
 /* 일반 이벤트 +더보기 블록 */
