@@ -1,6 +1,10 @@
 // static/js/main/dashboard.js
 document.addEventListener('DOMContentLoaded', () => {
-	let dateInput = document.getElementById('current-date');
+        const headerEl = document.querySelector('.dashboard-header');
+        if (headerEl) {
+                document.documentElement.style.setProperty('--dashboard-header-height', `${headerEl.offsetHeight}px`);
+        }
+        let dateInput = document.getElementById('current-date');
 	if (!dateInput) {
 		return;
 	}
