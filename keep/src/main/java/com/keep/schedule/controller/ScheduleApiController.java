@@ -120,11 +120,11 @@ public class ScheduleApiController {
 	 *   "deltaHours": 0.5   // 양수면 아래(뒤 시간), 음수면 위(앞 시간)
 	 * }
 	 */
-	@PatchMapping(path = "/{id}/moveWeekly", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> moveWeeklySchedule(
-	        Authentication authentication,
-	        @PathVariable("id") Long schedulesId,
-	        @RequestBody Map<String, Double> body) {
+        @PatchMapping(path = "/{id}/moveWeekly", consumes = MediaType.APPLICATION_JSON_VALUE)
+        public ResponseEntity<?> moveWeeklySchedule(
+                Authentication authentication,
+                @PathVariable("id") Long schedulesId,
+                @RequestBody Map<String, Double> body) {
 
 	    // deltaDays, deltaHours 두 값이 모두 제공되어야 합니다.
 	    Double deltaDays = body.get("deltaDays");
@@ -137,9 +137,20 @@ public class ScheduleApiController {
 
 	    Long userId = Long.valueOf(authentication.getName());
 	    // 서비스 레이어에 "주간 이동" 로직을 위임합니다.
-	    scheduleService.moveWeeklyEvent(schedulesId, userId, deltaDays, deltaHours);
+            scheduleService.moveWeeklyEvent(schedulesId, userId, deltaDays, deltaHours);
 
-	    return ResponseEntity.ok().build();
-	}
+            return ResponseEntity.ok().build();
+        }
+
+        /**
+         * 일정 삭제
+         */
+        @DeleteMapping(path = "/{id}")
+        public ResponseEntity<?> deleteSchedule(Authentication authentication,
+                        @PathVariable("id") Long scheduleId) {
+                Long userId = Long.valueOf(authentication.getName());
+                scheduleService.deleteSchedule(scheduleId, userId);
+                return ResponseEntity.noContent().build();
+        }
 
 }

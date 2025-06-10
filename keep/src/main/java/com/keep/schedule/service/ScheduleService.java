@@ -31,12 +31,24 @@ public class ScheduleService {
 	/**
 	 * 새로운 일정을 저장합니다.
 	 */
-	@Transactional
-	public Long createAndReturnId(ScheduleDTO dto) {
-		ScheduleEntity se = mapper.toEntity(dto);
-		ScheduleEntity scheduleEntity = repository.save(se);
-		return mapper.toDto(scheduleEntity).getUserId();
-	}
+        @Transactional
+        public Long createAndReturnId(ScheduleDTO dto) {
+                ScheduleEntity se = mapper.toEntity(dto);
+                ScheduleEntity scheduleEntity = repository.save(se);
+                return scheduleEntity.getSchedulesId();
+        }
+
+        @Transactional
+        public void deleteSchedule(Long scheduleId, Long userId) {
+                ScheduleEntity entity = repository.findById(scheduleId)
+                                .orElseThrow(() -> new EntityNotFoundException("해당 일정이 존재하지 않습니다: " + scheduleId));
+
+                if (!entity.getUserId().equals(userId)) {
+                        throw new AccessDeniedException("본인의 일정만 삭제할 수 있습니다.");
+                }
+
+                repository.delete(entity);
+        }
 
 	/**
 	 * userId 사용자의 주어진 날짜(date)에 속하는 일정 목록을 반환합니다. (daily 뷰에 사용)
