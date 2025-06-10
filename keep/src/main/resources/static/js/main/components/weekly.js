@@ -112,44 +112,66 @@
 			byDay[b.dayIdx].push(b);
 		});
 
-		// 6) 요일별 “열(column)” 동적 배치
-		Object.values(byDay).forEach(dayBlocks => {
-			if (dayBlocks.length === 0) return;
+                // 6) 요일별 "열(column)" 동적 배치 - 겹치는 구간만 나눠서 계산
+                Object.values(byDay).forEach(dayBlocks => {
+                        if (dayBlocks.length === 0) return;
 
-			// a) 같은 요일 이벤트들을 “startMin 오름차순”으로 정렬
-			dayBlocks.sort((a, b) => a.startMin - b.startMin);
+                        // 이벤트별 시작/끝 값 보조 속성
+                        dayBlocks.forEach(evt => {
+                                evt._start = evt.startMin;
+                                evt._end = evt.endMin;
+                        });
 
-			// b) 각 열이 사용 중인 “끝 시간(endMin)”을 추적할 배열
-			const slotEndTimes = []; // slotEndTimes[col] = 현재 컬럼(col)의 마지막 이벤트 끝 시간
+                        const clusters = [];
+                        const seen = new Set();
+                        dayBlocks.forEach(evt => {
+                                if (seen.has(evt)) return;
+                                const queue = [evt];
+                                const comp = [];
+                                seen.add(evt);
+                                while (queue.length) {
+                                        const cur = queue.shift();
+                                        comp.push(cur);
+                                        dayBlocks.forEach(other => {
+                                                if (!seen.has(other) && other._start < cur._end && other._end > cur._start) {
+                                                        seen.add(other);
+                                                        queue.push(other);
+                                                }
+                                        });
+                                }
+                                clusters.push(comp);
+                        });
 
-			// c) 각 이벤트마다 “columnIndex” 할당
-			dayBlocks.forEach(evt => {
-				// 빈 열(현재 이벤트 시작 시간 >= slotEndTimes[col]) 찾기
-				let assignedCol = -1;
-				for (let c = 0; c < slotEndTimes.length; c++) {
-					if (evt.startMin >= slotEndTimes[c]) {
-						assignedCol = c;
-						slotEndTimes[c] = evt.endMin;
-						break;
-					}
-				}
-				// 빈 열이 없으면 새 열 추가
-				if (assignedCol === -1) {
-					assignedCol = slotEndTimes.length;
-					slotEndTimes.push(evt.endMin);
-				}
-				evt.columnIndex = assignedCol;
-			});
+                        clusters.forEach(cluster => {
+                                const cols = [];
+                                cluster.sort((a, b) => a._start - b._start);
+                                cluster.forEach(evt => {
+                                        let placed = false;
+                                        for (let i = 0; i < cols.length; i++) {
+                                                if (evt._start >= cols[i]) {
+                                                        evt.colIndex = i;
+                                                        cols[i] = evt._end;
+                                                        placed = true;
+                                                        break;
+                                                }
+                                        }
+                                        if (!placed) {
+                                                evt.colIndex = cols.length;
+                                                cols.push(evt._end);
+                                        }
+                                });
+                                const clusterMax = cols.length;
+                                cluster.forEach(evt => {
+                                        evt.clusterMaxCols = clusterMax;
+                                });
+                        });
 
-			// d) 이 요일에서 사용한 총 열 수 = slotEndTimes.length
-			const totalCols = slotEndTimes.length;
-
-			// e) 좌표 및 너비 계산
-			dayBlocks.forEach(evt => {
-				evt.percentWidth = percentPerDay / totalCols;
-				evt.leftOffsetPct = evt.dayIdx * percentPerDay + evt.columnIndex * evt.percentWidth;
-			});
-		});
+                        dayBlocks.forEach(evt => {
+                                const widthPerCluster = percentPerDay / evt.clusterMaxCols;
+                                evt.percentWidth = widthPerCluster;
+                                evt.leftOffsetPct = evt.dayIdx * percentPerDay + evt.colIndex * widthPerCluster;
+                        });
+                });
 
 		// 7) 실제 DOM에 이벤트 블록 생성
 		blocks.forEach(b => {
@@ -187,10 +209,10 @@
                 const GAP = 2; // events 간격
                 div.style.left = `calc(${leftPct}% + ${GAP}px)`;
                 div.style.width = `calc(${widthPct}% - ${GAP}px)`;
-		div.style.top = `${topPx}px`;
-		div.style.height = `${heightPx}px`;
-		div.style.backgroundColor = category;
-		div.innerHTML = `<span class="event-title">${title}</span>`;
+                div.style.top = `${topPx}px`;
+                div.style.height = `calc(${heightPx}px - ${GAP}px)`;
+                div.style.backgroundColor = category;
+                div.innerHTML = `<span class="event-title">${title}</span>`;
 
 		// 데이터 속성
 		div.dataset.id = schedulesId;
@@ -210,9 +232,10 @@
 			window.loadAndOpenScheduleModal(schedulesId);
 		});
 
-		container.appendChild(div);
-		return div;
-	}
+                container.appendChild(div);
+                requestAnimationFrame(() => div.classList.add('show'));
+                return div;
+        }
 
 	/**
 	 * makeDraggable(eventBlocks):
