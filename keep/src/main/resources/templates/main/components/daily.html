@@ -15,19 +15,19 @@
 	<!-- 일반 일정 영역 -->
 	<div class="daily-schedule">
 		<!-- 시간축 -->
-		<div class="time-column">
-			<div class="hour-label" th:each="h : ${#numbers.sequence(0,23)}">
-				<span class="hour-text"
-					th:text="${h < 12
+                <div class="time-column">
+                        <div class="hour-label" th:each="h : ${#numbers.sequence(0,24)}">
+                                <span class="hour-text"
+                                        th:text="${h < 12
                        ? '오전 ' + (h==0?12:h) + '시'
                        : '오후 ' + ((h-12)==0?12:(h-12)) + '시'}">
-					오전 12시 </span>
-			</div>
-		</div>
+                                        오전 12시 </span>
+                        </div>
+                </div>
 
 		<!-- 스케줄 그리드 -->
-		<div class="schedule-grid" id ="chedule-grid">
-			<div class="hour-slot" th:each="h : ${#numbers.sequence(0,23)}"></div>
+                <div class="schedule-grid" id ="chedule-grid">
+                        <div class="hour-slot" th:each="h : ${#numbers.sequence(0,24)}"></div>
 			<div class="events-container">
 				<!-- 일간 이벤크 카드들이 렌더링됩니다. -->
 			</div>

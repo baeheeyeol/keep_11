@@ -214,6 +214,9 @@
   box-sizing: border-box;
   /* 높이는 grid-template-rows에 의해 자동 적용 */
 }
+.hour-slot:nth-last-child(n+8):hover {
+  background: rgba(59, 130, 246, 0.1);
+}
 
 /* 이벤트 블록이 위치할 컨테이너 */
 .events-container {
