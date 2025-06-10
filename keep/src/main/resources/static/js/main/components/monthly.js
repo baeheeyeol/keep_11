@@ -128,16 +128,32 @@
       const to = new Date(cell.dataset.date);
       const deltaDays = (to - from) / (86400000);
       if (isNaN(deltaDays)) return;
+      if (window.saveToast && window.saveToast.showSaving) {
+        window.saveToast.showSaving();
+      }
       try {
         await fetch(`/api/schedules/${info.id}/moveWeekly`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ deltaDays, deltaHours: 0 })
         });
+        initMonthlySchedule();
+        if (window.saveToast && window.saveToast.showSaved) {
+          window.saveToast.showSaved(info.id, async () => {
+            await fetch(`/api/schedules/${info.id}/moveWeekly`, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ deltaDays: -deltaDays, deltaHours: 0 })
+            });
+            initMonthlySchedule();
+          });
+        }
       } catch (err) {
         console.error(err);
+        if (window.saveToast && window.saveToast.hide) {
+          window.saveToast.hide();
+        }
       }
-      initMonthlySchedule();
     });
 
     return cell;
