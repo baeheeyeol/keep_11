@@ -246,7 +246,6 @@
                         div.dataset.id = evt.schedulesId;
                         div.innerHTML = `<span class="event-title">${evt.title}</span>`;
                         container.appendChild(div);
-                        requestAnimationFrame(() => div.classList.add('show'));
                 });
 		initDragAndDrop();
 		attachGridClick();

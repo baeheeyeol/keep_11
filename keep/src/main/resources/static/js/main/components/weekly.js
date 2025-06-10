@@ -232,9 +232,8 @@
 			window.loadAndOpenScheduleModal(schedulesId);
 		});
 
-		container.appendChild(div);
-		requestAnimationFrame(() => div.classList.add('show'));
-		return div;
+                container.appendChild(div);
+                return div;
 	}
 
 	/**

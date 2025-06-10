@@ -14,7 +14,8 @@
 <link id="weekly-css" rel="stylesheet" th:href="@{/css/main/components/weekly.css}" disabled="true" />
 <link id="monthly-css" rel="stylesheet" th:href="@{/css/main/components/monthly.css}" disabled="true" />
 
-	<link rel="stylesheet" th:href="@{/css/main/components/modal/schedule-modal.css}" />
+        <link rel="stylesheet" th:href="@{/css/main/components/modal/schedule-modal.css}" />
+        <link rel="stylesheet" th:href="@{/css/main/components/modal/save-toast.css}" />
 </th:block>
 <!--/* content */-->
 <th:block layout:fragment="content">
@@ -40,8 +41,9 @@
 	
 	<!-- 	daily.html 등록 모달 -->	
 
-	     <div th:replace="~{main/components/modal/schedule-modal :: schedule-modal}"></div>
-	     <div th:replace="~{common/calendar-modal :: calendar-modal}"></div>      
+             <div th:replace="~{main/components/modal/schedule-modal :: schedule-modal}"></div>
+             <div th:replace="~{common/calendar-modal :: calendar-modal}"></div>
+             <div th:replace="~{components/modal/save-toast :: save-toast}"></div>
 
 </th:block>
 <!--/* script */-->
@@ -52,6 +54,7 @@
         <script th:src="@{/js/main/components/weekly.js}"></script>
         <script th:src="@{/js/main/components/monthly.js}"></script>
         <script th:src="@{/js/main/components/modal/schedule-modal.js}"></script>
+        <script th:src="@{/js/main/components/save-toast.js}"></script>
 </th:block>
 
 </html>
