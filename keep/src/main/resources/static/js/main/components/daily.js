@@ -49,25 +49,44 @@
 		isDragging = false;
 
 	}
-	async function updateEventTime(id, deltaHours) {
-		try {
-			const res = await fetch(`/api/schedules/${id}`, {
-				method: 'PATCH',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ deltaHours })
-			});
-			if (!res.ok) {
-				const err = await res.json().catch(() => null);
-				const msg = err?.message || `HTTP ${res.status}`;
-				alert(`일정 이동에 실패했습니다: ${msg}`);
-				return;
-			}
-			await initDailySchedule();
-		} catch (e) {
-			console.error(e);
-			alert('일정 이동 중 예외가 발생했습니다.');
-		}
-	}
+        async function updateEventTime(id, deltaHours) {
+                if (window.saveToast && window.saveToast.showSaving) {
+                        window.saveToast.showSaving();
+                }
+                try {
+                        const res = await fetch(`/api/schedules/${id}`, {
+                                method: 'PATCH',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ deltaHours })
+                        });
+                        if (!res.ok) {
+                                const err = await res.json().catch(() => null);
+                                const msg = err?.message || `HTTP ${res.status}`;
+                                if (window.saveToast && window.saveToast.hide) {
+                                        window.saveToast.hide();
+                                }
+                                alert(`일정 이동에 실패했습니다: ${msg}`);
+                                return;
+                        }
+                        await initDailySchedule();
+                        if (window.saveToast && window.saveToast.showSaved) {
+                                window.saveToast.showSaved(id, async () => {
+                                        await fetch(`/api/schedules/${id}`, {
+                                                method: 'PATCH',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify({ deltaHours: -deltaHours })
+                                        });
+                                        await initDailySchedule();
+                                });
+                        }
+                } catch (e) {
+                        console.error(e);
+                        if (window.saveToast && window.saveToast.hide) {
+                                window.saveToast.hide();
+                        }
+                        alert('일정 이동 중 예외가 발생했습니다.');
+                }
+        }
 
 	function initDragAndDrop() {
 		const grid = document.querySelector('.schedule-grid');

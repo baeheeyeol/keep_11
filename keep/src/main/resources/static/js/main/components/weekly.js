@@ -341,22 +341,36 @@
 			const newTopPx = parseFloat(eventBlocks[0].style.top.replace('px', ''));
 			const deltaHours = (newTopPx - origTopPx) / slotHeight;
 
-			if (isNaN(deltaDays) || isNaN(deltaHours)) {
-				console.error('잘못된 delta 계산:', { deltaDays, deltaHours });
-			} else {
-				try {
-					await fetch(`/api/schedules/${scheduleId}/moveWeekly`, {
-						method: 'PATCH',
-						headers: { 'Content-Type': 'application/json' },
-						body: JSON.stringify({ deltaDays, deltaHours })
-					});
-				} catch (err) {
-					console.error('일정 업데이트 중 오류:', err);
-				}
-			}
-
-			// 드래그 후 전체 다시 렌더링
-			initWeeklySchedule();
+                        if (isNaN(deltaDays) || isNaN(deltaHours)) {
+                                console.error('잘못된 delta 계산:', { deltaDays, deltaHours });
+                        } else {
+                                if (window.saveToast && window.saveToast.showSaving) {
+                                        window.saveToast.showSaving();
+                                }
+                                try {
+                                        await fetch(`/api/schedules/${scheduleId}/moveWeekly`, {
+                                                method: 'PATCH',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify({ deltaDays, deltaHours })
+                                        });
+                                        initWeeklySchedule();
+                                        if (window.saveToast && window.saveToast.showSaved) {
+                                                window.saveToast.showSaved(scheduleId, async () => {
+                                                        await fetch(`/api/schedules/${scheduleId}/moveWeekly`, {
+                                                                method: 'PATCH',
+                                                                headers: { 'Content-Type': 'application/json' },
+                                                                body: JSON.stringify({ deltaDays: -deltaDays, deltaHours: -deltaHours })
+                                                        });
+                                                        initWeeklySchedule();
+                                                });
+                                        }
+                                } catch (err) {
+                                        console.error('일정 업데이트 중 오류:', err);
+                                        if (window.saveToast && window.saveToast.hide) {
+                                                window.saveToast.hide();
+                                        }
+                                }
+                        }
 
 			document.removeEventListener('pointermove', pointerMoveHandler);
 			document.removeEventListener('pointerup', pointerUpHandler);
