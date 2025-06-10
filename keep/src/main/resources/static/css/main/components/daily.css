@@ -2,6 +2,8 @@
 :root {
         /* 시간 슬롯 높이 */
         --hour-height: 60px;
+        /* 맨 밑 "다음 날 00시" 슬롯 높이 */
+        --bottom-slot-height: 40px;
         /* 종일 이벤트 카드 최소 너비 */
         --all-day-card-width: 150px;
         /* 종일 이벤트 한 줄 높이 */
@@ -19,7 +21,7 @@
 /* 종일 이벤트 영역 */
 .events-all-day-wrapper {
         position: sticky;
-        top: calc(var(--dashboard-header-height) + var(--weekday-header-height));
+        top: var(--dashboard-header-height);
         z-index: 20;
         display: grid;
         grid-template-columns: var(--time-column-width) 1fr;
@@ -105,10 +107,13 @@
 }
 
 .hour-label {
-	position: relative;
-	height: var(--hour-height);
-	box-sizing: border-box;
-	border-bottom: 1px solid #e5e7eb;
+        position: relative;
+        height: var(--hour-height);
+        box-sizing: border-box;
+        border-bottom: 1px solid #e5e7eb;
+}
+.hour-label:last-child {
+        height: var(--bottom-slot-height);
 }
 
 .hour-text {
@@ -126,13 +131,19 @@
 	position: relative;
 	background: #fff;
 	overflow: hidden;
-	height: calc(24 * var(--hour-height));
+        height: calc((24 * var(--hour-height)) + var(--bottom-slot-height));
 }
 
 .hour-slot {
-	height: var(--hour-height);
-	border-bottom: 1px solid #e5e7eb;
-	box-sizing: border-box;
+        height: var(--hour-height);
+        border-bottom: 1px solid #e5e7eb;
+        box-sizing: border-box;
+}
+.hour-slot:last-child {
+        height: var(--bottom-slot-height);
+}
+.hour-slot:not(:last-child):hover {
+        background: rgba(59, 130, 246, 0.1);
 }
 
 /* 일반 이벤트 컨테이너 */
