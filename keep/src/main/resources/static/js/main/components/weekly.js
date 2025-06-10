@@ -564,19 +564,27 @@
 			if (window.openScheduleModal) window.openScheduleModal();
 		}
 
-		function pointerMove(eMove) {
-			if (!selecting) return;
-			const rect = grid.getBoundingClientRect();
-			const curY = eMove.clientY - rect.top;
-			const curX = eMove.clientX - rect.left;
-			const colIdx = Math.floor(curX / (rect.width / 7));
-			if (colIdx !== startColIdx) return;
-			const top = Math.min(startY, curY);
-			const bottom = Math.max(startY, curY);
-			selectDiv.style.top = `${top}px`;
-			selectDiv.style.height = `${bottom - top}px`;
-			selectDiv.dataset.time = `${formatTime(top)} - ${formatTime(bottom)}`;
-		}
+                function pointerMove(eMove) {
+                        if (!selecting) return;
+                        const rect = grid.getBoundingClientRect();
+                        const curY = eMove.clientY - rect.top;
+                        const curX = eMove.clientX - rect.left;
+                        const colIdx = Math.floor(curX / (rect.width / 7));
+                        if (colIdx !== startColIdx) return;
+                        const top = Math.min(startY, curY);
+                        const bottom = Math.max(startY, curY);
+                        selectDiv.style.top = `${top}px`;
+                        selectDiv.style.height = `${bottom - top}px`;
+                        selectDiv.dataset.time = `${formatTime(top)} - ${formatTime(bottom)}`;
+                }
+
+                function cancelSelection() {
+                        if (!selecting) return;
+                        document.removeEventListener('pointermove', pointerMove);
+                        document.removeEventListener('pointerup', pointerUp);
+                        if (selectDiv) selectDiv.remove();
+                        selecting = false;
+                }
 
 		function pointerUp(eUp) {
 			if (!selecting) return;
@@ -600,27 +608,33 @@
 			openModalWithRange(startDateStr, top, bottom);
 		}
 
-		grid.addEventListener('pointerdown', e => {
-			if (e.target.closest('.event')) return;
-			const slot = e.target.closest('.hour-slot');
-			if (!slot) return;
-			console.log(slot)
-			const rect = grid.getBoundingClientRect();
-			const idx = Array.from(slot.parentNode.children).indexOf(slot);
-			startColIdx = idx % 7;
-			startDateStr = getDateForSlot(slot.id);
-			startY = e.clientY - rect.top;
-			selecting = true;
-			selectDiv = document.createElement('div');
-			selectDiv.className = 'drag-select';
-			selectDiv.style.left = `calc(${startColIdx * dayWidthPct}% )`;
-			selectDiv.style.width = `calc(${dayWidthPct}% )`;
-			selectDiv.style.top = `${startY}px`;
-			grid.appendChild(selectDiv);
+                grid.addEventListener('pointerdown', e => {
+                        if (e.target.closest('.event')) return;
+                        const slot = e.target.closest('.hour-slot');
+                        if (!slot) return;
+                        console.log(slot)
+                        const rect = grid.getBoundingClientRect();
+                        const idx = Array.from(slot.parentNode.children).indexOf(slot);
+                        startColIdx = idx % 7;
+                        startDateStr = getDateForSlot(slot.id);
+                        startY = e.clientY - rect.top;
+                        selecting = true;
+                        selectDiv = document.createElement('div');
+                        selectDiv.className = 'drag-select';
+                        selectDiv.style.left = `calc(${startColIdx * dayWidthPct}% )`;
+                        selectDiv.style.width = `calc(${dayWidthPct}% )`;
+                        selectDiv.style.top = `${startY}px`;
+                        grid.appendChild(selectDiv);
 
-			document.addEventListener('pointermove', pointerMove);
-			document.addEventListener('pointerup', pointerUp);
-		});
+                        document.addEventListener('pointermove', pointerMove);
+                        document.addEventListener('pointerup', pointerUp);
+                });
+
+                grid.addEventListener('contextmenu', e => {
+                        if (!selecting) return;
+                        e.preventDefault();
+                        cancelSelection();
+                });
 
 		grid.addEventListener('click', e => {
 			if (selecting) return; // drag selection handled separately
