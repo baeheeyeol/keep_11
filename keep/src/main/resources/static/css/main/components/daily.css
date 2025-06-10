@@ -1,32 +1,35 @@
 /* daily.css */
 :root {
-	/* 시간 슬롯 높이 */
-	--hour-height: 60px;
-	/* 종일 이벤트 카드 최소 너비 */
-	--all-day-card-width: 150px;
-	/* 종일 이벤트 한 줄 높이 */
-	--all-day-row-height: 20px;
-	/* 일반 이벤트 최대 컬럼 수 */
-	--normal-event-col-count: 9;
-	--normal-event-width: calc(100%/ var(--normal-event-col-count));
+        /* 시간 슬롯 높이 */
+        --hour-height: 60px;
+        /* 종일 이벤트 카드 최소 너비 */
+        --all-day-card-width: 150px;
+        /* 종일 이벤트 한 줄 높이 */
+        --all-day-row-height: 20px;
+        /* 일반 이벤트 최대 컬럼 수 */
+        --normal-event-col-count: 9;
+        --normal-event-width: calc(100%/ var(--normal-event-col-count));
+        /* 주간 뷰와 동일한 레이아웃을 위해 추가 */
+        --weekday-header-height: 40px;
+        --time-column-width: 60px;
 }
 
 /* 종일 이벤트 영역 */
 .events-all-day-wrapper {
-	position: sticky;
-	top: var(--weekday-header-height);
-	z-index: 20;
-	display: grid;
-	grid-template-columns: var(--time-column-width) 1fr;
-	grid-template-rows: auto auto;
-	padding: 8px;
-	background: #f9fafb;
-	border-bottom: 1px solid #e5e7eb;
+        position: sticky;
+        top: var(--weekday-header-height);
+        z-index: 20;
+        display: grid;
+        grid-template-columns: var(--time-column-width) 1fr;
+        padding: 8px;
+        background: #f9fafb;
+        border-bottom: 1px solid #e5e7eb;
 }
 
 /* 종일 이벤트 카드 리스트 */
 .events-all-day-list {
-	position: relative;
+        position: relative;
+        height: calc(var(--all-day-row-height) * 2);
 }
 
 .all-day-event {
@@ -70,28 +73,27 @@
 
 /* +더보기 버튼 (종일) */
 .all-day-toggle {
-	grid-row: 2;
-	grid-column: 1;
-	justify-self: start;
-	margin-top: 4px;
-	padding: 4px 8px;
-	background: transparent;
-	border: none;
-	font-size: 0.875rem;
-	color: #3b82f6;
-	cursor: pointer;
+        grid-column: 1 / -1;
+        justify-self: start;
+        margin-top: 4px;
+        padding: 4px 8px;
+        background: transparent;
+        border: none;
+        font-size: 0.875rem;
+        color: #3b82f6;
+        cursor: pointer;
 }
 /* "종일" 레이블 */
 .all-day-label {
-	grid-row: 1;
-	grid-column: 1;
-	flex: 0 0 var(--time-column-width);
-/* 	display: flex; */
-	align-items: center;
-	justify-content: center;
-	font-weight: 600;
-	color: #333;
-	margin-right: 8px;
+        grid-row: 1;
+        grid-column: 1;
+        flex: 0 0 var(--time-column-width);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        color: #333;
+        margin-right: 8px;
 }
 /* 시간축 컬럼 */
 .time-column {
