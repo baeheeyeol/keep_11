@@ -175,6 +175,7 @@
 			wrapperEl.appendChild(btn);
 		}
 	}
+	
 
 	async function initDailySchedule() {
 		const grid = document.querySelector('.schedule-grid');
