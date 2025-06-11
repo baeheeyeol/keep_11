@@ -25,8 +25,10 @@ document.addEventListener('DOMContentLoaded', () => {
 	dateInput.dataset.selectDate = `${yyyy}-${mm}-${dd}`;
 
 
-	const fragmentContainer = document.getElementById('fragment-container');
-	const viewBtns = document.querySelectorAll('.view-btn');
+        const fragmentContainer = document.getElementById('fragment-container');
+        const viewBtns = document.querySelectorAll('.view-btn');
+        const prevBtn = document.getElementById('prev-date');
+        const nextBtn = document.getElementById('next-date');
 
 	function updateDisplay(view) {
 		const [y, m, d] = dateInput.dataset.selectDate.split('-').map(Number);
@@ -51,7 +53,40 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 
-	updateDisplay(dateInput.dataset.view);
+        updateDisplay(dateInput.dataset.view);
+
+        function refreshSchedule() {
+                const view = dateInput.dataset.view;
+                if (view === 'daily') {
+                        window.initDailySchedule && window.initDailySchedule();
+                } else if (view === 'weekly') {
+                        window.initWeeklySchedule && window.initWeeklySchedule();
+                } else if (view === 'monthly') {
+                        window.initMonthlySchedule && window.initMonthlySchedule();
+                }
+        }
+
+        function changeDate(delta) {
+                const [y, m, d] = dateInput.dataset.selectDate.split('-').map(Number);
+                const dateObj = new Date(y, m - 1, d);
+                const view = dateInput.dataset.view;
+                if (view === 'daily') {
+                        dateObj.setDate(dateObj.getDate() + delta);
+                } else if (view === 'weekly') {
+                        dateObj.setDate(dateObj.getDate() + delta * 7);
+                } else if (view === 'monthly') {
+                        dateObj.setMonth(dateObj.getMonth() + delta);
+                }
+                const yyyy = dateObj.getFullYear();
+                const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+                const dd = String(dateObj.getDate()).padStart(2, '0');
+                dateInput.dataset.selectDate = `${yyyy}-${mm}-${dd}`;
+                updateDisplay(view);
+                if (view === 'weekly' && window.updateWeekDateNumbers) {
+                        window.updateWeekDateNumbers();
+                }
+                refreshSchedule();
+        }
 
 	// 6) 컴포넌트 로드 함수
         function loadView(view) {
@@ -102,6 +137,14 @@ document.addEventListener('DOMContentLoaded', () => {
 			loadView(view);
 		});
 	});
-	window.loadView = loadView;
-	window.updateDisplay = updateDisplay;
+        window.loadView = loadView;
+        window.updateDisplay = updateDisplay;
+        window.refreshSchedule = refreshSchedule;
+
+        if (prevBtn) {
+                prevBtn.addEventListener('click', () => changeDate(-1));
+        }
+        if (nextBtn) {
+                nextBtn.addEventListener('click', () => changeDate(1));
+        }
 });
