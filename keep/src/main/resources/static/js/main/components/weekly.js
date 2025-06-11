@@ -547,22 +547,34 @@
 			return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
 		}
 
-		function openModalWithRange(dateStr, topPx, bottomPx) {
-			const startMinTot = Math.round((topPx / slotHeight) * 60);
-			const endMinTot = Math.round((bottomPx / slotHeight) * 60);
-			const startHour = Math.floor(startMinTot / 60);
-			const startMin = startMinTot % 60;
-			const endHour = Math.floor(endMinTot / 60);
-			const endMin = endMinTot % 60;
-			const [y, m, d] = dateStr.split('-').map(v => v.padStart(2, '0'));
-			document.getElementById('sched-start-day').value = `${y}-${m}-${d}`;
-			document.getElementById('sched-end-day').value = `${y}-${m}-${d}`;
-			document.getElementById('sched-start-hour').value = String(startHour).padStart(2, '0');
-			document.getElementById('sched-start-min').value = String(startMin).padStart(2, '0');
-			document.getElementById('sched-end-hour').value = String(endHour).padStart(2, '0');
-			document.getElementById('sched-end-min').value = String(endMin).padStart(2, '0');
-			if (window.openScheduleModal) window.openScheduleModal();
-		}
+                function openModalWithRange(dateStr, topPx, bottomPx) {
+                        const startMinTot = Math.round((topPx / slotHeight) * 60);
+                        const endMinTot = Math.round((bottomPx / slotHeight) * 60);
+                        const startHour = Math.floor(startMinTot / 60);
+                        const startMin = startMinTot % 60;
+                        let endHour = Math.floor(endMinTot / 60);
+                        const endMin = endMinTot % 60;
+                        const [y, m, d] = dateStr.split('-').map(v => v.padStart(2, '0'));
+
+                        let endDay = `${y}-${m}-${d}`;
+                        if (endHour >= 24) {
+                                endHour -= 24;
+                                const next = new Date(dateStr);
+                                next.setDate(next.getDate() + 1);
+                                const ny = next.getFullYear();
+                                const nm = String(next.getMonth() + 1).padStart(2, '0');
+                                const nd = String(next.getDate()).padStart(2, '0');
+                                endDay = `${ny}-${nm}-${nd}`;
+                        }
+
+                        document.getElementById('sched-start-day').value = `${y}-${m}-${d}`;
+                        document.getElementById('sched-end-day').value = endDay;
+                        document.getElementById('sched-start-hour').value = String(startHour).padStart(2, '0');
+                        document.getElementById('sched-start-min').value = String(startMin).padStart(2, '0');
+                        document.getElementById('sched-end-hour').value = String(endHour).padStart(2, '0');
+                        document.getElementById('sched-end-min').value = String(endMin).padStart(2, '0');
+                        if (window.openScheduleModal) window.openScheduleModal();
+                }
 
                 function pointerMove(eMove) {
                         if (!selecting) return;
@@ -614,9 +626,12 @@
                         if (e.target.closest('.event')) return;
                         const slot = e.target.closest('.hour-slot');
                         if (!slot) return;
-                        console.log(slot)
+
+                        let idx = Array.from(slot.parentNode.children).indexOf(slot);
+                        const rowIdx = (idx / 7) | 0;
+                        if (rowIdx === 24) return; // ignore the bottom slot
+
                         const rect = grid.getBoundingClientRect();
-                        const idx = Array.from(slot.parentNode.children).indexOf(slot);
                         startColIdx = idx % 7;
                         startDateStr = getDateForSlot(slot.id);
                         startY = e.clientY - rect.top;
@@ -639,24 +654,38 @@
                         cancelSelection();
                 });
 
-		grid.addEventListener('click', e => {
-			if (selecting) return; // drag selection handled separately
-			const slot = e.target.closest('.hour-slot');
-			if (!slot) return;
+                grid.addEventListener('click', e => {
+                        if (selecting) return; // drag selection handled separately
+                        const slot = e.target.closest('.hour-slot');
+                        if (!slot) return;
 
-			let idx = Array.from(slot.parentNode.children).indexOf(slot);
-			const dateStr = getDateForSlot(slot.id);
-			idx = (idx / 7) | 0;
+                        let idx = Array.from(slot.parentNode.children).indexOf(slot);
+                        const dateStr = getDateForSlot(slot.id);
+                        const rowIdx = (idx / 7) | 0;
+                        if (rowIdx === 24) return; // bottom slot does nothing
 
-			const [y, m, d] = dateStr.split('-').map(v => v.padStart(2, '0'));
-			document.getElementById('sched-start-day').value = `${y}-${m}-${d}`;
-			document.getElementById('sched-end-day').value = `${y}-${m}-${d}`;
-			document.getElementById('sched-start-hour').value = String(idx).padStart(2, '0');
-			document.getElementById('sched-start-min').value = '00';
-			document.getElementById('sched-end-hour').value = String(idx + 1).padStart(2, '0');
-			document.getElementById('sched-end-min').value = '00';
-			if (window.openScheduleModal) window.openScheduleModal();
-		});
+                        const [y, m, d] = dateStr.split('-').map(v => v.padStart(2, '0'));
+                        document.getElementById('sched-start-day').value = `${y}-${m}-${d}`;
+
+                        let endDay = `${y}-${m}-${d}`;
+                        let endHour = rowIdx + 1;
+                        if (rowIdx === 23) {
+                                const next = new Date(`${y}-${m}-${d}`);
+                                next.setDate(next.getDate() + 1);
+                                const ny = next.getFullYear();
+                                const nm = String(next.getMonth() + 1).padStart(2, '0');
+                                const nd = String(next.getDate()).padStart(2, '0');
+                                endDay = `${ny}-${nm}-${nd}`;
+                                endHour = 0;
+                        }
+
+                        document.getElementById('sched-end-day').value = endDay;
+                        document.getElementById('sched-start-hour').value = String(rowIdx).padStart(2, '0');
+                        document.getElementById('sched-start-min').value = '00';
+                        document.getElementById('sched-end-hour').value = String(endHour).padStart(2, '0');
+                        document.getElementById('sched-end-min').value = '00';
+                        if (window.openScheduleModal) window.openScheduleModal();
+                });
 		grid.dataset.modalClickAttached = 'true';
 	}
 
