@@ -290,23 +290,36 @@
 			return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
 		}
 
-		function openModalWithRange(topPx, bottomPx) {
-			const startMinTot = Math.round((topPx / H) * 60);
-			const endMinTot = Math.round((bottomPx / H) * 60);
-			const startHour = Math.floor(startMinTot / 60);
-			const startMin = startMinTot % 60;
-			const endHour = Math.floor(endMinTot / 60);
-			const endMin = endMinTot % 60;
-			const dateStr = document.getElementById('current-date').dataset.selectDate;
-			const [y, m, d] = dateStr.split('-').map(v => v.padStart(2, '0'));
-			document.getElementById('sched-start-day').value = `${y}-${m}-${d}`;
-			document.getElementById('sched-end-day').value = `${y}-${m}-${d}`;
-			document.getElementById('sched-start-hour').value = String(startHour).padStart(2, '0');
-			document.getElementById('sched-start-min').value = String(startMin).padStart(2, '0');
-			document.getElementById('sched-end-hour').value = String(endHour).padStart(2, '0');
-			document.getElementById('sched-end-min').value = String(endMin).padStart(2, '0');
-			if (window.openScheduleModal) window.openScheduleModal();
-		}
+                function openModalWithRange(topPx, bottomPx) {
+                        const startMinTot = Math.round((topPx / H) * 60);
+                        const endMinTot = Math.round((bottomPx / H) * 60);
+                        let startHour = Math.floor(startMinTot / 60);
+                        const startMin = startMinTot % 60;
+                        let endHour = Math.floor(endMinTot / 60);
+                        const endMin = endMinTot % 60;
+                        const dateStr = document.getElementById('current-date').dataset.selectDate;
+                        const [y, m, d] = dateStr.split('-').map(v => v.padStart(2, '0'));
+                        const startDate = new Date(`${y}-${m}-${d}`);
+                        const endDate = new Date(startDate);
+
+                        if (startHour >= 24) {
+                                startHour -= 24;
+                                startDate.setDate(startDate.getDate() + 1);
+                        }
+                        if (endHour >= 24) {
+                                endHour -= 24;
+                                endDate.setDate(endDate.getDate() + 1);
+                        }
+
+                        const pad = n => String(n).padStart(2, '0');
+                        document.getElementById('sched-start-day').value = `${startDate.getFullYear()}-${pad(startDate.getMonth() + 1)}-${pad(startDate.getDate())}`;
+                        document.getElementById('sched-end-day').value = `${endDate.getFullYear()}-${pad(endDate.getMonth() + 1)}-${pad(endDate.getDate())}`;
+                        document.getElementById('sched-start-hour').value = pad(startHour);
+                        document.getElementById('sched-start-min').value = pad(startMin);
+                        document.getElementById('sched-end-hour').value = pad(endHour);
+                        document.getElementById('sched-end-min').value = pad(endMin);
+                        if (window.openScheduleModal) window.openScheduleModal();
+                }
 
                 function pointerMove(eMove) {
                         if (!selecting) return;
@@ -363,21 +376,33 @@
                         cancelSelection();
                 });
 
-		grid.addEventListener('click', e => {
-			if (selecting) return; // drag selection handled separately
-			const slot = e.target.closest('.hour-slot');
-			if (!slot) return;
-			let idx = Array.from(slot.parentNode.children).indexOf(slot);
-			const dateStr = document.getElementById('current-date').dataset.selectDate;
-			const [y, m, d] = dateStr.split('-').map(v => v.padStart(2, '0'));
-			document.getElementById('sched-start-day').value = `${y}-${m}-${d}`;
-			document.getElementById('sched-end-day').value = `${y}-${m}-${d}`;
-			document.getElementById('sched-start-hour').value = String(idx).padStart(2, '0');
-			document.getElementById('sched-start-min').value = '00';
-			document.getElementById('sched-end-hour').value = String(idx + 1).padStart(2, '0');
-			document.getElementById('sched-end-min').value = '00';
-			if (window.openScheduleModal) window.openScheduleModal();
-		});
+                grid.addEventListener('click', e => {
+                        if (selecting) return; // drag selection handled separately
+                        const slot = e.target.closest('.hour-slot');
+                        if (!slot) return;
+                        const hourSlots = Array.from(grid.querySelectorAll('.hour-slot'));
+                        const idx = hourSlots.indexOf(slot);
+                        const lastIdx = hourSlots.length - 1;
+                        if (idx === lastIdx) return; // ignore click on bottom dummy slot
+
+                        const dateStr = document.getElementById('current-date').dataset.selectDate;
+                        const [y, m, d] = dateStr.split('-').map(v => v.padStart(2, '0'));
+                        const startDate = new Date(`${y}-${m}-${d}`);
+                        const endDate = new Date(startDate);
+                        let endHour = idx + 1;
+                        if (endHour >= 24) {
+                                endHour -= 24;
+                                endDate.setDate(endDate.getDate() + 1);
+                        }
+                        const pad = n => String(n).padStart(2, '0');
+                        document.getElementById('sched-start-day').value = `${startDate.getFullYear()}-${pad(startDate.getMonth() + 1)}-${pad(startDate.getDate())}`;
+                        document.getElementById('sched-end-day').value = `${endDate.getFullYear()}-${pad(endDate.getMonth() + 1)}-${pad(endDate.getDate())}`;
+                        document.getElementById('sched-start-hour').value = pad(idx);
+                        document.getElementById('sched-start-min').value = '00';
+                        document.getElementById('sched-end-hour').value = pad(endHour);
+                        document.getElementById('sched-end-min').value = '00';
+                        if (window.openScheduleModal) window.openScheduleModal();
+                });
 		grid.dataset.modalClickAttached = 'true';
 	}
 
