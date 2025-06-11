@@ -100,9 +100,6 @@
                     const dd = zeroPad(selectedDate.getDate());
                     formattedValue = `${yyyy}.${mm}`;
                     activeInput.dataset.selectDate = `${yyyy}-${mm}-${dd}`;
-                    if (window.initMonthlySchedule) {
-                        window.initMonthlySchedule();
-                    }
                 } else if (view === 'daily') {
                     const yyyy = selectedDate.getFullYear();
                     const mm = zeroPad(selectedDate.getMonth() + 1);
@@ -120,6 +117,9 @@
                 activeInput.value = formattedValue;
                 if (window.updateDisplay) {
                     window.updateDisplay(view);
+                }
+                if (window.refreshSchedule) {
+                    window.refreshSchedule();
                 }
                 closeCalendar();
             });
