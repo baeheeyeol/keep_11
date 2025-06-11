@@ -248,6 +248,7 @@
 
 		const container = grid.querySelector('.events-container');
 		container.innerHTML = '';
+                updateCurrentTimeLine();
 		const H = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hour-height'));
 		const GAP = 2;
 
@@ -269,9 +270,21 @@
                         div.innerHTML = `<span class="event-title">${evt.title}</span>`;
                         container.appendChild(div);
                 });
-		initDragAndDrop();
-		attachGridClick();
-	}
+                initDragAndDrop();
+                attachGridClick();
+        }
+
+        function updateCurrentTimeLine() {
+                const line = document.querySelector('.current-time-line');
+                if (!line) return;
+                const now = new Date();
+                const h = now.getHours() + now.getMinutes() / 60;
+                const H = parseFloat(getComputedStyle(document.documentElement)
+                        .getPropertyValue('--hour-height'));
+                line.style.top = `${h * H}px`;
+                const pad = n => String(n).padStart(2, '0');
+                line.dataset.time = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+        }
 
 	function attachGridClick() {
 		const grid = document.querySelector('.schedule-grid');
@@ -359,6 +372,9 @@
                         if (e.target.closest('.event')) return;
                         const slot = e.target.closest('.hour-slot');
                         if (!slot) return;
+                        const hourSlots = Array.from(grid.querySelectorAll('.hour-slot'));
+                        const idx = hourSlots.indexOf(slot);
+                        if (idx === hourSlots.length - 1) return;
                         selecting = true;
                         startY = e.clientY - grid.getBoundingClientRect().top;
                         selectDiv = document.createElement('div');

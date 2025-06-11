@@ -495,16 +495,39 @@
 	}
 
 	// 현재 시간선 위치 및 헤더의 날짜 숫자 업데이트
-	function updateCurrentTimeLine() {
-		const line = document.querySelector('.current-time-line');
-		const now = new Date();
-		const h = now.getHours() + now.getMinutes() / 60;
-		const slotHeight = parseFloat(
-			getComputedStyle(document.documentElement).getPropertyValue('--hour-height')
-		);
-		line.style.top = `${h * slotHeight}px`;
-		updateWeekDateNumbers();
-	}
+        function updateCurrentTimeLine() {
+                const line = document.querySelector('.current-time-line');
+                if (!line) return;
+                const now = new Date();
+                const h = now.getHours() + now.getMinutes() / 60;
+                const slotHeight = parseFloat(
+                        getComputedStyle(document.documentElement).getPropertyValue('--hour-height')
+                );
+                line.style.top = `${h * slotHeight}px`;
+
+                const currentDateInput = document.getElementById('current-date');
+                const selectedDate = new Date(currentDateInput.dataset.selectDate);
+                const weekStart = new Date(selectedDate);
+                weekStart.setDate(selectedDate.getDate() - selectedDate.getDay());
+
+                const todayMid = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const diff = Math.floor((todayMid - new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate())) / 86400000);
+
+                const pct = 100 / 7;
+                if (diff < 0 || diff > 6) {
+                        line.style.display = 'none';
+                } else {
+                        line.style.display = '';
+                        line.style.left = `calc(${diff * pct}% )`;
+                        line.style.width = `calc(${pct}% )`;
+                        line.style.right = 'auto';
+                }
+
+                const pad = n => String(n).padStart(2, '0');
+                line.dataset.time = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+
+                updateWeekDateNumbers();
+        }
 
 	// 요일 헤더의 .date-number에 실제 날짜(숫자) 채우기
 	function updateWeekDateNumbers() {
