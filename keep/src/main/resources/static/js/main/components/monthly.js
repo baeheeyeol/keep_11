@@ -16,8 +16,11 @@
     const month = parseInt(monthStr, 10) - 1;
     const first = new Date(year, month, 1);
     const last = new Date(year, month + 1, 0);
+    const start = new Date(year, month, 1 - first.getDay());
+    const end = new Date(last);
+    end.setDate(end.getDate() + (6 - end.getDay()));
 
-    const res = await fetch(`/api/schedules?start=${formatYMD(first)}&end=${formatYMD(last)}`);
+    const res = await fetch(`/api/schedules?start=${formatYMD(start)}&end=${formatYMD(end)}`);
     const events = res.ok ? await res.json() : [];
 
     renderCalendar(first, events);
@@ -69,59 +72,42 @@
     const month = firstDate.getMonth();
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const rowCount = Math.ceil((firstDay + daysInMonth) / 7);
+    const displayStart = new Date(year, month, 1 - firstDay);
+    const displayEnd = new Date(displayStart);
+    displayEnd.setDate(displayStart.getDate() + rowCount * 7 - 1);
 
     const dayMap = {};
     const segments = [];
-
-    const monthStart = new Date(year, month, 1);
-    const monthEnd = new Date(year, month + 1, 0);
 
     events.forEach(e => {
       const s = new Date(e.startTs);
       const eDate = new Date(e.endTs);
       const start = new Date(s.getFullYear(), s.getMonth(), s.getDate());
       const end = new Date(eDate.getFullYear(), eDate.getMonth(), eDate.getDate());
-      if (end < monthStart || start > monthEnd) return;
+      if (end < displayStart || start > displayEnd) return;
 
-      if (start.getTime() === end.getTime()) {
-        if (start.getMonth() === month) {
-          const d = start.getDate();
-          if (!dayMap[d]) dayMap[d] = [];
-          dayMap[d].push(e);
-        }
-      } else {
-        if (start >= monthStart && start <= monthEnd && start.getMonth() === month) {
-          const d = start.getDate();
-          if (!dayMap[d]) dayMap[d] = [];
-          dayMap[d].push(e);
-        }
-        let nextWeek = new Date(start);
-        nextWeek.setDate(nextWeek.getDate() + (7 - nextWeek.getDay()));
-        while (nextWeek <= end) {
-          if (nextWeek >= monthStart && nextWeek <= monthEnd && nextWeek.getMonth() === month) {
-            const nd = nextWeek.getDate();
-            if (!dayMap[nd]) dayMap[nd] = [];
-            dayMap[nd].push(e);
-          }
-          nextWeek.setDate(nextWeek.getDate() + 7);
-        }
-        let segStart = start < monthStart ? monthStart : start;
-        const realEnd = end > monthEnd ? monthEnd : end;
-        while (segStart <= realEnd) {
-          const weekEnd = new Date(segStart);
-          weekEnd.setDate(segStart.getDate() + (6 - weekEnd.getDay()));
-          const segEnd = weekEnd < realEnd ? weekEnd : realEnd;
-          segments.push({
-            id: e.schedulesId,
-            title: e.title,
-            category: e.category,
-            start: new Date(segStart),
-            end: new Date(segEnd),
-            eventStart: start
-          });
-          segStart = new Date(segEnd);
-          segStart.setDate(segStart.getDate() + 1);
-        }
+      const firstVisible = start < displayStart ? displayStart : start;
+      const key = formatYMD(firstVisible);
+      if (!dayMap[key]) dayMap[key] = [];
+      dayMap[key].push(e);
+
+      let segStart = start < displayStart ? displayStart : start;
+      const realEnd = end > displayEnd ? displayEnd : end;
+      while (segStart <= realEnd) {
+        const weekEnd = new Date(segStart);
+        weekEnd.setDate(segStart.getDate() + (6 - weekEnd.getDay()));
+        const segEnd = weekEnd < realEnd ? weekEnd : realEnd;
+        segments.push({
+          id: e.schedulesId,
+          title: e.title,
+          category: e.category,
+          start: new Date(segStart),
+          end: new Date(segEnd),
+          eventStart: start
+        });
+        segStart = new Date(segEnd);
+        segStart.setDate(segStart.getDate() + 1);
       }
     });
 
@@ -129,26 +115,31 @@
     const prevDays = prevMonth.getDate();
     for (let i = firstDay - 1; i >= 0; i--) {
       const d = prevDays - i;
-      calendar.appendChild(createDayCell(prevMonth.getFullYear(), prevMonth.getMonth(), d, [], true));
+      const date = new Date(prevMonth.getFullYear(), prevMonth.getMonth(), d);
+      const key = formatYMD(date);
+      calendar.appendChild(createDayCell(date.getFullYear(), date.getMonth(), d, dayMap[key] || [], true));
     }
 
     for (let d = 1; d <= daysInMonth; d++) {
-      const cell = createDayCell(year, month, d, dayMap[d] || []);
+      const date = new Date(year, month, d);
+      const key = formatYMD(date);
+      const cell = createDayCell(year, month, d, dayMap[key] || []);
       calendar.appendChild(cell);
     }
 
-    const rowCount = Math.ceil((firstDay + daysInMonth) / 7);
     const totalCells = rowCount * 7;
     const nextMonth = new Date(year, month + 1, 1);
     let nextDay = 1;
     while (calendar.children.length < totalCells) {
-      calendar.appendChild(createDayCell(nextMonth.getFullYear(), nextMonth.getMonth(), nextDay++, [], true));
+      const date = new Date(nextMonth.getFullYear(), nextMonth.getMonth(), nextDay++);
+      const key = formatYMD(date);
+      calendar.appendChild(createDayCell(date.getFullYear(), date.getMonth(), date.getDate(), dayMap[key] || [], true));
     }
 
     adjustLayout(rowCount);
     attachResize(rowCount);
     attachWheelNavigation();
-    renderSegments(calendar, segments, firstDay);
+    renderSegments(calendar, segments, displayStart);
     attachRangeSelection(calendar);
   }
 
@@ -264,7 +255,7 @@
     return cell;
   }
 
-  function renderSegments(calendar, segs, firstDay) {
+  function renderSegments(calendar, segs, displayStart) {
     if (!segs.length) return;
     const overlay = document.createElement('div');
     overlay.className = 'monthly-events-overlay';
@@ -280,8 +271,8 @@
     const pct = 100 / 7;
 
     segs.sort((a, b) => a.start - b.start).forEach(seg => {
-      const sIdx = firstDay + (seg.start.getDate() - 1);
-      const eIdx = firstDay + (seg.end.getDate() - 1);
+      const sIdx = Math.floor((seg.start - displayStart) / 86400000);
+      const eIdx = Math.floor((seg.end - displayStart) / 86400000);
       const row = Math.floor(sIdx / 7);
       const col = sIdx % 7;
       const span = eIdx - sIdx + 1;
