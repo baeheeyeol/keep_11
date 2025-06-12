@@ -37,6 +37,11 @@
   cursor: pointer;
   border-left-width: 4px;
   border-left-style: solid;
+  transition: background-color 0.2s ease;
+}
+
+#monthly-more-list li:hover {
+  background: #f3f4f6;
 }
 
 #monthly-more-close {
@@ -47,4 +52,9 @@
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#monthly-more-close:hover {
+  background: #e5e7eb;
 }
