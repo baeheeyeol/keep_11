@@ -1,5 +1,6 @@
 // static/js/main/components/monthly.js
 (function() {
+  let suppressCellClick = false;
   function formatYMD(date) {
     const y = date.getFullYear();
     const m = String(date.getMonth() + 1).padStart(2, '0');
@@ -78,7 +79,6 @@
     displayEnd.setDate(displayStart.getDate() + rowCount * 7 - 1);
 
     const dayMap = {};
-    const segments = [];
 
     events.forEach(e => {
       const s = new Date(e.startTs);
@@ -87,31 +87,13 @@
       const end = new Date(eDate.getFullYear(), eDate.getMonth(), eDate.getDate());
       if (end < displayStart || start > displayEnd) return;
 
-      const isSingleDay = start.getTime() === end.getTime();
-
-      if (isSingleDay) {
-        const firstVisible = start < displayStart ? displayStart : start;
-        const key = formatYMD(firstVisible);
+      const cur = start < displayStart ? new Date(displayStart) : new Date(start);
+      const last = end > displayEnd ? new Date(displayEnd) : new Date(end);
+      while (cur <= last) {
+        const key = formatYMD(cur);
         if (!dayMap[key]) dayMap[key] = [];
         dayMap[key].push(e);
-      } else {
-        let segStart = start < displayStart ? displayStart : start;
-        const realEnd = end > displayEnd ? displayEnd : end;
-        while (segStart <= realEnd) {
-          const weekEnd = new Date(segStart);
-          weekEnd.setDate(segStart.getDate() + (6 - weekEnd.getDay()));
-          const segEnd = weekEnd < realEnd ? weekEnd : realEnd;
-          segments.push({
-            id: e.schedulesId,
-            title: e.title,
-            category: e.category,
-            start: new Date(segStart),
-            end: new Date(segEnd),
-            eventStart: start
-          });
-          segStart = new Date(segEnd);
-          segStart.setDate(segStart.getDate() + 1);
-        }
+        cur.setDate(cur.getDate() + 1);
       }
     });
 
@@ -143,7 +125,6 @@
     adjustLayout(rowCount);
     attachResize(rowCount);
     attachWheelNavigation();
-    renderSegments(calendar, segments, displayStart);
     attachRangeSelection(calendar);
   }
 
@@ -173,10 +154,19 @@
       bar.dataset.date = cell.dataset.date;
       bar.draggable = true;
       bar.addEventListener('dragstart', e => {
+        bar._dragging = true;
+        const ghost = bar.cloneNode(true);
+        ghost.classList.add('drag-ghost');
+        bar._ghost = ghost;
+        bar.parentNode.insertBefore(ghost, bar);
         e.dataTransfer.setData('text/plain', JSON.stringify({ id: evt.schedulesId, date: bar.dataset.date }));
         if (e.dataTransfer.setDragImage) {
           e.dataTransfer.setDragImage(bar, 0, 0);
         }
+      });
+      bar.addEventListener('dragend', () => {
+        if (bar._ghost) bar._ghost.remove();
+        setTimeout(() => { bar._dragging = false; }, 0);
       });
       list.appendChild(bar);
     });
@@ -195,12 +185,16 @@
     cell.appendChild(list);
     list.addEventListener('click', e => {
       const bar = e.target.closest('.event-bar');
-      if (bar) {
+      if (bar && !bar._dragging) {
         window.loadAndOpenScheduleModal(bar.dataset.id);
       }
     });
 
     cell.addEventListener('click', e => {
+      if (suppressCellClick) {
+        suppressCellClick = false;
+        return;
+      }
       if (e.target.closest('.event-bar')) return;
       const startDay = document.getElementById('sched-start-day');
       const endDay = document.getElementById('sched-end-day');
@@ -221,6 +215,7 @@
     cell.addEventListener('dragover', e => e.preventDefault());
     cell.addEventListener('drop', async e => {
       e.preventDefault();
+      suppressCellClick = true;
       const data = e.dataTransfer.getData('text/plain');
       if (!data) return;
       const info = JSON.parse(data);
@@ -259,126 +254,6 @@
     return cell;
   }
 
-  function renderSegments(calendar, segs, displayStart) {
-    if (!segs.length) return;
-    const overlay = document.createElement('div');
-    overlay.className = 'monthly-events-overlay';
-    calendar.appendChild(overlay);
-
-    const cellH = parseFloat(
-      getComputedStyle(document.documentElement).getPropertyValue('--monthly-cell-height') || 120
-    );
-    const BAR_H = 18;
-    const GAP = 2;
-    const OFFSET = 2;
-    const rows = {};
-    const pct = 100 / 7;
-
-    segs.sort((a, b) => a.start - b.start).forEach(seg => {
-      const sIdx = Math.floor((seg.start - displayStart) / 86400000);
-      const eIdx = Math.floor((seg.end - displayStart) / 86400000);
-      const row = Math.floor(sIdx / 7);
-      const col = sIdx % 7;
-      const span = eIdx - sIdx + 1;
-      if (!rows[row]) rows[row] = 0;
-      const line = rows[row]++;
-      const bar = document.createElement('div');
-      bar.className = 'event-bar';
-      bar.style.backgroundColor = seg.category;
-      bar.textContent = seg.title;
-      bar.dataset.id = seg.id;
-      bar.dataset.date = formatYMD(seg.eventStart);
-      bar.dataset.col = col;
-      bar.dataset.row = row;
-      bar.dataset.span = span;
-      bar.style.left = `calc(${pct * col}% + 2px)`;
-      bar.style.width = `calc(${pct * span}% - 4px)`;
-      bar.style.top = `${row * cellH + OFFSET + line * (BAR_H + GAP)}px`;
-      bar.style.height = `${BAR_H}px`;
-      overlay.appendChild(bar);
-      enableMonthlyDrag(bar);
-      bar.addEventListener('click', () => {
-        if (window.loadAndOpenScheduleModal) {
-          window.loadAndOpenScheduleModal(seg.id);
-        }
-      });
-    });
-  }
-
-  function enableMonthlyDrag(bar) {
-    const calendar = document.querySelector('.monthly-calendar');
-    if (!calendar) return;
-    const percentPerDay = 100 / 7;
-    let startX, startCol, startPct, pointerId, ghost;
-
-    function onMove(e) {
-      if (e.pointerId !== pointerId) return;
-      const deltaX = e.clientX - startX;
-      const dayWidth = calendar.getBoundingClientRect().width / 7;
-      const deltaDays = Math.round(deltaX / dayWidth);
-      bar.style.left = `calc(${startPct + deltaDays * percentPerDay}% + 2px)`;
-    }
-
-    async function onUp(e) {
-      if (e.pointerId !== pointerId) return;
-      document.removeEventListener('pointermove', onMove);
-      document.removeEventListener('pointerup', onUp);
-      if (ghost) ghost.remove();
-      bar.style.zIndex = '';
-      const endPctMatch = bar.style.left.match(/([\d.]+)%/);
-      const endPct = endPctMatch ? parseFloat(endPctMatch[1]) : startPct;
-      const deltaDays = Math.round((endPct - startPct) / percentPerDay);
-      if (deltaDays !== 0) {
-        if (window.saveToast && window.saveToast.showSaving) {
-          window.saveToast.showSaving();
-        }
-        try {
-          await fetch(`/api/schedules/${bar.dataset.id}/moveWeekly`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ deltaDays, deltaHours: 0 })
-          });
-          initMonthlySchedule();
-          if (window.saveToast && window.saveToast.showSaved) {
-            window.saveToast.showSaved(bar.dataset.id, async () => {
-              await fetch(`/api/schedules/${bar.dataset.id}/moveWeekly`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ deltaDays: -deltaDays, deltaHours: 0 })
-              });
-              initMonthlySchedule();
-            });
-          }
-        } catch (err) {
-          console.error(err);
-          if (window.saveToast && window.saveToast.hide) {
-            window.saveToast.hide();
-          }
-        }
-      }
-    }
-
-    bar.style.touchAction = 'none';
-    bar.addEventListener('pointerdown', e => {
-      e.preventDefault();
-      pointerId = e.pointerId;
-      startX = e.clientX;
-      startCol = Number(bar.dataset.col) || 0;
-      const match = bar.style.left.match(/([\d.]+)%/);
-      startPct = match ? parseFloat(match[1]) : startCol * percentPerDay;
-      ghost = bar.cloneNode(true);
-      ghost.classList.add('drag-ghost');
-      ghost.style.pointerEvents = 'none';
-      ghost.style.left = bar.style.left;
-      ghost.style.top = bar.style.top;
-      ghost.style.width = bar.style.width;
-      ghost.style.height = bar.style.height;
-      bar.parentNode.insertBefore(ghost, bar);
-      bar.style.zIndex = '100';
-      document.addEventListener('pointermove', onMove);
-      document.addEventListener('pointerup', onUp);
-    });
-  }
 
   function attachRangeSelection(calendar) {
     if (!calendar) return;
