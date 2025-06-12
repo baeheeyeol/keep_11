@@ -16,6 +16,7 @@
 
         <link rel="stylesheet" th:href="@{/css/main/components/modal/schedule-modal.css}" />
         <link rel="stylesheet" th:href="@{/css/main/components/modal/save-toast.css}" />
+        <link rel="stylesheet" th:href="@{/css/main/components/modal/monthly-more-modal.css}" />
 </th:block>
 <!--/* content */-->
 <th:block layout:fragment="content">
@@ -44,6 +45,7 @@
              <div th:replace="~{main/components/modal/schedule-modal :: schedule-modal}"></div>
              <div th:replace="~{common/calendar-modal :: calendar-modal}"></div>
              <div th:replace="~{main/components/modal/save-toast :: save-toast}"></div>
+             <div th:replace="~{main/components/modal/monthly-more-modal :: monthly-more-modal}"></div>
 
 </th:block>
 <!--/* script */-->
@@ -55,6 +57,7 @@
         <script th:src="@{/js/main/components/monthly.js}"></script>
         <script th:src="@{/js/main/components/modal/schedule-modal.js}"></script>
         <script th:src="@{/js/main/components/save-toast.js}"></script>
+        <script th:src="@{/js/main/components/modal/monthly-more-modal.js}"></script>
 </th:block>
 
 </html>

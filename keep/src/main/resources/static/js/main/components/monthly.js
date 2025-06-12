@@ -35,9 +35,18 @@
 
     const eventMap = {};
     events.forEach(e => {
-      const d = new Date(e.startTs).getDate();
-      if (!eventMap[d]) eventMap[d] = [];
-      eventMap[d].push(e);
+      const start = new Date(e.startTs);
+      const end = new Date(e.endTs);
+      const cur = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+      const last = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+      while (cur <= last) {
+        if (cur.getMonth() === month) {
+          const d = cur.getDate();
+          if (!eventMap[d]) eventMap[d] = [];
+          eventMap[d].push(e);
+        }
+        cur.setDate(cur.getDate() + 1);
+      }
     });
 
     // fill blanks before first day
@@ -90,6 +99,12 @@
       const more = document.createElement('div');
       more.className = 'more-link';
       more.textContent = `+${events.length - MAX}`;
+      more.addEventListener('click', e => {
+        e.stopPropagation();
+        if (window.openMonthlyMoreModal) {
+          window.openMonthlyMoreModal(events);
+        }
+      });
       list.appendChild(more);
     }
     cell.appendChild(list);
