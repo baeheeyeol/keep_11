@@ -263,7 +263,8 @@
 		const totalGridHeight = 24 * slotHeight + bottomSlotHeight;
 		const percentPerDay = 100 / 7;
 
-		let originals, pressedPointerId, scheduleId, startX, startY;
+                let originals, pressedPointerId, scheduleId, startX, startY;
+                let ghostEls = [];
 
 		eventBlocks.forEach(block => {
 			block.style.touchAction = 'none';  // 터치 스크롤 방지
@@ -294,12 +295,25 @@
 			document.addEventListener('pointerup', pointerUpHandler);
 		}
 
-		function pointerMoveHandler(eMove) {
-			if (eMove.pointerId !== pressedPointerId) return;
-			eMove.preventDefault();
+                function pointerMoveHandler(eMove) {
+                        if (eMove.pointerId !== pressedPointerId) return;
+                        eMove.preventDefault();
 
-			// 드래그 중임을 표시
-			eventBlocks.forEach(el => (el.__isDragging = true));
+                        // 첫 이동 시 원래 위치에 투명한 복제본 생성
+                        if (ghostEls.length === 0) {
+                                originals.forEach(o => {
+                                        const g = o.el.cloneNode(true);
+                                        g.classList.add('drag-ghost');
+                                        g.style.pointerEvents = 'none';
+                                        g.style.left = o.el.style.left;
+                                        g.style.top = `${o.origTopPx}px`;
+                                        o.el.parentNode.insertBefore(g, o.el);
+                                        ghostEls.push(g);
+                                });
+                        }
+
+                        // 드래그 중임을 표시
+                        eventBlocks.forEach(el => (el.__isDragging = true));
 
 			const deltaX = eMove.clientX - startX;
 			const deltaY = eMove.clientY - startY;
@@ -325,7 +339,9 @@
 
 		async function pointerUpHandler(eUp) {
 			if (eUp.pointerId !== pressedPointerId) return;
-			eventBlocks.forEach(el => (el.style.zIndex = ''));
+                        eventBlocks.forEach(el => (el.style.zIndex = ''));
+                        ghostEls.forEach(g => g.remove());
+                        ghostEls = [];
 
 			// origDayIdx과 실제 렌더된 leftPct를 바탕으로 deltaDays 계산
 			const origDayIdx = originals[0].origDayIdx;

@@ -172,6 +172,12 @@
         transform: none;
 }
 
+/* 드래그 시 원본 위치에 남겨둘 투명한 복제본 */
+.drag-ghost {
+        opacity: 0.5;
+        pointer-events: none;
+}
+
 /* 일반 이벤트 +더보기 블록 */
 .event.normal-more {
 	position: absolute;
