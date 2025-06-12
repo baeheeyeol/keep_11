@@ -1,5 +1,6 @@
 // static/js/main/components/monthly.js
 (function() {
+  let suppressCellClick = false;
   function formatYMD(date) {
     const y = date.getFullYear();
     const m = String(date.getMonth() + 1).padStart(2, '0');
@@ -173,10 +174,19 @@
       bar.dataset.date = cell.dataset.date;
       bar.draggable = true;
       bar.addEventListener('dragstart', e => {
+        bar._dragging = true;
+        const ghost = bar.cloneNode(true);
+        ghost.classList.add('drag-ghost');
+        bar._ghost = ghost;
+        bar.parentNode.insertBefore(ghost, bar);
         e.dataTransfer.setData('text/plain', JSON.stringify({ id: evt.schedulesId, date: bar.dataset.date }));
         if (e.dataTransfer.setDragImage) {
           e.dataTransfer.setDragImage(bar, 0, 0);
         }
+      });
+      bar.addEventListener('dragend', () => {
+        if (bar._ghost) bar._ghost.remove();
+        setTimeout(() => { bar._dragging = false; }, 0);
       });
       list.appendChild(bar);
     });
@@ -195,12 +205,16 @@
     cell.appendChild(list);
     list.addEventListener('click', e => {
       const bar = e.target.closest('.event-bar');
-      if (bar) {
+      if (bar && !bar._dragging) {
         window.loadAndOpenScheduleModal(bar.dataset.id);
       }
     });
 
     cell.addEventListener('click', e => {
+      if (suppressCellClick) {
+        suppressCellClick = false;
+        return;
+      }
       if (e.target.closest('.event-bar')) return;
       const startDay = document.getElementById('sched-start-day');
       const endDay = document.getElementById('sched-end-day');
@@ -221,6 +235,7 @@
     cell.addEventListener('dragover', e => e.preventDefault());
     cell.addEventListener('drop', async e => {
       e.preventDefault();
+      suppressCellClick = true;
       const data = e.dataTransfer.getData('text/plain');
       if (!data) return;
       const info = JSON.parse(data);
@@ -270,7 +285,8 @@
     );
     const BAR_H = 18;
     const GAP = 2;
-    const OFFSET = 2;
+    // offset so bars appear just below day numbers like single day events
+    const OFFSET = 22;
     const rows = {};
     const pct = 100 / 7;
 
@@ -309,14 +325,19 @@
     const calendar = document.querySelector('.monthly-calendar');
     if (!calendar) return;
     const percentPerDay = 100 / 7;
-    let startX, startCol, startPct, pointerId, ghost;
+    let startX, startY, startCol, startPct, startTop, pointerId, ghost;
 
     function onMove(e) {
       if (e.pointerId !== pointerId) return;
       const deltaX = e.clientX - startX;
+      const deltaY = e.clientY - startY;
       const dayWidth = calendar.getBoundingClientRect().width / 7;
+      const dayHeight = parseFloat(getComputedStyle(document.documentElement)
+        .getPropertyValue('--monthly-cell-height') || 120);
       const deltaDays = Math.round(deltaX / dayWidth);
+      const deltaRows = Math.round(deltaY / dayHeight);
       bar.style.left = `calc(${startPct + deltaDays * percentPerDay}% + 2px)`;
+      bar.style.top = `${startTop + deltaRows * dayHeight}px`;
     }
 
     async function onUp(e) {
@@ -327,7 +348,11 @@
       bar.style.zIndex = '';
       const endPctMatch = bar.style.left.match(/([\d.]+)%/);
       const endPct = endPctMatch ? parseFloat(endPctMatch[1]) : startPct;
-      const deltaDays = Math.round((endPct - startPct) / percentPerDay);
+      const endTop = parseFloat(bar.style.top) || startTop;
+      const dayHeight = parseFloat(getComputedStyle(document.documentElement)
+        .getPropertyValue('--monthly-cell-height') || 120);
+      const deltaRows = Math.round((endTop - startTop) / dayHeight);
+      const deltaDays = Math.round((endPct - startPct) / percentPerDay) + deltaRows * 7;
       if (deltaDays !== 0) {
         if (window.saveToast && window.saveToast.showSaving) {
           window.saveToast.showSaving();
@@ -363,9 +388,11 @@
       e.preventDefault();
       pointerId = e.pointerId;
       startX = e.clientX;
+      startY = e.clientY;
       startCol = Number(bar.dataset.col) || 0;
       const match = bar.style.left.match(/([\d.]+)%/);
       startPct = match ? parseFloat(match[1]) : startCol * percentPerDay;
+      startTop = parseFloat(bar.style.top) || 0;
       ghost = bar.cloneNode(true);
       ghost.classList.add('drag-ghost');
       ghost.style.pointerEvents = 'none';
