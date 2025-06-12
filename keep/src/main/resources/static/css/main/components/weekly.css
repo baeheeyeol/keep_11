@@ -249,6 +249,12 @@
   transform: none;
 }
 
+/* 드래그 중에 표시되는 투명한 원본 */
+.drag-ghost {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 /* — 전체 컨테이너 — */
 .daily-schedule-container {
   background: #ffffff;

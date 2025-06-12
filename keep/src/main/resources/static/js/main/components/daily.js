@@ -1,7 +1,8 @@
 // static/js/main/components/daily.js 
 (function() {
-	let draggingEvt = null;
-	let startY, origTop;
+        let draggingEvt = null;
+        let ghostEl = null;
+        let startY, origTop;
 	let H, STEP;
 	let isDragging = false;               // 실제 드래그 중인지 플래그
 	const DRAG_THRESHOLD = 5;
@@ -13,13 +14,21 @@
 		if (!isDragging) {
 			if (Math.abs(dy) < DRAG_THRESHOLD) return;
 
-			// 2) 임계치 넘으면 진짜 드래그 시작!
-			isDragging = true;
-			// 드래그 중 스타일 변경
-			draggingEvt._origLeft = getComputedStyle(draggingEvt).left;
-			draggingEvt.style.left = '0px';
-			draggingEvt.style.zIndex = '9999';
-		}
+                        // 2) 임계치 넘으면 진짜 드래그 시작!
+                        isDragging = true;
+                        // 드래그 중 스타일 변경
+                        draggingEvt._origLeft = getComputedStyle(draggingEvt).left;
+                        draggingEvt.style.left = '0px';
+                        draggingEvt.style.zIndex = '9999';
+
+                        // 원래 위치에 투명한 복제본 표시
+                        ghostEl = draggingEvt.cloneNode(true);
+                        ghostEl.classList.add('drag-ghost');
+                        ghostEl.style.pointerEvents = 'none';
+                        ghostEl.style.left = draggingEvt._origLeft;
+                        ghostEl.style.top = `${origTop}px`;
+                        draggingEvt.parentNode.insertBefore(ghostEl, draggingEvt);
+                }
 		const contTop = origTop + dy;
 		const maxTop = 24 * H - STEP;
 		const snapped = Math.min(maxTop, Math.max(0, Math.round(contTop / STEP) * STEP));
@@ -44,10 +53,14 @@
 		}
 
 		// 스타일 원복 및 상태 초기화
-		draggingEvt.style.left = draggingEvt._origLeft;
-		draggingEvt.style.zIndex = '';
-		draggingEvt = null;
-		isDragging = false;
+                draggingEvt.style.left = draggingEvt._origLeft;
+                draggingEvt.style.zIndex = '';
+                if (ghostEl) {
+                        ghostEl.remove();
+                        ghostEl = null;
+                }
+                draggingEvt = null;
+                isDragging = false;
 
 	}
         async function updateEventTime(id, deltaHours) {
