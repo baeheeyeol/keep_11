@@ -58,9 +58,14 @@
 }
 
 .monthly-calendar .events-container {
-  margin-top: 22px;
+  position: absolute;
+  top: 22px;
+  bottom: 2px;
+  left: 2px;
+  right: 2px;
   display: flex;
   flex-direction: column;
+  justify-content: flex-end;
   gap: 2px;
 }
 

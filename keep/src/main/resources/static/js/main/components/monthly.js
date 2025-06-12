@@ -224,7 +224,12 @@
 
     const sorted = events
       .map(e => ({ ...e, start: new Date(e.startTs), end: new Date(e.endTs) }))
-      .sort((a, b) => a.start - b.start);
+      .sort((a, b) => {
+        const durA = Math.ceil((a.end - a.start) / 86400000);
+        const durB = Math.ceil((b.end - b.start) / 86400000);
+        if (durA !== durB) return durB - durA;
+        return a.start - b.start;
+      });
 
     sorted.forEach(evt => {
       let s = evt.start;
