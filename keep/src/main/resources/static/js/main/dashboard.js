@@ -119,6 +119,9 @@ document.addEventListener('DOMContentLoaded', () => {
 					}
 				}
                                 window.initScheduleModal();
+                                if (window.initMonthlyMoreModal) {
+                                        window.initMonthlyMoreModal();
+                                }
                                 requestAnimationFrame(() => {
                                         fragmentContainer.style.opacity = 1;
                                 });
