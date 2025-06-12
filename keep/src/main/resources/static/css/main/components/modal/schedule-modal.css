@@ -10,6 +10,11 @@
   background: rgba(0,0,0,0.3);
   z-index: 100;
 }
+
+/* 일정 등록 모달은 다른 모달보다 위에 표시 */
+#schedule-modal-overlay {
+  z-index: 200;
+}
 .modal-overlay.hidden {
   display: none;
 }
@@ -28,6 +33,11 @@
 }
 .modal.hidden {
   display: none;
+}
+
+/* 일정 등록 모달 상자 z-index 조정 */
+#schedule-modal {
+  z-index: 201;
 }
 
 .modal-title {
