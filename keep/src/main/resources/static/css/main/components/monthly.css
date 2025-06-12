@@ -73,6 +73,12 @@
   text-overflow: ellipsis;
 }
 
+/* ghost element shown while dragging */
+.drag-ghost {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 .monthly-calendar .more-link {
   font-size: 0.75rem;
   color: #555;
