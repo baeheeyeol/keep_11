@@ -217,6 +217,7 @@
     const BAR_HEIGHT = temp.offsetHeight || 16;
     overlay.removeChild(temp);
     const GAP = 2;
+    const MAX_VISIBLE_ROWS = 3;
 
     const rows = Array.from({ length: rowCount }, () => []);
     const parts = [];
@@ -261,8 +262,23 @@
     });
 
     const calRect = calendar.getBoundingClientRect();
+    const eventsByDate = {};
+    const hiddenCount = {};
+    parts.forEach(p => {
+      for (let idx = p.startIdx; idx <= p.endIdx; idx++) {
+        const d = new Date(displayStart);
+        d.setDate(displayStart.getDate() + idx);
+        const key = formatYMD(d);
+        if (!eventsByDate[key]) eventsByDate[key] = [];
+        eventsByDate[key].push(p.evt);
+        if (p.row >= MAX_VISIBLE_ROWS) {
+          hiddenCount[key] = (hiddenCount[key] || 0) + 1;
+        }
+      }
+    });
 
     parts.forEach(p => {
+      if (p.row >= MAX_VISIBLE_ROWS) return;
       const sDate = new Date(displayStart);
       sDate.setDate(displayStart.getDate() + p.startIdx);
       const eDate = new Date(displayStart);
@@ -310,6 +326,28 @@
       });
 
       overlay.appendChild(bar);
+    });
+
+    Object.keys(cellMap).forEach(key => {
+      const cell = cellMap[key];
+      const count = hiddenCount[key] || 0;
+      let link = cell.querySelector('.more-link');
+      if (count > 0) {
+        if (!link) {
+          link = document.createElement('div');
+          link.className = 'more-link';
+          link.addEventListener('click', e => {
+            e.stopPropagation();
+            if (window.openMonthlyMoreModal) {
+              window.openMonthlyMoreModal(eventsByDate[key] || []);
+            }
+          });
+          cell.querySelector('.events-container').appendChild(link);
+        }
+        link.textContent = `+${count}개 더보기`;
+      } else if (link) {
+        link.remove();
+      }
     });
   }
 
