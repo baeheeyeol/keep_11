@@ -30,7 +30,6 @@
     overlay.classList.remove('hidden');
     modal.classList.add('show');
     modal.classList.remove('hidden');
-    document.addEventListener('scheduleModalClosed', closeModal);
   }
 
   function closeModal() {
@@ -40,7 +39,6 @@
     modal.classList.remove('show');
     modal.addEventListener('transitionend', () => modal.classList.add('hidden'), { once: true });
     overlay.classList.add('hidden');
-    document.removeEventListener('scheduleModalClosed', closeModal);
   }
 
   window.initMonthlyMoreModal = init;

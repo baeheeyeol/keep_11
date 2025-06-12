@@ -64,7 +64,8 @@
             title: e.title,
             category: e.category,
             start: new Date(segStart),
-            end: new Date(segEnd)
+            end: new Date(segEnd),
+            eventStart: start
           });
           segStart = new Date(segEnd);
           segStart.setDate(segStart.getDate() + 1);
@@ -83,6 +84,7 @@
     }
 
     renderSegments(calendar, segments, firstDay);
+    attachRangeSelection(calendar);
   }
 
   function createBlankCell() {
@@ -227,6 +229,11 @@
       bar.style.backgroundColor = seg.category;
       bar.textContent = seg.title;
       bar.dataset.id = seg.id;
+      bar.dataset.date = formatYMD(seg.eventStart);
+      bar.draggable = true;
+      bar.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text/plain', JSON.stringify({ id: seg.id, date: bar.dataset.date }));
+      });
       bar.style.left = `calc(${pct * col}% + 2px)`;
       bar.style.width = `calc(${pct * span}% - 4px)`;
       bar.style.top = `${row * cellH + OFFSET + line * (BAR_H + GAP)}px`;
@@ -237,6 +244,56 @@
           window.loadAndOpenScheduleModal(seg.id);
         }
       });
+    });
+  }
+
+  function attachRangeSelection(calendar) {
+    if (!calendar) return;
+    let selecting = false;
+    let startCell = null;
+
+    function pointerUp(e) {
+      document.removeEventListener('pointerup', pointerUp);
+      document.removeEventListener('pointercancel', cancel);
+      if (!selecting) return;
+      selecting = false;
+      const endCell = e.target.closest('.day-cell') || startCell;
+      if (!endCell || !startCell) return;
+      let start = new Date(startCell.dataset.date);
+      let end = new Date(endCell.dataset.date);
+      if (start > end) {
+        const tmp = start;
+        start = end;
+        end = tmp;
+      }
+      const startDay = document.getElementById('sched-start-day');
+      const endDay = document.getElementById('sched-end-day');
+      if (startDay && endDay && window.openScheduleModal) {
+        startDay.value = formatYMD(start);
+        endDay.value = formatYMD(end);
+        document.getElementById('sched-start-hour').value = '00';
+        document.getElementById('sched-start-min').value = '00';
+        document.getElementById('sched-end-hour').value = '01';
+        document.getElementById('sched-end-min').value = '00';
+        window.openScheduleModal();
+      }
+    }
+
+    function cancel() {
+      selecting = false;
+      document.removeEventListener('pointerup', pointerUp);
+      document.removeEventListener('pointercancel', cancel);
+    }
+
+    calendar.addEventListener('pointerdown', e => {
+      if (e.target.closest('.event-bar') || e.target.classList.contains('more-link')) return;
+      const cell = e.target.closest('.day-cell');
+      if (!cell || cell.classList.contains('empty')) return;
+      e.preventDefault();
+      selecting = true;
+      startCell = cell;
+      document.addEventListener('pointerup', pointerUp);
+      document.addEventListener('pointercancel', cancel);
     });
   }
 
