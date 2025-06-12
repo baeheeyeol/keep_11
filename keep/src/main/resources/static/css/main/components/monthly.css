@@ -34,6 +34,14 @@
   overflow: hidden;
 }
 
+.monthly-calendar .day-cell.other-month {
+  background: #f3f4f6;
+}
+
+.monthly-calendar .day-cell.other-month .day-number {
+  color: #9ca3af;
+}
+
 .monthly-calendar .day-number {
   position: absolute;
   top: 2px;

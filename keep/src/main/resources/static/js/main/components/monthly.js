@@ -33,7 +33,7 @@
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-    const singleMap = {};
+    const dayMap = {};
     const segments = [];
 
     const monthStart = new Date(year, month, 1);
@@ -49,10 +49,25 @@
       if (start.getTime() === end.getTime()) {
         if (start.getMonth() === month) {
           const d = start.getDate();
-          if (!singleMap[d]) singleMap[d] = [];
-          singleMap[d].push(e);
+          if (!dayMap[d]) dayMap[d] = [];
+          dayMap[d].push(e);
         }
       } else {
+        if (start >= monthStart && start <= monthEnd && start.getMonth() === month) {
+          const d = start.getDate();
+          if (!dayMap[d]) dayMap[d] = [];
+          dayMap[d].push(e);
+        }
+        let nextWeek = new Date(start);
+        nextWeek.setDate(nextWeek.getDate() + (7 - nextWeek.getDay()));
+        while (nextWeek <= end) {
+          if (nextWeek >= monthStart && nextWeek <= monthEnd && nextWeek.getMonth() === month) {
+            const nd = nextWeek.getDate();
+            if (!dayMap[nd]) dayMap[nd] = [];
+            dayMap[nd].push(e);
+          }
+          nextWeek.setDate(nextWeek.getDate() + 7);
+        }
         let segStart = start < monthStart ? monthStart : start;
         const realEnd = end > monthEnd ? monthEnd : end;
         while (segStart <= realEnd) {
@@ -73,32 +88,36 @@
       }
     });
 
-    // fill blanks before first day
-    for (let i = 0; i < firstDay; i++) {
-      calendar.appendChild(createBlankCell());
+    const prevMonth = new Date(year, month, 0);
+    const prevDays = prevMonth.getDate();
+    for (let i = firstDay - 1; i >= 0; i--) {
+      const d = prevDays - i;
+      calendar.appendChild(createDayCell(prevMonth.getFullYear(), prevMonth.getMonth(), d, [], true));
     }
-    // days
+
     for (let d = 1; d <= daysInMonth; d++) {
-      const cell = createDayCell(year, month, d, singleMap[d] || []);
+      const cell = createDayCell(year, month, d, dayMap[d] || []);
       calendar.appendChild(cell);
+    }
+
+    const totalCells = Math.ceil((firstDay + daysInMonth) / 7) * 7;
+    const nextMonth = new Date(year, month + 1, 1);
+    let nextDay = 1;
+    while (calendar.children.length < totalCells) {
+      calendar.appendChild(createDayCell(nextMonth.getFullYear(), nextMonth.getMonth(), nextDay++, [], true));
     }
 
     renderSegments(calendar, segments, firstDay);
     attachRangeSelection(calendar);
   }
 
-  function createBlankCell() {
-    const div = document.createElement('div');
-    div.className = 'day-cell empty';
-    return div;
-  }
-
-  function createDayCell(year, month, date, events) {
+  function createDayCell(year, month, date, events, otherMonth = false) {
     const dayIdx = new Date(year, month, date).getDay();
     const cell = document.createElement('div');
     cell.className = 'day-cell';
     if (dayIdx === 0) cell.classList.add('sun');
     if (dayIdx === 6) cell.classList.add('sat');
+    if (otherMonth) cell.classList.add('other-month');
     cell.dataset.date = `${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
 
     const num = document.createElement('span');
@@ -119,6 +138,9 @@
       bar.draggable = true;
       bar.addEventListener('dragstart', e => {
         e.dataTransfer.setData('text/plain', JSON.stringify({ id: evt.schedulesId, date: bar.dataset.date }));
+        if (e.dataTransfer.setDragImage) {
+          e.dataTransfer.setDragImage(bar, 0, 0);
+        }
       });
       list.appendChild(bar);
     });
@@ -212,7 +234,7 @@
     );
     const BAR_H = 18;
     const GAP = 2;
-    const OFFSET = 18;
+    const OFFSET = 2;
     const rows = {};
     const pct = 100 / 7;
 
@@ -233,6 +255,9 @@
       bar.draggable = true;
       bar.addEventListener('dragstart', e => {
         e.dataTransfer.setData('text/plain', JSON.stringify({ id: seg.id, date: bar.dataset.date }));
+        if (e.dataTransfer.setDragImage) {
+          e.dataTransfer.setDragImage(bar, 0, 0);
+        }
       });
       bar.style.left = `calc(${pct * col}% + 2px)`;
       bar.style.width = `calc(${pct * span}% - 4px)`;
@@ -288,7 +313,7 @@
     calendar.addEventListener('pointerdown', e => {
       if (e.target.closest('.event-bar') || e.target.classList.contains('more-link')) return;
       const cell = e.target.closest('.day-cell');
-      if (!cell || cell.classList.contains('empty')) return;
+      if (!cell || cell.classList.contains('other-month')) return;
       e.preventDefault();
       selecting = true;
       startCell = cell;
