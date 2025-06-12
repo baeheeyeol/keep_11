@@ -87,10 +87,13 @@
       const end = new Date(eDate.getFullYear(), eDate.getMonth(), eDate.getDate());
       if (end < displayStart || start > displayEnd) return;
 
-      const firstVisible = start < displayStart ? displayStart : start;
-      const key = formatYMD(firstVisible);
-      if (!dayMap[key]) dayMap[key] = [];
-      dayMap[key].push(e);
+      // Only put single-day events into dayMap to avoid duplicate rendering
+      if (start.getTime() === end.getTime()) {
+        const firstVisible = start < displayStart ? displayStart : start;
+        const key = formatYMD(firstVisible);
+        if (!dayMap[key]) dayMap[key] = [];
+        dayMap[key].push(e);
+      }
 
       let segStart = start < displayStart ? displayStart : start;
       const realEnd = end > displayEnd ? displayEnd : end;
@@ -284,23 +287,95 @@
       bar.textContent = seg.title;
       bar.dataset.id = seg.id;
       bar.dataset.date = formatYMD(seg.eventStart);
-      bar.draggable = true;
-      bar.addEventListener('dragstart', e => {
-        e.dataTransfer.setData('text/plain', JSON.stringify({ id: seg.id, date: bar.dataset.date }));
-        if (e.dataTransfer.setDragImage) {
-          e.dataTransfer.setDragImage(bar, 0, 0);
-        }
-      });
+      bar.dataset.col = col;
+      bar.dataset.row = row;
+      bar.dataset.span = span;
       bar.style.left = `calc(${pct * col}% + 2px)`;
       bar.style.width = `calc(${pct * span}% - 4px)`;
       bar.style.top = `${row * cellH + OFFSET + line * (BAR_H + GAP)}px`;
       bar.style.height = `${BAR_H}px`;
       overlay.appendChild(bar);
+      enableMonthlyDrag(bar);
       bar.addEventListener('click', () => {
         if (window.loadAndOpenScheduleModal) {
           window.loadAndOpenScheduleModal(seg.id);
         }
       });
+    });
+  }
+
+  function enableMonthlyDrag(bar) {
+    const calendar = document.querySelector('.monthly-calendar');
+    if (!calendar) return;
+    const percentPerDay = 100 / 7;
+    let startX, startCol, startPct, pointerId, ghost;
+
+    function onMove(e) {
+      if (e.pointerId !== pointerId) return;
+      const deltaX = e.clientX - startX;
+      const dayWidth = calendar.getBoundingClientRect().width / 7;
+      const deltaDays = Math.round(deltaX / dayWidth);
+      bar.style.left = `calc(${startPct + deltaDays * percentPerDay}% + 2px)`;
+    }
+
+    async function onUp(e) {
+      if (e.pointerId !== pointerId) return;
+      document.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerup', onUp);
+      if (ghost) ghost.remove();
+      bar.style.zIndex = '';
+      const endPctMatch = bar.style.left.match(/([\d.]+)%/);
+      const endPct = endPctMatch ? parseFloat(endPctMatch[1]) : startPct;
+      const deltaDays = Math.round((endPct - startPct) / percentPerDay);
+      if (deltaDays !== 0) {
+        if (window.saveToast && window.saveToast.showSaving) {
+          window.saveToast.showSaving();
+        }
+        try {
+          await fetch(`/api/schedules/${bar.dataset.id}/moveWeekly`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ deltaDays, deltaHours: 0 })
+          });
+          initMonthlySchedule();
+          if (window.saveToast && window.saveToast.showSaved) {
+            window.saveToast.showSaved(bar.dataset.id, async () => {
+              await fetch(`/api/schedules/${bar.dataset.id}/moveWeekly`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ deltaDays: -deltaDays, deltaHours: 0 })
+              });
+              initMonthlySchedule();
+            });
+          }
+        } catch (err) {
+          console.error(err);
+          if (window.saveToast && window.saveToast.hide) {
+            window.saveToast.hide();
+          }
+        }
+      }
+    }
+
+    bar.style.touchAction = 'none';
+    bar.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      pointerId = e.pointerId;
+      startX = e.clientX;
+      startCol = Number(bar.dataset.col) || 0;
+      const match = bar.style.left.match(/([\d.]+)%/);
+      startPct = match ? parseFloat(match[1]) : startCol * percentPerDay;
+      ghost = bar.cloneNode(true);
+      ghost.classList.add('drag-ghost');
+      ghost.style.pointerEvents = 'none';
+      ghost.style.left = bar.style.left;
+      ghost.style.top = bar.style.top;
+      ghost.style.width = bar.style.width;
+      ghost.style.height = bar.style.height;
+      bar.parentNode.insertBefore(ghost, bar);
+      bar.style.zIndex = '100';
+      document.addEventListener('pointermove', onMove);
+      document.addEventListener('pointerup', onUp);
     });
   }
 
