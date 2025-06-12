@@ -33,19 +33,42 @@
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-    const eventMap = {};
+    const singleMap = {};
+    const segments = [];
+
+    const monthStart = new Date(year, month, 1);
+    const monthEnd = new Date(year, month + 1, 0);
+
     events.forEach(e => {
-      const start = new Date(e.startTs);
-      const end = new Date(e.endTs);
-      const cur = new Date(start.getFullYear(), start.getMonth(), start.getDate());
-      const last = new Date(end.getFullYear(), end.getMonth(), end.getDate());
-      while (cur <= last) {
-        if (cur.getMonth() === month) {
-          const d = cur.getDate();
-          if (!eventMap[d]) eventMap[d] = [];
-          eventMap[d].push(e);
+      const s = new Date(e.startTs);
+      const eDate = new Date(e.endTs);
+      const start = new Date(s.getFullYear(), s.getMonth(), s.getDate());
+      const end = new Date(eDate.getFullYear(), eDate.getMonth(), eDate.getDate());
+      if (end < monthStart || start > monthEnd) return;
+
+      if (start.getTime() === end.getTime()) {
+        if (start.getMonth() === month) {
+          const d = start.getDate();
+          if (!singleMap[d]) singleMap[d] = [];
+          singleMap[d].push(e);
         }
-        cur.setDate(cur.getDate() + 1);
+      } else {
+        let segStart = start < monthStart ? monthStart : start;
+        const realEnd = end > monthEnd ? monthEnd : end;
+        while (segStart <= realEnd) {
+          const weekEnd = new Date(segStart);
+          weekEnd.setDate(segStart.getDate() + (6 - weekEnd.getDay()));
+          const segEnd = weekEnd < realEnd ? weekEnd : realEnd;
+          segments.push({
+            id: e.schedulesId,
+            title: e.title,
+            category: e.category,
+            start: new Date(segStart),
+            end: new Date(segEnd)
+          });
+          segStart = new Date(segEnd);
+          segStart.setDate(segStart.getDate() + 1);
+        }
       }
     });
 
@@ -55,9 +78,11 @@
     }
     // days
     for (let d = 1; d <= daysInMonth; d++) {
-      const cell = createDayCell(year, month, d, eventMap[d] || []);
+      const cell = createDayCell(year, month, d, singleMap[d] || []);
       calendar.appendChild(cell);
     }
+
+    renderSegments(calendar, segments, firstDay);
   }
 
   function createBlankCell() {
@@ -172,6 +197,47 @@
     });
 
     return cell;
+  }
+
+  function renderSegments(calendar, segs, firstDay) {
+    if (!segs.length) return;
+    const overlay = document.createElement('div');
+    overlay.className = 'monthly-events-overlay';
+    calendar.appendChild(overlay);
+
+    const cellH = parseFloat(
+      getComputedStyle(document.documentElement).getPropertyValue('--monthly-cell-height') || 120
+    );
+    const BAR_H = 18;
+    const GAP = 2;
+    const OFFSET = 18;
+    const rows = {};
+    const pct = 100 / 7;
+
+    segs.sort((a, b) => a.start - b.start).forEach(seg => {
+      const sIdx = firstDay + (seg.start.getDate() - 1);
+      const eIdx = firstDay + (seg.end.getDate() - 1);
+      const row = Math.floor(sIdx / 7);
+      const col = sIdx % 7;
+      const span = eIdx - sIdx + 1;
+      if (!rows[row]) rows[row] = 0;
+      const line = rows[row]++;
+      const bar = document.createElement('div');
+      bar.className = 'event-bar';
+      bar.style.backgroundColor = seg.category;
+      bar.textContent = seg.title;
+      bar.dataset.id = seg.id;
+      bar.style.left = `calc(${pct * col}% + 2px)`;
+      bar.style.width = `calc(${pct * span}% - 4px)`;
+      bar.style.top = `${row * cellH + OFFSET + line * (BAR_H + GAP)}px`;
+      bar.style.height = `${BAR_H}px`;
+      overlay.appendChild(bar);
+      bar.addEventListener('click', () => {
+        if (window.loadAndOpenScheduleModal) {
+          window.loadAndOpenScheduleModal(seg.id);
+        }
+      });
+    });
   }
 
   window.initMonthlySchedule = initMonthlySchedule;
