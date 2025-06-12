@@ -87,30 +87,31 @@
       const end = new Date(eDate.getFullYear(), eDate.getMonth(), eDate.getDate());
       if (end < displayStart || start > displayEnd) return;
 
-      // Only put single-day events into dayMap to avoid duplicate rendering
-      if (start.getTime() === end.getTime()) {
+      const isSingleDay = start.getTime() === end.getTime();
+
+      if (isSingleDay) {
         const firstVisible = start < displayStart ? displayStart : start;
         const key = formatYMD(firstVisible);
         if (!dayMap[key]) dayMap[key] = [];
         dayMap[key].push(e);
-      }
-
-      let segStart = start < displayStart ? displayStart : start;
-      const realEnd = end > displayEnd ? displayEnd : end;
-      while (segStart <= realEnd) {
-        const weekEnd = new Date(segStart);
-        weekEnd.setDate(segStart.getDate() + (6 - weekEnd.getDay()));
-        const segEnd = weekEnd < realEnd ? weekEnd : realEnd;
-        segments.push({
-          id: e.schedulesId,
-          title: e.title,
-          category: e.category,
-          start: new Date(segStart),
-          end: new Date(segEnd),
-          eventStart: start
-        });
-        segStart = new Date(segEnd);
-        segStart.setDate(segStart.getDate() + 1);
+      } else {
+        let segStart = start < displayStart ? displayStart : start;
+        const realEnd = end > displayEnd ? displayEnd : end;
+        while (segStart <= realEnd) {
+          const weekEnd = new Date(segStart);
+          weekEnd.setDate(segStart.getDate() + (6 - weekEnd.getDay()));
+          const segEnd = weekEnd < realEnd ? weekEnd : realEnd;
+          segments.push({
+            id: e.schedulesId,
+            title: e.title,
+            category: e.category,
+            start: new Date(segStart),
+            end: new Date(segEnd),
+            eventStart: start
+          });
+          segStart = new Date(segEnd);
+          segStart.setDate(segStart.getDate() + 1);
+        }
       }
     });
 
