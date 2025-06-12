@@ -98,7 +98,7 @@
     if (events.length > MAX) {
       const more = document.createElement('div');
       more.className = 'more-link';
-      more.textContent = `+${events.length - MAX}`;
+      more.textContent = `+${events.length - MAX} 더보기`;
       more.addEventListener('click', e => {
         e.stopPropagation();
         if (window.openMonthlyMoreModal) {
