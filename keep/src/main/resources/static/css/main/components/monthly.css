@@ -97,8 +97,17 @@
 }
 
 .monthly-calendar-container {
+  height: calc(100vh - var(--dashboard-header-height) - 20px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   border-radius: 1rem;
   background: #ffffff;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   font-family: 'Noto Sans KR', sans-serif;
+}
+
+.monthly-calendar {
+  flex: 1;
+  overflow: hidden;
 }

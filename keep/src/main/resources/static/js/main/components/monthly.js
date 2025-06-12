@@ -23,6 +23,43 @@
     renderCalendar(first, events);
   }
 
+  function adjustLayout(rowCount) {
+    const container = document.querySelector('.monthly-calendar-container');
+    if (!container) return;
+    const rect = container.getBoundingClientRect();
+    const avail = window.innerHeight - rect.top;
+    container.style.height = `${avail}px`;
+    const header = container.querySelector('.weekday-header');
+    const headerH = header ? header.offsetHeight : 0;
+    const cellH = Math.floor((avail - headerH) / rowCount);
+    document.documentElement.style.setProperty('--monthly-cell-height', `${cellH}px`);
+  }
+
+  function attachWheelNavigation() {
+    const container = document.querySelector('.monthly-calendar-container');
+    if (!container) return;
+    if (container._wheelHandler) {
+      container.removeEventListener('wheel', container._wheelHandler);
+    }
+    container._wheelHandler = function(e) {
+      e.preventDefault();
+      if (e.deltaY > 0) {
+        document.getElementById('next-date')?.click();
+      } else if (e.deltaY < 0) {
+        document.getElementById('prev-date')?.click();
+      }
+    };
+    container.addEventListener('wheel', container._wheelHandler, { passive: false });
+  }
+
+  function attachResize(rowCount) {
+    if (window._monthlyResize) {
+      window.removeEventListener('resize', window._monthlyResize);
+    }
+    window._monthlyResize = () => adjustLayout(rowCount);
+    window.addEventListener('resize', window._monthlyResize);
+  }
+
   function renderCalendar(firstDate, events) {
     const calendar = document.querySelector('.monthly-calendar');
     if (!calendar) return;
@@ -100,13 +137,17 @@
       calendar.appendChild(cell);
     }
 
-    const totalCells = Math.ceil((firstDay + daysInMonth) / 7) * 7;
+    const rowCount = Math.ceil((firstDay + daysInMonth) / 7);
+    const totalCells = rowCount * 7;
     const nextMonth = new Date(year, month + 1, 1);
     let nextDay = 1;
     while (calendar.children.length < totalCells) {
       calendar.appendChild(createDayCell(nextMonth.getFullYear(), nextMonth.getMonth(), nextDay++, [], true));
     }
 
+    adjustLayout(rowCount);
+    attachResize(rowCount);
+    attachWheelNavigation();
     renderSegments(calendar, segments, firstDay);
     attachRangeSelection(calendar);
   }
