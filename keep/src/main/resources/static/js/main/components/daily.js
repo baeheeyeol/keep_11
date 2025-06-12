@@ -392,6 +392,8 @@
                         cancelSelection();
                 });
 
+                document.addEventListener('scheduleModalClosed', cancelSelection);
+
                 grid.addEventListener('click', e => {
                         if (selecting) return; // drag selection handled separately
                         const slot = e.target.closest('.hour-slot');

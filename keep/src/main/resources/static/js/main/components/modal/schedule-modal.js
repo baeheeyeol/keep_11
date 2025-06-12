@@ -177,13 +177,14 @@
 			?.classList.add('selected');
 	}
 
-	function closeModal() {
-		document.getElementById('schedule-modal-overlay').classList.add('hidden');
-		document.getElementById('schedule-modal').classList.add('hidden');
-		document.getElementById('schedule-form').reset();
-		document.getElementById('sched-id').value = '';
-		document.querySelectorAll('.cat-color').forEach(b => b.classList.remove('selected'));
-	}
+        function closeModal() {
+                document.getElementById('schedule-modal-overlay').classList.add('hidden');
+                document.getElementById('schedule-modal').classList.add('hidden');
+                document.getElementById('schedule-form').reset();
+                document.getElementById('sched-id').value = '';
+                document.querySelectorAll('.cat-color').forEach(b => b.classList.remove('selected'));
+                document.dispatchEvent(new Event('scheduleModalClosed'));
+        }
 
 	// 전역 호출용 및 초기화
 	window.initScheduleModal = initScheduleModal;
