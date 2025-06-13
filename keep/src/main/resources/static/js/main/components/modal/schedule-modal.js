@@ -173,8 +173,12 @@
 			document.getElementById('sched-end-min').value = pad(end.getMinutes());
 			document.getElementById('sched-location').value = data.location || '';
 			document.getElementById('sched-desc').value = data.description || '';
-			document.getElementById('sched-color').value = data.category;
-			document.getElementById('sched-id').value = data.schedulesId;
+                        document.getElementById('sched-color').value = data.category;
+                        document.getElementById('sched-id').value = data.schedulesId;
+
+                        // 삭제 버튼 표시
+                        const delBtn = document.getElementById('modal-delete');
+                        delBtn?.classList.remove('hidden');
 
 			// 카테고리 버튼 선택 상태 동기화
 			document.querySelectorAll('.cat-color').forEach(btn => {
