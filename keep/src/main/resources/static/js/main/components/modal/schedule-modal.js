@@ -195,16 +195,16 @@
 	// ────────────────────────────────────────────────────────────────────────
 
         function openModal() {
+                const delBtn = document.getElementById('modal-delete');
+                if (delBtn) {
+                        delBtn.classList.toggle('hidden', !document.getElementById('sched-id').value);
+                }
                 document.getElementById('schedule-modal-overlay').classList.remove('hidden');
                 document.getElementById('schedule-modal').classList.remove('hidden');
                 // 기본 색상 표시
                 const hiddenColorInput = document.getElementById('sched-color');
                 document.querySelector('.cat-color[data-color="' + hiddenColorInput.value + '"]')
                         ?.classList.add('selected');
-                const delBtn = document.getElementById('modal-delete');
-                if (delBtn) {
-                        delBtn.classList.toggle('hidden', !document.getElementById('sched-id').value);
-                }
         }
 
         function closeModal() {
