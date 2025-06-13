@@ -3,7 +3,8 @@
 	function initScheduleModal() {
 		const overlay = document.getElementById('schedule-modal-overlay');
 		const modal = document.getElementById('schedule-modal');
-		const cancel = document.getElementById('modal-cancel');
+                const cancel = document.getElementById('modal-cancel');
+                const deleteBtn = document.getElementById('modal-delete');
 		const colors = document.querySelectorAll('.cat-color');
 		const hiddenColorInput = document.getElementById('sched-color');
 		const form = document.getElementById('schedule-form');
@@ -48,8 +49,29 @@
 		});
 
 		// 취소 버튼 및 오버레이 클릭 시 모달 닫기
-		cancel.addEventListener('click', closeModal);
-		overlay.addEventListener('click', closeModal);
+                cancel.addEventListener('click', closeModal);
+                overlay.addEventListener('click', closeModal);
+                deleteBtn?.addEventListener('click', async () => {
+                        const id = document.getElementById('sched-id').value;
+                        if (!id) return;
+                        if (!confirm('일정을 삭제하시겠습니까?')) return;
+                        try {
+                                const res = await fetch(`/api/schedules/${id}`, { method: 'DELETE' });
+                                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                                closeModal();
+                                const curView = currentDateInput.dataset.view;
+                                if (curView === 'weekly') {
+                                        window.initWeeklySchedule();
+                                } else if (curView === 'daily') {
+                                        window.initDailySchedule();
+                                } else if (curView === 'monthly') {
+                                        window.initMonthlySchedule();
+                                }
+                        } catch (err) {
+                                console.error(err);
+                                alert('일정을 삭제하는 데 실패했습니다.');
+                        }
+                });
 
 		if (form.dataset.listenerAttached) return;
 		// ❶ 폼 submit 이벤트 가로채기 (REST API용)
@@ -168,14 +190,18 @@
 	}
 	// ────────────────────────────────────────────────────────────────────────
 
-	function openModal() {
-		document.getElementById('schedule-modal-overlay').classList.remove('hidden');
-		document.getElementById('schedule-modal').classList.remove('hidden');
-		// 기본 색상 표시
-		const hiddenColorInput = document.getElementById('sched-color');
-		document.querySelector('.cat-color[data-color="' + hiddenColorInput.value + '"]')
-			?.classList.add('selected');
-	}
+        function openModal() {
+                document.getElementById('schedule-modal-overlay').classList.remove('hidden');
+                document.getElementById('schedule-modal').classList.remove('hidden');
+                // 기본 색상 표시
+                const hiddenColorInput = document.getElementById('sched-color');
+                document.querySelector('.cat-color[data-color="' + hiddenColorInput.value + '"]')
+                        ?.classList.add('selected');
+                const delBtn = document.getElementById('modal-delete');
+                if (delBtn) {
+                        delBtn.classList.toggle('hidden', !document.getElementById('sched-id').value);
+                }
+        }
 
         function closeModal() {
                 document.getElementById('schedule-modal-overlay').classList.add('hidden');
@@ -183,6 +209,8 @@
                 document.getElementById('schedule-form').reset();
                 document.getElementById('sched-id').value = '';
                 document.querySelectorAll('.cat-color').forEach(b => b.classList.remove('selected'));
+                const delBtn = document.getElementById('modal-delete');
+                delBtn?.classList.add('hidden');
                 document.dispatchEvent(new Event('scheduleModalClosed'));
         }
 
