@@ -88,14 +88,14 @@
 		for (let i = firstDay - 1; i >= 0; i--) {
 			const d = prevDays - i;
 			const date = new Date(prevMonth.getFullYear(), prevMonth.getMonth(), d);
-			const cell = createDayCell(date.getFullYear(), date.getMonth(), d, [], true);
+                        const cell = createDayCell(date.getFullYear(), date.getMonth(), d, true);
 			calendar.appendChild(cell);
 			cellMap[formatYMD(date)] = cell;
 		}
 
 		for (let d = 1; d <= daysInMonth; d++) {
 			const date = new Date(year, month, d);
-			const cell = createDayCell(year, month, d, []);
+                        const cell = createDayCell(year, month, d);
 			calendar.appendChild(cell);
 			cellMap[formatYMD(date)] = cell;
 		}
@@ -105,7 +105,7 @@
 		let nextDay = 1;
 		while (calendar.children.length < totalCells) {
 			const date = new Date(nextMonth.getFullYear(), nextMonth.getMonth(), nextDay++);
-			const cell = createDayCell(date.getFullYear(), date.getMonth(), date.getDate(), [], true);
+                        const cell = createDayCell(date.getFullYear(), date.getMonth(), date.getDate(), true);
 			calendar.appendChild(cell);
 			cellMap[formatYMD(date)] = cell;
 		}
@@ -118,7 +118,7 @@
 		attachRangeSelection(calendar);
 	}
 
-	function createDayCell(year, month, date, events, otherMonth = false) {
+        function createDayCell(year, month, date, otherMonth = false) {
 		const dayIdx = new Date(year, month, date).getDay();
 		const cell = document.createElement('div');
 		cell.className = 'day-cell';
@@ -225,14 +225,12 @@
                 const sorted = events
                         .map(e => ({ ...e, start: new Date(e.startTs), end: new Date(e.endTs) }))
                         .sort((a, b) => {
-                                const multiA = a.start.toDateString() !== a.end.toDateString();
-                                const multiB = b.start.toDateString() !== b.end.toDateString();
-                                if (multiA && !multiB) return -1;
-                                if (!multiA && multiB) return 1;
+                                if (a.start.getTime() !== b.start.getTime()) {
+                                        return a.start - b.start;
+                                }
                                 const durA = a.end - a.start;
                                 const durB = b.end - b.start;
-                                if (durA !== durB) return durB - durA;
-                                return a.start - b.start;
+                                return durB - durA;
                         });
 
 		sorted.forEach(evt => {
