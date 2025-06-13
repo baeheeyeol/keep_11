@@ -1,4 +1,5 @@
-// static/js/main/components/monthly.js
+// static/js/main/components/monthly.js 에서 하루가 지나는 일정및 그렇지 않은 일정 둘다 드래그중에는 해당 요일에 딱딱 들어맞게 이동되는거 처럼 보이도록 수정.드래그 중에는 기존 일정은 반투명상태로 변환.하루가 지나는 일정의 경우 
+// 
 (function() {
 	let suppressCellClick = false;
 	function formatYMD(date) {

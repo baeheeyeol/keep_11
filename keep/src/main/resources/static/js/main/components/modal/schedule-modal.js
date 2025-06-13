@@ -197,7 +197,7 @@
         function openModal() {
                 const delBtn = document.getElementById('modal-delete');
                 if (delBtn) {
-                        delBtn.classList.toggle('hidden', !document.getElementById('sched-id').value);
+                       console.log(delBtn.classList.toggle('hidden', !document.getElementById('sched-id').value));
                 }
                 document.getElementById('schedule-modal-overlay').classList.remove('hidden');
                 document.getElementById('schedule-modal').classList.remove('hidden');
@@ -206,7 +206,7 @@
                 document.querySelector('.cat-color[data-color="' + hiddenColorInput.value + '"]')
                         ?.classList.add('selected');
         }
-
+		
         function closeModal() {
                 document.getElementById('schedule-modal-overlay').classList.add('hidden');
                 document.getElementById('schedule-modal').classList.add('hidden');
