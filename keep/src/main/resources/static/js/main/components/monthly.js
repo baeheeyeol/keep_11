@@ -1,7 +1,8 @@
 // static/js/main/components/monthly.js 에서 하루가 지나는 일정및 그렇지 않은 일정 둘다 드래그중에는 해당 요일에 딱딱 들어맞게 이동되는거 처럼 보이도록 수정.드래그 중에는 기존 일정은 반투명상태로 변환.하루가 지나는 일정의 경우 
 // 
 (function() {
-	let suppressCellClick = false;
+        let suppressCellClick = false;
+        const monthlyState = {}; // 현재 렌더 상태 저장
 	function formatYMD(date) {
 		const y = date.getFullYear();
 		const m = String(date.getMonth() + 1).padStart(2, '0');
@@ -201,24 +202,30 @@
 		return cell;
 	}
 
-	function renderEventOverlay(events, displayStart, displayEnd, calendar, cellMap, rowCount) {
-		if (!calendar) return;
-		let overlay = calendar.querySelector('.monthly-events-overlay');
-		if (!overlay) {
-			overlay = document.createElement('div');
-			overlay.className = 'monthly-events-overlay';
-			calendar.appendChild(overlay);
-		}
-		overlay.innerHTML = '';
+        function renderEventOverlay(events, displayStart, displayEnd, calendar, cellMap, rowCount) {
+                if (!calendar) return;
+                monthlyState.displayStart = new Date(displayStart);
+                monthlyState.calendar = calendar;
+                monthlyState.cellMap = cellMap;
+                let overlay = calendar.querySelector('.monthly-events-overlay');
+                if (!overlay) {
+                        overlay = document.createElement('div');
+                        overlay.className = 'monthly-events-overlay';
+                        calendar.appendChild(overlay);
+                }
+                overlay.innerHTML = '';
+                monthlyState.overlay = overlay;
 
 		const temp = document.createElement('div');
 		temp.className = 'event-bar';
 		temp.style.visibility = 'hidden';
 		overlay.appendChild(temp);
-		const BAR_HEIGHT = temp.offsetHeight || 16;
-		overlay.removeChild(temp);
-		const GAP = 2;
-		const MAX_VISIBLE_ROWS = 3;
+                const BAR_HEIGHT = temp.offsetHeight || 16;
+                overlay.removeChild(temp);
+                const GAP = 2;
+                const MAX_VISIBLE_ROWS = 3;
+                monthlyState.barHeight = BAR_HEIGHT;
+                monthlyState.gap = GAP;
 
 		const rows = Array.from({ length: rowCount }, () => []);
 		const parts = [];
@@ -333,22 +340,11 @@
 			bar.style.left = left + 'px';
 			bar.style.top = top + 'px';
 			bar.style.width = (right - left) + 'px';
-			bar.draggable = true;
-			bar.addEventListener('dragstart', e => {
-				bar._dragging = true;
-				const ghost = bar.cloneNode(true);
-				ghost.classList.add('drag-ghost');
-				bar._ghost = ghost;
-				bar.parentNode.insertBefore(ghost, bar);
-				e.dataTransfer.setData('text/plain', JSON.stringify({ id: p.evt.schedulesId, date: bar.dataset.date }));
-				if (e.dataTransfer.setDragImage) {
-					e.dataTransfer.setDragImage(bar, 0, 0);
-				}
-			});
-			bar.addEventListener('dragend', () => {
-				if (bar._ghost) bar._ghost.remove();
-				setTimeout(() => { bar._dragging = false; }, 0);
-			});
+                        bar.dataset.startIdx = p.startIdx;
+                        bar.dataset.endIdx = p.endIdx;
+                        bar.dataset.row = p.row;
+                        bar.style.touchAction = 'none';
+                        bar.addEventListener('pointerdown', monthlyPointerDown);
 			bar.addEventListener('click', () => {
 				if (!bar._dragging && window.loadAndOpenScheduleModal) {
 					window.loadAndOpenScheduleModal(bar.dataset.id);
@@ -358,11 +354,11 @@
 			overlay.appendChild(bar);
 		});
 
-		Object.keys(cellMap).forEach(key => {
-			const cell = cellMap[key];
-			const count = hiddenCount[key] || 0;
-			let link = cell.querySelector('.more-link');
-			if (count > 0) {
+                Object.keys(cellMap).forEach(key => {
+                        const cell = cellMap[key];
+                        const count = hiddenCount[key] || 0;
+                        let link = cell.querySelector('.more-link');
+                        if (count > 0) {
 				if (!link) {
 					link = document.createElement('div');
 					link.className = 'more-link';
@@ -377,9 +373,120 @@
 				link.textContent = `+${count}개 더보기`;
 			} else if (link) {
 				link.remove();
-			}
-		});
-	}
+                        }
+                });
+        }
+
+
+        let dragState = null;
+
+        function monthlyPointerDown(e) {
+                const bar = e.currentTarget;
+                e.preventDefault();
+                e.stopPropagation();
+
+                const id = bar.dataset.id;
+                const overlay = monthlyState.overlay;
+                const allBars = Array.from(overlay.querySelectorAll(`.event-bar[data-id="${id}"]`));
+                dragState = {
+                        id,
+                        startX: e.clientX,
+                        deltaDays: 0,
+                        bars: allBars.map(el => ({
+                                el,
+                                startIdx: Number(el.dataset.startIdx),
+                                endIdx: Number(el.dataset.endIdx),
+                                row: Number(el.dataset.row)
+                        })),
+                        ghosts: []
+                };
+                dragState.bars.forEach(o => { o.el._dragging = false; });
+
+                dragState.bars.forEach(o => {
+                        o.el.style.opacity = '0.5';
+                        const g = o.el.cloneNode(true);
+                        g.classList.add('drag-ghost');
+                        overlay.appendChild(g);
+                        dragState.ghosts.push({ info: o, el: g });
+                });
+
+                document.addEventListener('pointermove', monthlyPointerMove);
+                document.addEventListener('pointerup', monthlyPointerUp);
+        }
+
+        function monthlyPointerMove(e) {
+                if (!dragState) return;
+                const cellWidth = monthlyState.calendar.querySelector('.day-cell').offsetWidth;
+                const delta = Math.round((e.clientX - dragState.startX) / cellWidth);
+                if (delta === dragState.deltaDays) return;
+                dragState.deltaDays = delta;
+                dragState.bars.forEach(o => { o.el._dragging = true; });
+
+                dragState.ghosts.forEach(g => {
+                        const newStart = g.info.startIdx + delta;
+                        const newEnd = g.info.endIdx + delta;
+                        const sDate = new Date(monthlyState.displayStart);
+                        sDate.setDate(monthlyState.displayStart.getDate() + newStart);
+                        const eDate = new Date(monthlyState.displayStart);
+                        eDate.setDate(monthlyState.displayStart.getDate() + newEnd);
+                        const startCell = monthlyState.cellMap[formatYMD(sDate)];
+                        const endCell = monthlyState.cellMap[formatYMD(eDate)];
+                        if (!startCell || !endCell) return;
+                        const sc = startCell.querySelector('.events-container').getBoundingClientRect();
+                        const ec = endCell.querySelector('.events-container').getBoundingClientRect();
+                        const calRect = monthlyState.calendar.getBoundingClientRect();
+                        const left = sc.left - calRect.left;
+                        const right = ec.left - calRect.left + ec.width;
+                        const top = sc.top - calRect.top + g.info.row * (monthlyState.barHeight + monthlyState.gap);
+                        g.el.style.left = left + 'px';
+                        g.el.style.top = top + 'px';
+                        g.el.style.width = (right - left) + 'px';
+                });
+        }
+
+        async function monthlyPointerUp() {
+                if (!dragState) return;
+                document.removeEventListener('pointermove', monthlyPointerMove);
+                document.removeEventListener('pointerup', monthlyPointerUp);
+
+                dragState.bars.forEach(o => {
+                        o.el.style.opacity = '';
+                        o.el._dragging = false;
+                });
+                dragState.ghosts.forEach(g => g.el.remove());
+
+                const deltaDays = dragState.deltaDays;
+                const id = dragState.id;
+                dragState = null;
+                if (!deltaDays) return;
+
+                if (window.saveToast && window.saveToast.showSaving) {
+                        window.saveToast.showSaving();
+                }
+                try {
+                        await fetch(`/api/schedules/${id}/moveWeekly`, {
+                                method: 'PATCH',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ deltaDays, deltaHours: 0 })
+                        });
+                        initMonthlySchedule();
+                        if (window.saveToast && window.saveToast.showSaved) {
+                                window.saveToast.showSaved(id, async () => {
+                                        await fetch(`/api/schedules/${id}/moveWeekly`, {
+                                                method: 'PATCH',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify({ deltaDays: -deltaDays, deltaHours: 0 })
+                                        });
+                                        initMonthlySchedule();
+                                });
+                        }
+                } catch (err) {
+                        console.error(err);
+                        if (window.saveToast && window.saveToast.hide) {
+                                window.saveToast.hide();
+                        }
+                }
+        }
 
 
 	function attachRangeSelection(calendar) {
