@@ -1,8 +1,8 @@
 // static/js/main/components/monthly.js 에서 하루가 지나는 일정및 그렇지 않은 일정 둘다 드래그중에는 해당 요일에 딱딱 들어맞게 이동되는거 처럼 보이도록 수정.드래그 중에는 기존 일정은 반투명상태로 변환.하루가 지나는 일정의 경우 
 // 
 (function() {
-        let suppressCellClick = false;
-        const monthlyState = {}; // 현재 렌더 상태 저장
+	let suppressCellClick = false;
+	const monthlyState = {}; // 현재 렌더 상태 저장
 	function formatYMD(date) {
 		const y = date.getFullYear();
 		const m = String(date.getMonth() + 1).padStart(2, '0');
@@ -90,14 +90,14 @@
 		for (let i = firstDay - 1; i >= 0; i--) {
 			const d = prevDays - i;
 			const date = new Date(prevMonth.getFullYear(), prevMonth.getMonth(), d);
-                        const cell = createDayCell(date.getFullYear(), date.getMonth(), d, true);
+			const cell = createDayCell(date.getFullYear(), date.getMonth(), d, true);
 			calendar.appendChild(cell);
 			cellMap[formatYMD(date)] = cell;
 		}
 
 		for (let d = 1; d <= daysInMonth; d++) {
 			const date = new Date(year, month, d);
-                        const cell = createDayCell(year, month, d);
+			const cell = createDayCell(year, month, d);
 			calendar.appendChild(cell);
 			cellMap[formatYMD(date)] = cell;
 		}
@@ -107,7 +107,7 @@
 		let nextDay = 1;
 		while (calendar.children.length < totalCells) {
 			const date = new Date(nextMonth.getFullYear(), nextMonth.getMonth(), nextDay++);
-                        const cell = createDayCell(date.getFullYear(), date.getMonth(), date.getDate(), true);
+			const cell = createDayCell(date.getFullYear(), date.getMonth(), date.getDate(), true);
 			calendar.appendChild(cell);
 			cellMap[formatYMD(date)] = cell;
 		}
@@ -120,7 +120,7 @@
 		attachRangeSelection(calendar);
 	}
 
-        function createDayCell(year, month, date, otherMonth = false) {
+	function createDayCell(year, month, date, otherMonth = false) {
 		const dayIdx = new Date(year, month, date).getDay();
 		const cell = document.createElement('div');
 		cell.className = 'day-cell';
@@ -202,44 +202,44 @@
 		return cell;
 	}
 
-        function renderEventOverlay(events, displayStart, displayEnd, calendar, cellMap, rowCount) {
-                if (!calendar) return;
-                monthlyState.displayStart = new Date(displayStart);
-                monthlyState.calendar = calendar;
-                monthlyState.cellMap = cellMap;
-                let overlay = calendar.querySelector('.monthly-events-overlay');
-                if (!overlay) {
-                        overlay = document.createElement('div');
-                        overlay.className = 'monthly-events-overlay';
-                        calendar.appendChild(overlay);
-                }
-                overlay.innerHTML = '';
-                monthlyState.overlay = overlay;
+	function renderEventOverlay(events, displayStart, displayEnd, calendar, cellMap, rowCount) {
+		if (!calendar) return;
+		monthlyState.displayStart = new Date(displayStart);
+		monthlyState.calendar = calendar;
+		monthlyState.cellMap = cellMap;
+		let overlay = calendar.querySelector('.monthly-events-overlay');
+		if (!overlay) {
+			overlay = document.createElement('div');
+			overlay.className = 'monthly-events-overlay';
+			calendar.appendChild(overlay);
+		}
+		overlay.innerHTML = '';
+		monthlyState.overlay = overlay;
 
 		const temp = document.createElement('div');
 		temp.className = 'event-bar';
 		temp.style.visibility = 'hidden';
 		overlay.appendChild(temp);
-                const BAR_HEIGHT = temp.offsetHeight || 16;
-                overlay.removeChild(temp);
-                const GAP = 2;
-                const MAX_VISIBLE_ROWS = 3;
-                monthlyState.barHeight = BAR_HEIGHT;
-                monthlyState.gap = GAP;
+		const BAR_HEIGHT = temp.offsetHeight || 16;
+		overlay.removeChild(temp);
+		const GAP = 2;
+		const MAX_VISIBLE_ROWS = 3;
+		monthlyState.barHeight = BAR_HEIGHT;
+		monthlyState.gap = GAP;
 
 		const rows = Array.from({ length: rowCount }, () => []);
 		const parts = [];
 
-                const sorted = events
-                        .map(e => ({ ...e, start: new Date(e.startTs), end: new Date(e.endTs) }))
-                        .sort((a, b) => {
-                                if (a.start.getTime() !== b.start.getTime()) {
-                                        return a.start - b.start;
-                                }
-                                const durA = a.end - a.start;
-                                const durB = b.end - b.start;
-                                return durB - durA;
-                        });
+		const sorted = events
+			.map(e => ({ ...e, start: new Date(e.startTs), end: new Date(e.endTs) }))
+			.sort((a, b) => {
+				if (a.start.getTime() !== b.start.getTime()) {
+					return a.start - b.start;
+				}
+				const durA = a.end - a.start;
+				const durB = b.end - b.start;
+				return durB - durA;
+			});
 
 		sorted.forEach(evt => {
 			let s = evt.start;
@@ -276,43 +276,43 @@
 			}
 		});
 
-                const calRect = calendar.getBoundingClientRect();
+		const calRect = calendar.getBoundingClientRect();
 		const eventsByDate = {};
 		const hiddenCount = {};
-               parts.forEach(p => {
-                        for (let idx = p.startIdx; idx <= p.endIdx; idx++) {
-                                const d = new Date(displayStart);
-                                d.setDate(displayStart.getDate() + idx);
-                                const key = formatYMD(d);
-                                if (!eventsByDate[key]) eventsByDate[key] = [];
-                                eventsByDate[key].push(p.evt);
-                                if (p.row >= MAX_VISIBLE_ROWS) {
-                                        hiddenCount[key] = (hiddenCount[key] || 0) + 1;
-                                }
-                        }
-                });
+		parts.forEach(p => {
+			for (let idx = p.startIdx; idx <= p.endIdx; idx++) {
+				const d = new Date(displayStart);
+				d.setDate(displayStart.getDate() + idx);
+				const key = formatYMD(d);
+				if (!eventsByDate[key]) eventsByDate[key] = [];
+				eventsByDate[key].push(p.evt);
+				if (p.row >= MAX_VISIBLE_ROWS) {
+					hiddenCount[key] = (hiddenCount[key] || 0) + 1;
+				}
+			}
+		});
 
-                // If a day only has a single short event, place it in the first row
-                parts.forEach(p => {
-                        if (p.startIdx === p.endIdx) {
-                                const d = new Date(displayStart);
-                                d.setDate(displayStart.getDate() + p.startIdx);
-                                const key = formatYMD(d);
-                                if ((eventsByDate[key] || []).length === 1) {
-                                        p.row = 0;
-                                }
-                        }
-                });
+		// If a day only has a single short event, place it in the first row
+		parts.forEach(p => {
+			if (p.startIdx === p.endIdx) {
+				const d = new Date(displayStart);
+				d.setDate(displayStart.getDate() + p.startIdx);
+				const key = formatYMD(d);
+				if ((eventsByDate[key] || []).length === 1) {
+					p.row = 0;
+				}
+			}
+		});
 
-                // compress visible row indices after adjustments
-                const visibleParts = parts.filter(p => p.row < MAX_VISIBLE_ROWS);
-                const rowMap = {};
-                visibleParts.forEach(p => {
-                        if (rowMap[p.row] === undefined) {
-                                rowMap[p.row] = Object.keys(rowMap).length;
-                        }
-                });
-                visibleParts.forEach(p => { p.row = rowMap[p.row]; });
+		// compress visible row indices after adjustments
+		const visibleParts = parts.filter(p => p.row < MAX_VISIBLE_ROWS);
+		const rowMap = {};
+		visibleParts.forEach(p => {
+			if (rowMap[p.row] === undefined) {
+				rowMap[p.row] = Object.keys(rowMap).length;
+			}
+		});
+		visibleParts.forEach(p => { p.row = rowMap[p.row]; });
 
 		parts.forEach(p => {
 			if (p.row >= MAX_VISIBLE_ROWS) return;
@@ -331,23 +331,23 @@
 			const right = ec.left - calRect.left + ec.width;
 			const top = sc.top - calRect.top + p.row * (BAR_HEIGHT + GAP);
 
-                        const bar = document.createElement('div');
-                        bar.className = 'event-bar';
-                        bar.style.backgroundColor = p.evt.category;
-                        bar.textContent = p.evt.title;
-                        bar.dataset.id = p.evt.schedulesId;
-                        bar.dataset.date = formatYMD(p.evt.start);
-                        // store full event range for drag calculations
-                        bar.dataset.eventStart = formatYMD(p.evt.start);
-                        bar.dataset.eventEnd = formatYMD(p.evt.end);
+			const bar = document.createElement('div');
+			bar.className = 'event-bar';
+			bar.style.backgroundColor = p.evt.category;
+			bar.textContent = p.evt.title;
+			bar.dataset.id = p.evt.schedulesId;
+			bar.dataset.date = formatYMD(p.evt.start);
+			// store full event range for drag calculations
+			bar.dataset.eventStart = formatYMD(p.evt.start);
+			bar.dataset.eventEnd = formatYMD(p.evt.end);
 			bar.style.left = left + 'px';
 			bar.style.top = top + 'px';
 			bar.style.width = (right - left) + 'px';
-                        bar.dataset.startIdx = p.startIdx;
-                        bar.dataset.endIdx = p.endIdx;
-                        bar.dataset.row = p.row;
-                        bar.style.touchAction = 'none';
-                        bar.addEventListener('pointerdown', monthlyPointerDown);
+			bar.dataset.startIdx = p.startIdx;
+			bar.dataset.endIdx = p.endIdx;
+			bar.dataset.row = p.row;
+			bar.style.touchAction = 'none';
+			bar.addEventListener('pointerdown', monthlyPointerDown);
 			bar.addEventListener('click', () => {
 				if (!bar._dragging && window.loadAndOpenScheduleModal) {
 					window.loadAndOpenScheduleModal(bar.dataset.id);
@@ -357,11 +357,11 @@
 			overlay.appendChild(bar);
 		});
 
-                Object.keys(cellMap).forEach(key => {
-                        const cell = cellMap[key];
-                        const count = hiddenCount[key] || 0;
-                        let link = cell.querySelector('.more-link');
-                        if (count > 0) {
+		Object.keys(cellMap).forEach(key => {
+			const cell = cellMap[key];
+			const count = hiddenCount[key] || 0;
+			let link = cell.querySelector('.more-link');
+			if (count > 0) {
 				if (!link) {
 					link = document.createElement('div');
 					link.className = 'more-link';
@@ -376,177 +376,177 @@
 				link.textContent = `+${count}개 더보기`;
 			} else if (link) {
 				link.remove();
-                        }
-                });
-        }
+			}
+		});
+	}
 
 
-        let dragState = null;
+	let dragState = null;
 
-        function monthlyPointerDown(e) {
-                const bar = e.currentTarget;
-                e.preventDefault();
-                e.stopPropagation();
+	function monthlyPointerDown(e) {
+		const bar = e.currentTarget;
+		e.preventDefault();
+		e.stopPropagation();
 
-                const id = bar.dataset.id;
-                const overlay = monthlyState.overlay;
-                const allBars = Array.from(overlay.querySelectorAll(`.event-bar[data-id="${id}"]`));
+		const id = bar.dataset.id;
+		const overlay = monthlyState.overlay;
+		const allBars = Array.from(overlay.querySelectorAll(`.event-bar[data-id="${id}"]`));
 
-                const evtStart = new Date(bar.dataset.eventStart);
-                const evtEnd = new Date(bar.dataset.eventEnd);
-                const base = monthlyState.displayStart;
-                let startIdx = Math.floor((evtStart - base) / 86400000);
-                const endIdx = Math.floor((evtEnd - base) / 86400000);
-                const row = Number(bar.dataset.row);
-                const segments = [];
-                while (startIdx <= endIdx) {
-                        const weekIdx = Math.floor(startIdx / 7);
-                        const weekEnd = (weekIdx + 1) * 7 - 1;
-                        const partEnd = Math.min(endIdx, weekEnd);
-                        segments.push({ startIdx, endIdx: partEnd, row });
-                        startIdx = partEnd + 1;
-                }
+		const evtStart = new Date(bar.dataset.eventStart);
+		const evtEnd = new Date(bar.dataset.eventEnd);
+		const base = monthlyState.displayStart;
+		let startIdx = Math.floor((evtStart - base) / 86400000);
+		const endIdx = Math.floor((evtEnd - base) / 86400000);
+		const row = Number(bar.dataset.row);
+		const segments = [];
+		while (startIdx <= endIdx) {
+			const weekIdx = Math.floor(startIdx / 7);
+			const weekEnd = (weekIdx + 1) * 7 - 1;
+			const partEnd = Math.min(endIdx, weekEnd);
+			segments.push({ startIdx, endIdx: partEnd, row });
+			startIdx = partEnd + 1;
+		}
 
-                dragState = {
-                        id,
-                        startX: e.clientX,
-                        startY: e.clientY,
-                        deltaDays: 0,
-                        eventStart: evtStart,
-                        eventEnd: evtEnd,
-                        bars: allBars.map(el => ({
-                                el,
-                                startIdx: Number(el.dataset.startIdx),
-                                endIdx: Number(el.dataset.endIdx),
-                                row: Number(el.dataset.row)
-                        })),
-                        ghosts: []
-                };
-                dragState.bars.forEach(info => {
-                        info.el._dragging = false;
-                        const g = info.el.cloneNode(true);
-                        g.classList.add('drag-ghost');
-                        g.style.pointerEvents = 'none';
-                        g.style.left = info.el.style.left;
-                        g.style.top = info.el.style.top;
-                        g.style.width = info.el.style.width;
-                        overlay.insertBefore(g, info.el);
-                        dragState.ghosts.push(g);
-                });
+		dragState = {
+			id,
+			startX: e.clientX,
+			startY: e.clientY,
+			deltaDays: 0,
+			eventStart: evtStart,
+			eventEnd: evtEnd,
+			bars: allBars.map(el => ({
+				el,
+				startIdx: Number(el.dataset.startIdx),
+				endIdx: Number(el.dataset.endIdx),
+				row: Number(el.dataset.row)
+			})),
+			ghosts: []
+		};
+		dragState.bars.forEach(info => {
+			info.el._dragging = false;
+			const g = info.el.cloneNode(true);
+			g.classList.add('drag-ghost');
+			g.style.pointerEvents = 'none';
+			g.style.left = info.el.style.left;
+			g.style.top = info.el.style.top;
+			g.style.width = info.el.style.width;
+			overlay.insertBefore(g, info.el);
+			dragState.ghosts.push(g);
+		});
 
-                document.addEventListener('pointermove', monthlyPointerMove);
-                document.addEventListener('pointerup', monthlyPointerUp);
-        }
+		document.addEventListener('pointermove', monthlyPointerMove);
+		document.addEventListener('pointerup', monthlyPointerUp);
+	}
 
-        function monthlyPointerMove(e) {
-                if (!dragState) return;
-                const cellWidth = monthlyState.calendar.querySelector('.day-cell').offsetWidth;
-                const cellHeight = monthlyState.calendar.querySelector('.day-cell').offsetHeight;
-                const deltaX = Math.round((e.clientX - dragState.startX) / cellWidth);
-                const deltaY = Math.round((e.clientY - dragState.startY) / cellHeight) * 7;
-                const delta = deltaX + deltaY;
-                if (delta === dragState.deltaDays) return;
-                dragState.deltaDays = delta;
+	function monthlyPointerMove(e) {
+		if (!dragState) return;
+		const cellWidth = monthlyState.calendar.querySelector('.day-cell').offsetWidth;
+		const cellHeight = monthlyState.calendar.querySelector('.day-cell').offsetHeight;
+		const deltaX = Math.round((e.clientX - dragState.startX) / cellWidth);
+		const deltaY = Math.round((e.clientY - dragState.startY) / cellHeight) * 7;
+		const delta = deltaX + deltaY;
+		if (delta === dragState.deltaDays) return;
+		dragState.deltaDays = delta;
 
-                const newStart = new Date(dragState.eventStart);
-                newStart.setDate(newStart.getDate() + delta);
-                const newEnd = new Date(dragState.eventEnd);
-                newEnd.setDate(newEnd.getDate() + delta);
+		const newStart = new Date(dragState.eventStart);
+		newStart.setDate(newStart.getDate() + delta);
+		const newEnd = new Date(dragState.eventEnd);
+		newEnd.setDate(newEnd.getDate() + delta);
 
-                const base = monthlyState.displayStart;
-                let sIdx = Math.floor((newStart - base) / 86400000);
-                const eIdx = Math.floor((newEnd - base) / 86400000);
-                const segments = [];
-                while (sIdx <= eIdx) {
-                        const weekIdx = Math.floor(sIdx / 7);
-                        const weekEnd = (weekIdx + 1) * 7 - 1;
-                        const partEnd = Math.min(eIdx, weekEnd);
-                        const row = dragState.bars[0] ? dragState.bars[0].row : 0;
-                        segments.push({ startIdx: sIdx, endIdx: partEnd, row });
-                        sIdx = partEnd + 1;
-                }
+		const base = monthlyState.displayStart;
+		let sIdx = Math.floor((newStart - base) / 86400000);
+		const eIdx = Math.floor((newEnd - base) / 86400000);
+		const segments = [];
+		while (sIdx <= eIdx) {
+			const weekIdx = Math.floor(sIdx / 7);
+			const weekEnd = (weekIdx + 1) * 7 - 1;
+			const partEnd = Math.min(eIdx, weekEnd);
+			const row = dragState.bars[0] ? dragState.bars[0].row : 0;
+			segments.push({ startIdx: sIdx, endIdx: partEnd, row });
+			sIdx = partEnd + 1;
+		}
 
-                // ensure enough ghost bars
-                while (dragState.ghosts.length < segments.length) {
-                        const tmpl = dragState.bars[0].el.cloneNode(true);
-                        tmpl.classList.add('drag-ghost');
-                        tmpl.style.pointerEvents = 'none';
-                        monthlyState.overlay.appendChild(tmpl);
-                        dragState.ghosts.push(tmpl);
-                }
+		// ensure enough ghost bars
+		while (dragState.ghosts.length < segments.length) {
+			const tmpl = dragState.bars[0].el.cloneNode(true);
+			tmpl.classList.add('drag-ghost');
+			tmpl.style.pointerEvents = 'none';
+			monthlyState.overlay.appendChild(tmpl);
+			dragState.ghosts.push(tmpl);
+		}
 
-                for (let i = 0; i < dragState.ghosts.length; i++) {
-                        const g = dragState.ghosts[i];
-                        const seg = segments[i];
-                        if (!seg) {
-                                g.style.display = 'none';
-                                continue;
-                        }
-                        g.style.display = '';
-                        const sDate = new Date(base);
-                        sDate.setDate(base.getDate() + seg.startIdx);
-                        const eDate = new Date(base);
-                        eDate.setDate(base.getDate() + seg.endIdx);
-                        const startCell = monthlyState.cellMap[formatYMD(sDate)];
-                        const endCell = monthlyState.cellMap[formatYMD(eDate)];
-                        if (!startCell || !endCell) {
-                                g.style.display = 'none';
-                                continue;
-                        }
-                        const sc = startCell.querySelector('.events-container').getBoundingClientRect();
-                        const ec = endCell.querySelector('.events-container').getBoundingClientRect();
-                        const calRect = monthlyState.calendar.getBoundingClientRect();
-                        const left = sc.left - calRect.left;
-                        const right = ec.left - calRect.left + ec.width;
-                        const top = sc.top - calRect.top + seg.row * (monthlyState.barHeight + monthlyState.gap);
-                        g.style.left = left + 'px';
-                        g.style.top = top + 'px';
-                        g.style.width = (right - left) + 'px';
-                }
-        }
+		for (let i = 0; i < dragState.ghosts.length; i++) {
+			const g = dragState.ghosts[i];
+			const seg = segments[i];
+			if (!seg) {
+				g.style.display = 'none';
+				continue;
+			}
+			g.style.display = '';
+			const sDate = new Date(base);
+			sDate.setDate(base.getDate() + seg.startIdx);
+			const eDate = new Date(base);
+			eDate.setDate(base.getDate() + seg.endIdx);
+			const startCell = monthlyState.cellMap[formatYMD(sDate)];
+			const endCell = monthlyState.cellMap[formatYMD(eDate)];
+			if (!startCell || !endCell) {
+				g.style.display = 'none';
+				continue;
+			}
+			const sc = startCell.querySelector('.events-container').getBoundingClientRect();
+			const ec = endCell.querySelector('.events-container').getBoundingClientRect();
+			const calRect = monthlyState.calendar.getBoundingClientRect();
+			const left = sc.left - calRect.left;
+			const right = ec.left - calRect.left + ec.width;
+			const top = sc.top - calRect.top + seg.row * (monthlyState.barHeight + monthlyState.gap);
+			g.style.left = left + 'px';
+			g.style.top = top + 'px';
+			g.style.width = (right - left) + 'px';
+		}
+	}
 
-        async function monthlyPointerUp() {
-                if (!dragState) return;
-                document.removeEventListener('pointermove', monthlyPointerMove);
-                document.removeEventListener('pointerup', monthlyPointerUp);
+	async function monthlyPointerUp() {
+		if (!dragState) return;
+		document.removeEventListener('pointermove', monthlyPointerMove);
+		document.removeEventListener('pointerup', monthlyPointerUp);
 
-                dragState.bars.forEach(o => {
-                        o.el._dragging = false;
-                });
-                dragState.ghosts.forEach(g => g.remove());
+		dragState.bars.forEach(o => {
+			o.el._dragging = false;
+		});
+		dragState.ghosts.forEach(g => g.remove());
 
-                const deltaDays = dragState.deltaDays;
-                const id = dragState.id;
-                dragState = null;
-                if (!deltaDays) return;
+		const deltaDays = dragState.deltaDays;
+		const id = dragState.id;
+		dragState = null;
+		if (!deltaDays) return;
 
-                if (window.saveToast && window.saveToast.showSaving) {
-                        window.saveToast.showSaving();
-                }
-                try {
-                        await fetch(`/api/schedules/${id}/moveWeekly`, {
-                                method: 'PATCH',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ deltaDays, deltaHours: 0 })
-                        });
-                        initMonthlySchedule();
-                        if (window.saveToast && window.saveToast.showSaved) {
-                                window.saveToast.showSaved(id, async () => {
-                                        await fetch(`/api/schedules/${id}/moveWeekly`, {
-                                                method: 'PATCH',
-                                                headers: { 'Content-Type': 'application/json' },
-                                                body: JSON.stringify({ deltaDays: -deltaDays, deltaHours: 0 })
-                                        });
-                                        initMonthlySchedule();
-                                });
-                        }
-                } catch (err) {
-                        console.error(err);
-                        if (window.saveToast && window.saveToast.hide) {
-                                window.saveToast.hide();
-                        }
-                }
-        }
+		if (window.saveToast && window.saveToast.showSaving) {
+			window.saveToast.showSaving();
+		}
+		try {
+			await fetch(`/api/schedules/${id}/moveWeekly`, {
+				method: 'PATCH',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ deltaDays, deltaHours: 0 })
+			});
+			initMonthlySchedule();
+			if (window.saveToast && window.saveToast.showSaved) {
+				window.saveToast.showSaved(id, async () => {
+					await fetch(`/api/schedules/${id}/moveWeekly`, {
+						method: 'PATCH',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ deltaDays: -deltaDays, deltaHours: 0 })
+					});
+					initMonthlySchedule();
+				});
+			}
+		} catch (err) {
+			console.error(err);
+			if (window.saveToast && window.saveToast.hide) {
+				window.saveToast.hide();
+			}
+		}
+	}
 
 
 	function attachRangeSelection(calendar) {

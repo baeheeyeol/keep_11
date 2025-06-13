@@ -197,7 +197,7 @@
         function openModal() {
                 const delBtn = document.getElementById('modal-delete');
                 if (delBtn) {
-                       console.log(delBtn.classList.toggle('hidden', !document.getElementById('sched-id').value));
+                       delBtn.classList.toggle('hidden', !document.getElementById('sched-id').value);
                 }
                 document.getElementById('schedule-modal-overlay').classList.remove('hidden');
                 document.getElementById('schedule-modal').classList.remove('hidden');
