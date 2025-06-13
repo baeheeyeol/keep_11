@@ -269,18 +269,30 @@
 		const calRect = calendar.getBoundingClientRect();
 		const eventsByDate = {};
 		const hiddenCount = {};
-		parts.forEach(p => {
-			for (let idx = p.startIdx; idx <= p.endIdx; idx++) {
-				const d = new Date(displayStart);
-				d.setDate(displayStart.getDate() + idx);
-				const key = formatYMD(d);
-				if (!eventsByDate[key]) eventsByDate[key] = [];
-				eventsByDate[key].push(p.evt);
-				if (p.row >= MAX_VISIBLE_ROWS) {
-					hiddenCount[key] = (hiddenCount[key] || 0) + 1;
-				}
-			}
-		});
+               parts.forEach(p => {
+                        for (let idx = p.startIdx; idx <= p.endIdx; idx++) {
+                                const d = new Date(displayStart);
+                                d.setDate(displayStart.getDate() + idx);
+                                const key = formatYMD(d);
+                                if (!eventsByDate[key]) eventsByDate[key] = [];
+                                eventsByDate[key].push(p.evt);
+                                if (p.row >= MAX_VISIBLE_ROWS) {
+                                        hiddenCount[key] = (hiddenCount[key] || 0) + 1;
+                                }
+                        }
+                });
+
+                // If a day only has a single short event, place it in the first row
+                parts.forEach(p => {
+                        if (p.startIdx === p.endIdx) {
+                                const d = new Date(displayStart);
+                                d.setDate(displayStart.getDate() + p.startIdx);
+                                const key = formatYMD(d);
+                                if ((eventsByDate[key] || []).length === 1) {
+                                        p.row = 0;
+                                }
+                        }
+                });
 
 		parts.forEach(p => {
 			if (p.row >= MAX_VISIBLE_ROWS) return;
