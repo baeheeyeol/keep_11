@@ -82,7 +82,6 @@
 
 /* ghost element shown while dragging */
 .drag-ghost {
-  opacity: 0.5;
   pointer-events: none;
 }
 

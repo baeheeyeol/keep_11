@@ -391,6 +391,7 @@
                 dragState = {
                         id,
                         startX: e.clientX,
+                        startY: e.clientY,
                         deltaDays: 0,
                         bars: allBars.map(el => ({
                                 el,
@@ -417,7 +418,10 @@
         function monthlyPointerMove(e) {
                 if (!dragState) return;
                 const cellWidth = monthlyState.calendar.querySelector('.day-cell').offsetWidth;
-                const delta = Math.round((e.clientX - dragState.startX) / cellWidth);
+                const cellHeight = monthlyState.calendar.querySelector('.day-cell').offsetHeight;
+                const deltaX = Math.round((e.clientX - dragState.startX) / cellWidth);
+                const deltaY = Math.round((e.clientY - dragState.startY) / cellHeight) * 7;
+                const delta = deltaX + deltaY;
                 if (delta === dragState.deltaDays) return;
                 dragState.deltaDays = delta;
                 dragState.bars.forEach(o => { o.el._dragging = true; });
