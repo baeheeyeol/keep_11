@@ -222,14 +222,18 @@
 		const rows = Array.from({ length: rowCount }, () => []);
 		const parts = [];
 
-		const sorted = events
-			.map(e => ({ ...e, start: new Date(e.startTs), end: new Date(e.endTs) }))
-			.sort((a, b) => {
-				const durA = Math.ceil((a.end - a.start) / 86400000);
-				const durB = Math.ceil((b.end - b.start) / 86400000);
-				if (durA !== durB) return durB - durA;
-				return a.start - b.start;
-			});
+                const sorted = events
+                        .map(e => ({ ...e, start: new Date(e.startTs), end: new Date(e.endTs) }))
+                        .sort((a, b) => {
+                                const multiA = a.start.toDateString() !== a.end.toDateString();
+                                const multiB = b.start.toDateString() !== b.end.toDateString();
+                                if (multiA && !multiB) return -1;
+                                if (!multiA && multiB) return 1;
+                                const durA = a.end - a.start;
+                                const durB = b.end - b.start;
+                                if (durA !== durB) return durB - durA;
+                                return a.start - b.start;
+                        });
 
 		sorted.forEach(evt => {
 			let s = evt.start;
@@ -266,7 +270,7 @@
 			}
 		});
 
-		const calRect = calendar.getBoundingClientRect();
+                const calRect = calendar.getBoundingClientRect();
 		const eventsByDate = {};
 		const hiddenCount = {};
                parts.forEach(p => {
@@ -293,6 +297,16 @@
                                 }
                         }
                 });
+
+                // compress visible row indices after adjustments
+                const visibleParts = parts.filter(p => p.row < MAX_VISIBLE_ROWS);
+                const rowMap = {};
+                visibleParts.forEach(p => {
+                        if (rowMap[p.row] === undefined) {
+                                rowMap[p.row] = Object.keys(rowMap).length;
+                        }
+                });
+                visibleParts.forEach(p => { p.row = rowMap[p.row]; });
 
 		parts.forEach(p => {
 			if (p.row >= MAX_VISIBLE_ROWS) return;
