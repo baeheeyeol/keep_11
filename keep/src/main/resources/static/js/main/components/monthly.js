@@ -412,6 +412,8 @@
                         startX: e.clientX,
                         startY: e.clientY,
                         deltaDays: 0,
+                        eventStart: evtStart,
+                        eventEnd: evtEnd,
                         bars: allBars.map(el => ({
                                 el,
                                 startIdx: Number(el.dataset.startIdx),
@@ -445,27 +447,62 @@
                 const delta = deltaX + deltaY;
                 if (delta === dragState.deltaDays) return;
                 dragState.deltaDays = delta;
-                dragState.bars.forEach(info => {
-                        info.el._dragging = true;
-                        const newStart = info.startIdx + delta;
-                        const newEnd = info.endIdx + delta;
-                        const sDate = new Date(monthlyState.displayStart);
-                        sDate.setDate(monthlyState.displayStart.getDate() + newStart);
-                        const eDate = new Date(monthlyState.displayStart);
-                        eDate.setDate(monthlyState.displayStart.getDate() + newEnd);
+
+                const newStart = new Date(dragState.eventStart);
+                newStart.setDate(newStart.getDate() + delta);
+                const newEnd = new Date(dragState.eventEnd);
+                newEnd.setDate(newEnd.getDate() + delta);
+
+                const base = monthlyState.displayStart;
+                let sIdx = Math.floor((newStart - base) / 86400000);
+                const eIdx = Math.floor((newEnd - base) / 86400000);
+                const segments = [];
+                while (sIdx <= eIdx) {
+                        const weekIdx = Math.floor(sIdx / 7);
+                        const weekEnd = (weekIdx + 1) * 7 - 1;
+                        const partEnd = Math.min(eIdx, weekEnd);
+                        const row = dragState.bars[0] ? dragState.bars[0].row : 0;
+                        segments.push({ startIdx: sIdx, endIdx: partEnd, row });
+                        sIdx = partEnd + 1;
+                }
+
+                // ensure enough ghost bars
+                while (dragState.ghosts.length < segments.length) {
+                        const tmpl = dragState.bars[0].el.cloneNode(true);
+                        tmpl.classList.add('drag-ghost');
+                        tmpl.style.pointerEvents = 'none';
+                        monthlyState.overlay.appendChild(tmpl);
+                        dragState.ghosts.push(tmpl);
+                }
+
+                for (let i = 0; i < dragState.ghosts.length; i++) {
+                        const g = dragState.ghosts[i];
+                        const seg = segments[i];
+                        if (!seg) {
+                                g.style.display = 'none';
+                                continue;
+                        }
+                        g.style.display = '';
+                        const sDate = new Date(base);
+                        sDate.setDate(base.getDate() + seg.startIdx);
+                        const eDate = new Date(base);
+                        eDate.setDate(base.getDate() + seg.endIdx);
                         const startCell = monthlyState.cellMap[formatYMD(sDate)];
                         const endCell = monthlyState.cellMap[formatYMD(eDate)];
-                        if (!startCell || !endCell) return;
+                        if (!startCell || !endCell) {
+                                g.style.display = 'none';
+                                continue;
+                        }
                         const sc = startCell.querySelector('.events-container').getBoundingClientRect();
                         const ec = endCell.querySelector('.events-container').getBoundingClientRect();
                         const calRect = monthlyState.calendar.getBoundingClientRect();
                         const left = sc.left - calRect.left;
                         const right = ec.left - calRect.left + ec.width;
-                        const top = sc.top - calRect.top + info.row * (monthlyState.barHeight + monthlyState.gap);
-                        info.el.style.left = left + 'px';
-                        info.el.style.top = top + 'px';
-                        info.el.style.width = (right - left) + 'px';
-                });
+                        const top = sc.top - calRect.top + seg.row * (monthlyState.barHeight + monthlyState.gap);
+                        g.style.left = left + 'px';
+                        g.style.top = top + 'px';
+                        g.style.width = (right - left) + 'px';
+                }
         }
 
         async function monthlyPointerUp() {
