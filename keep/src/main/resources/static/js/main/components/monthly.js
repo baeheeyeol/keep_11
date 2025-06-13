@@ -331,12 +331,15 @@
 			const right = ec.left - calRect.left + ec.width;
 			const top = sc.top - calRect.top + p.row * (BAR_HEIGHT + GAP);
 
-			const bar = document.createElement('div');
-			bar.className = 'event-bar';
-			bar.style.backgroundColor = p.evt.category;
-			bar.textContent = p.evt.title;
-			bar.dataset.id = p.evt.schedulesId;
-			bar.dataset.date = formatYMD(p.evt.start);
+                        const bar = document.createElement('div');
+                        bar.className = 'event-bar';
+                        bar.style.backgroundColor = p.evt.category;
+                        bar.textContent = p.evt.title;
+                        bar.dataset.id = p.evt.schedulesId;
+                        bar.dataset.date = formatYMD(p.evt.start);
+                        // store full event range for drag calculations
+                        bar.dataset.eventStart = formatYMD(p.evt.start);
+                        bar.dataset.eventEnd = formatYMD(p.evt.end);
 			bar.style.left = left + 'px';
 			bar.style.top = top + 'px';
 			bar.style.width = (right - left) + 'px';
@@ -388,27 +391,38 @@
                 const id = bar.dataset.id;
                 const overlay = monthlyState.overlay;
                 const allBars = Array.from(overlay.querySelectorAll(`.event-bar[data-id="${id}"]`));
+
+                const evtStart = new Date(bar.dataset.eventStart);
+                const evtEnd = new Date(bar.dataset.eventEnd);
+                const base = monthlyState.displayStart;
+                let startIdx = Math.floor((evtStart - base) / 86400000);
+                const endIdx = Math.floor((evtEnd - base) / 86400000);
+                const row = Number(bar.dataset.row);
+                const segments = [];
+                while (startIdx <= endIdx) {
+                        const weekIdx = Math.floor(startIdx / 7);
+                        const weekEnd = (weekIdx + 1) * 7 - 1;
+                        const partEnd = Math.min(endIdx, weekEnd);
+                        segments.push({ startIdx, endIdx: partEnd, row });
+                        startIdx = partEnd + 1;
+                }
+
                 dragState = {
                         id,
                         startX: e.clientX,
                         startY: e.clientY,
                         deltaDays: 0,
-                        bars: allBars.map(el => ({
-                                el,
-                                startIdx: Number(el.dataset.startIdx),
-                                endIdx: Number(el.dataset.endIdx),
-                                row: Number(el.dataset.row)
-                        })),
+                        bars: allBars.map(el => ({ el })),
+                        segments,
                         ghosts: []
                 };
                 dragState.bars.forEach(o => { o.el._dragging = false; });
 
-                dragState.bars.forEach(o => {
-                        o.el.style.opacity = '0.5';
-                        const g = o.el.cloneNode(true);
+                dragState.segments.forEach(info => {
+                        const g = bar.cloneNode(true);
                         g.classList.add('drag-ghost');
                         overlay.appendChild(g);
-                        dragState.ghosts.push({ info: o, el: g });
+                        dragState.ghosts.push({ info, el: g });
                 });
 
                 document.addEventListener('pointermove', monthlyPointerMove);
@@ -454,7 +468,6 @@
                 document.removeEventListener('pointerup', monthlyPointerUp);
 
                 dragState.bars.forEach(o => {
-                        o.el.style.opacity = '';
                         o.el._dragging = false;
                 });
                 dragState.ghosts.forEach(g => g.el.remove());
