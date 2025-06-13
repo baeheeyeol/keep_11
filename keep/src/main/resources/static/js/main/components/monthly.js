@@ -412,17 +412,24 @@
                         startX: e.clientX,
                         startY: e.clientY,
                         deltaDays: 0,
-                        bars: allBars.map(el => ({ el })),
-                        segments,
+                        bars: allBars.map(el => ({
+                                el,
+                                startIdx: Number(el.dataset.startIdx),
+                                endIdx: Number(el.dataset.endIdx),
+                                row: Number(el.dataset.row)
+                        })),
                         ghosts: []
                 };
-                dragState.bars.forEach(o => { o.el._dragging = false; });
-
-                dragState.segments.forEach(info => {
-                        const g = bar.cloneNode(true);
+                dragState.bars.forEach(info => {
+                        info.el._dragging = false;
+                        const g = info.el.cloneNode(true);
                         g.classList.add('drag-ghost');
-                        overlay.appendChild(g);
-                        dragState.ghosts.push({ info, el: g });
+                        g.style.pointerEvents = 'none';
+                        g.style.left = info.el.style.left;
+                        g.style.top = info.el.style.top;
+                        g.style.width = info.el.style.width;
+                        overlay.insertBefore(g, info.el);
+                        dragState.ghosts.push(g);
                 });
 
                 document.addEventListener('pointermove', monthlyPointerMove);
@@ -438,11 +445,10 @@
                 const delta = deltaX + deltaY;
                 if (delta === dragState.deltaDays) return;
                 dragState.deltaDays = delta;
-                dragState.bars.forEach(o => { o.el._dragging = true; });
-
-                dragState.ghosts.forEach(g => {
-                        const newStart = g.info.startIdx + delta;
-                        const newEnd = g.info.endIdx + delta;
+                dragState.bars.forEach(info => {
+                        info.el._dragging = true;
+                        const newStart = info.startIdx + delta;
+                        const newEnd = info.endIdx + delta;
                         const sDate = new Date(monthlyState.displayStart);
                         sDate.setDate(monthlyState.displayStart.getDate() + newStart);
                         const eDate = new Date(monthlyState.displayStart);
@@ -455,10 +461,10 @@
                         const calRect = monthlyState.calendar.getBoundingClientRect();
                         const left = sc.left - calRect.left;
                         const right = ec.left - calRect.left + ec.width;
-                        const top = sc.top - calRect.top + g.info.row * (monthlyState.barHeight + monthlyState.gap);
-                        g.el.style.left = left + 'px';
-                        g.el.style.top = top + 'px';
-                        g.el.style.width = (right - left) + 'px';
+                        const top = sc.top - calRect.top + info.row * (monthlyState.barHeight + monthlyState.gap);
+                        info.el.style.left = left + 'px';
+                        info.el.style.top = top + 'px';
+                        info.el.style.width = (right - left) + 'px';
                 });
         }
 
@@ -470,7 +476,7 @@
                 dragState.bars.forEach(o => {
                         o.el._dragging = false;
                 });
-                dragState.ghosts.forEach(g => g.el.remove());
+                dragState.ghosts.forEach(g => g.remove());
 
                 const deltaDays = dragState.deltaDays;
                 const id = dragState.id;
