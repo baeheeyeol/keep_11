@@ -265,18 +265,20 @@
 
                 let originals, pressedPointerId, scheduleId, startX, startY;
                 let ghostEls = [];
+                let dragging = false;
 
 		eventBlocks.forEach(block => {
 			block.style.touchAction = 'none';  // 터치 스크롤 방지
 			block.addEventListener('pointerdown', pointerDownHandler);
 		});
 
-		function pointerDownHandler(e) {
-			e.preventDefault();
-			e.stopPropagation();
+                function pointerDownHandler(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
 
-			updateGridRect();
-			pressedPointerId = e.pointerId;
+                        updateGridRect();
+                        dragging = false;
+                        pressedPointerId = e.pointerId;
 			startX = e.clientX;
 			startY = e.clientY;
 
@@ -299,6 +301,17 @@
                         if (eMove.pointerId !== pressedPointerId) return;
                         eMove.preventDefault();
 
+                        const deltaX = eMove.clientX - startX;
+                        const deltaY = eMove.clientY - startY;
+
+                        if (!dragging) {
+                                const THRESHOLD = 5;
+                                if (Math.abs(deltaX) < THRESHOLD && Math.abs(deltaY) < THRESHOLD) {
+                                        return;
+                                }
+                                dragging = true;
+                        }
+
                         // 첫 이동 시 원래 위치에 투명한 복제본 생성
                         if (ghostEls.length === 0) {
                                 originals.forEach(o => {
@@ -315,9 +328,7 @@
                         // 드래그 중임을 표시
                         eventBlocks.forEach(el => (el.__isDragging = true));
 
-			const deltaX = eMove.clientX - startX;
-			const deltaY = eMove.clientY - startY;
-			const dayWidthPx = gridRect.width / 7;
+                        const dayWidthPx = gridRect.width / 7;
 
 			originals.forEach(o => {
 				// 1) 세로 이동: 원본 top + deltaY → 15분 단위로 스냅
@@ -342,6 +353,12 @@
                         eventBlocks.forEach(el => (el.style.zIndex = ''));
                         ghostEls.forEach(g => g.remove());
                         ghostEls = [];
+
+                        if (!dragging) {
+                                document.removeEventListener('pointermove', pointerMoveHandler);
+                                document.removeEventListener('pointerup', pointerUpHandler);
+                                return;
+                        }
 
 			// origDayIdx과 실제 렌더된 leftPct를 바탕으로 deltaDays 계산
 			const origDayIdx = originals[0].origDayIdx;
@@ -388,9 +405,10 @@
                                 }
                         }
 
-			document.removeEventListener('pointermove', pointerMoveHandler);
-			document.removeEventListener('pointerup', pointerUpHandler);
-		}
+                        document.removeEventListener('pointermove', pointerMoveHandler);
+                        document.removeEventListener('pointerup', pointerUpHandler);
+                        dragging = false;
+                }
 	}
 
 	// 두 Date 객체가 “년·월·일”까지 같은지 비교
