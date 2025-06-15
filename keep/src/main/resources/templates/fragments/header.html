@@ -12,15 +12,19 @@
 
 	<div class="head">
 		<h1>일정</h1>
-		<div class="top-menu">
-			<div class="login-user">님 반갑습니다.</div>
-			<div class="logout">
-				<form action="/logout" method="post">
-					<button type="submit">
-						<span class="skip-info">로그아웃</span>
-					</button>
-				</form>
-			</div>
+                <div class="top-menu">
+                        <div class="login-user" th:text="${session.hname + '님 반갑습니다.'}">님 반갑습니다.</div>
+                        <div class="menu-icons">
+                                <a href="/friends" class="friend-icon" title="친구목록">👥</a>
+                                <a href="/dashboard" class="schedule-icon" title="일정">📅</a>
+                        </div>
+                        <div class="logout">
+                                <form action="/logout" method="post">
+                                        <button type="submit">
+                                                <span class="skip-info">로그아웃</span>
+                                        </button>
+                                </form>
+                        </div>
 		</div>
 	</div>
 </header>

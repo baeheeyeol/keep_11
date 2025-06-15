@@ -15,8 +15,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class MemberService {
-	private final MemberRepository memberRepository;
-	private final PasswordEncoder passwordEncoder;
+        private final MemberRepository memberRepository;
+        private final PasswordEncoder passwordEncoder;
 
 	// 회원가입
 	@Transactional
@@ -46,7 +46,13 @@ public class MemberService {
 				.orElse(false);
 	}
 
-	public Long findIdByEmail(String email) {
-		return memberRepository.findIdByEmail(email);
-	}
+        public Long findIdByEmail(String email) {
+                return memberRepository.findIdByEmail(email);
+        }
+
+        public String findHnameById(Long id) {
+                return memberRepository.findById(id)
+                                .map(MemberEntity::getHname)
+                                .orElse(null);
+        }
 }

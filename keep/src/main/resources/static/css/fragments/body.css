@@ -108,6 +108,18 @@ header .head h1 {
   color: #555;
   margin-right: 15px;
 }
+.menu-icons a {
+  margin-right: 10px;
+  font-size: 1.2rem;
+  text-decoration: none;
+  color: #555;
+}
+.menu-icons a:last-child {
+  margin-right: 15px;
+}
+.menu-icons a:hover {
+  color: #000;
+}
 .logout button {
   background-color: #4f46e5;
   color: #ffffff;
