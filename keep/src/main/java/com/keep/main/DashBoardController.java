@@ -13,11 +13,12 @@ public class DashBoardController {
     // 메인 대시보드 (초기 로드: daily fragment 로딩)
     @GetMapping({"/",""})
     public String dashboard() {
-        return "main/dashboard";  // -> templates/main/dashboard.html
+        // templates/main/dashboard/dashboard-main.html
+        return "main/dashboard/dashboard-main";
     }
     // fragment 만 뽑아 주는 엔드포인트
     @GetMapping("/fragment/{view}")
     public String fragment(@PathVariable("view") String view) {
-      return "main/components/" + view + " :: content";
+      return "main/dashboard/components/" + view + " :: content";
     }
 }
