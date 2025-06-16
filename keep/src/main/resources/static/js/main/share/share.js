@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					}
 				} else if (view === 'request') {
 					if (window.initShareRequest()) {
-						window.initShareInvite();
+						window.initShareRequest();
 					}
 				} else if (view === 'list') {
 					if (window.initShareList()) {
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					}
 				} else if (view === 'manage') {
 					if (window.initShareManage()) {
-						window.initShareInvite();
+						window.initShareManage();
 					}
 				}
 				requestAnimationFrame(() => {

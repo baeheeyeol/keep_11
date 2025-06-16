@@ -16,4 +16,5 @@ public class ScheduleShareDTO {
     private Long receiverId;
     private String canEdit;
     private String acceptYn;
+    private String message;
 }
