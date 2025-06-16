@@ -15,8 +15,19 @@ import java.util.List;
 @RequestMapping("/api/share")
 @RequiredArgsConstructor
 public class ScheduleShareApiController {
-	private final MemberService memberService;
-	private final ScheduleShareService shareService;
+        private final MemberService memberService;
+        private final ScheduleShareService shareService;
+
+        @GetMapping(path = "/search")
+        public List<MemberDTO> searchAll(@RequestParam("name") String name, Authentication authentication) {
+                Long sharerId = Long.valueOf(authentication.getName());
+                List<Long> receivers = shareService.findReceiverIds(sharerId);
+                List<MemberDTO> members = memberService.searchByName(name);
+                for (MemberDTO dto : members) {
+                        dto.setInvitable(!receivers.contains(dto.getId()));
+                }
+                return members;
+        }
 
 	@GetMapping(path = "/invite")
 	public List<MemberDTO> search(@RequestParam("name") String name, Authentication authentication) {
