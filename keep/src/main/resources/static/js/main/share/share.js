@@ -15,23 +15,23 @@ document.addEventListener('DOMContentLoaded', () => {
 				document.getElementById('share-request-css').disabled = (view !== 'request');
 				document.getElementById('share-list-css').disabled = (view !== 'list');
 				document.getElementById('share-manage-css').disabled = (view !== 'manage');
-				if (view === 'invite') {
-					if (window.initShareInvite()) {
-						window.initShareInvite();
-					}
-				} else if (view === 'request') {
-					if (window.initShareRequest()) {
-						window.initShareInvite();
-					}
-				} else if (view === 'list') {
-					if (window.initShareList()) {
-						window.initShareInvite();
-					}
-				} else if (view === 'manage') {
-					if (window.initShareManage()) {
-						window.initShareInvite();
-					}
-				}
+                                if (view === 'invite') {
+                                        if (typeof window.initShareInvite === 'function') {
+                                                window.initShareInvite();
+                                        }
+                                } else if (view === 'request') {
+                                        if (typeof window.initShareRequest === 'function') {
+                                                window.initShareRequest();
+                                        }
+                                } else if (view === 'list') {
+                                        if (typeof window.initShareList === 'function') {
+                                                window.initShareList();
+                                        }
+                                } else if (view === 'manage') {
+                                        if (typeof window.initShareManage === 'function') {
+                                                window.initShareManage();
+                                        }
+                                }
 				requestAnimationFrame(() => {
 					fragmentContainer.style.opacity = 1;
 				});
