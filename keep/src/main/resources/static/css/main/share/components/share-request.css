@@ -1,7 +1,7 @@
 #request-list {
   margin: 10px 0;
   /* Adjust height so the footer remains visible without scroll */
-  min-height: calc(100vh - 220px);
+  min-height: calc(100vh - 240px);
 }
 
 .placeholder {
@@ -11,7 +11,7 @@
   width: 100%;
   font-size: 1.6rem;
   /* Fill remaining space considering header and footer */
-  min-height: calc(100vh - 220px);
+  min-height: calc(100vh - 240px);
   display: flex;
   justify-content: center;
   align-items: center;
