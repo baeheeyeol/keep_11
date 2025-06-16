@@ -6,5 +6,7 @@ import java.util.List;
 
 public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEntity, Long> {
     List<ScheduleShareEntity> findBySharerId(Long sharerId);
+    List<ScheduleShareEntity> findBySharerIdAndAcceptYn(Long sharerId, String acceptYn);
+    List<ScheduleShareEntity> findByReceiverIdAndAcceptYn(Long receiverId, String acceptYn);
     boolean existsBySharerIdAndReceiverId(Long sharerId, Long receiverId);
 }
