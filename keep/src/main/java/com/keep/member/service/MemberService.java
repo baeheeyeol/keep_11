@@ -62,8 +62,8 @@ public class MemberService {
                                 .toList();
         }
 
-        public java.util.List<MemberDTO> searchAvailableForShare(Long scheduleId, String name) {
-                return memberRepository.searchAvailableForShare(scheduleId, name).stream()
+        public java.util.List<MemberDTO> searchAvailableForShare(Long scheduleId, Long excludeId, String name) {
+                return memberRepository.searchAvailableForShare(scheduleId, excludeId, name).stream()
                                 .map(e -> new MemberDTO(e.getId(), e.getEmail(), null, e.getHname(), null))
                                 .toList();
         }

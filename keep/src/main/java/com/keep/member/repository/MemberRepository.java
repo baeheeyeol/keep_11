@@ -24,6 +24,7 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
   @Query("""
       select m from MemberEntity m
       where lower(m.hname) like lower(concat('%', :name, '%'))
+        and m.id <> :excludeId
         and not exists (
             select 1 from ScheduleShareEntity s
             where s.scheduleId = :scheduleId
@@ -31,5 +32,6 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
         )
       """)
   java.util.List<MemberEntity> searchAvailableForShare(@Param("scheduleId") Long scheduleId,
+                                                      @Param("excludeId") Long excludeId,
                                                       @Param("name") String name);
 }
