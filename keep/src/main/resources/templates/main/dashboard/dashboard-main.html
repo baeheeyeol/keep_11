@@ -44,7 +44,7 @@
 
              <div th:replace="~{main/dashboard/components/modal/schedule-modal :: schedule-modal}"></div>
              <div th:replace="~{common/calendar-modal :: calendar-modal}"></div>
-             <div th:replace="~{main/dashboard/components/modal/save-toast :: save-toast}"></div>
+             <div th:replace="~{common/toast :: save-toast}"></div>
              <div th:replace="~{main/dashboard/components/modal/monthly-more-modal :: monthly-more-modal}"></div>
 
 </th:block>
@@ -56,7 +56,7 @@
         <script th:src="@{/js/main/dashboard/components/dashboard-weekly.js}"></script>
         <script th:src="@{/js/main/dashboard/components/dashboard-monthly.js}"></script>
         <script th:src="@{/js/main/dashboard/components/modal/schedule-modal.js}"></script>
-        <script th:src="@{/js/main/dashboard/components/save-toast.js}"></script>
+        <script th:src="@{/js/main/common/toast.js}"></script>
         <script th:src="@{/js/main/dashboard/components/modal/monthly-more-modal.js}"></script>
 </th:block>
 
