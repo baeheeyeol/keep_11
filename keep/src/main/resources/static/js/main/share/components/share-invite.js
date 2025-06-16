@@ -1,3 +1,4 @@
+//keep/src/main/resources/static/js/main/share/components/share-invite.js 에서 이름 검색할때 본인 아이디는 세션에 저장되어있으니 js로 보내지 말고 controller단에서 확인하도록 수정
 (function() {
 	async function initShareInvite() {
 		const list = document.getElementById('invite-list');

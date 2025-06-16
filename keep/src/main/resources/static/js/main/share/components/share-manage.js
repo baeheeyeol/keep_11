@@ -1,1 +1,6 @@
-// JS for share manage view
+// JS for share Manage view
+(function() {
+	async function initShareManage() {
+	}
+	window.initShareManage = initShareManage;
+})();

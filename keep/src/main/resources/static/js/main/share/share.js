@@ -15,25 +15,27 @@ document.addEventListener('DOMContentLoaded', () => {
 				document.getElementById('share-request-css').disabled = (view !== 'request');
 				document.getElementById('share-list-css').disabled = (view !== 'list');
 				document.getElementById('share-manage-css').disabled = (view !== 'manage');
-				console.log(view)
 				if (view === 'invite') {
-					if (windwo.initShareInvite()) {
+					console.log(1)
+					if (window.initShareInvite()) {
 						window.initShareInvite();
 					}
 				} else if (view === 'request') {
-					if (windwo.initShareRequest()) {
+					if (window.initShareRequest()) {
 						window.initShareInvite();
 					}
 				} else if (view === 'list') {
-					if (windwo.initShareList()) {
+					if (window.initShareList()) {
 						window.initShareInvite();
 					}
 				} else if (view === 'manage') {
-					if (windwo.initShareManage()) {
+					if (window.initShareManage()) {
 						window.initShareInvite();
 					}
 				}
-
+				requestAnimationFrame(() => {
+					fragmentContainer.style.opacity = 1;
+				});
 			})
 			.catch(err => console.error(err));
 	}
