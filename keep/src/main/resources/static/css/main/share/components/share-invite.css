@@ -1,11 +1,17 @@
 .list-container {
   margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
 
 .placeholder {
   padding: 40px;
   text-align: center;
   color: #888;
+  width: 100%;
+  font-size: 2rem;
 }
 
 .list-item {
