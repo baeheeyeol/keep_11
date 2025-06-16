@@ -5,21 +5,24 @@
         const btn = document.querySelector('.search-bar button');
         let list = document.getElementById('request-list');
 
-        if (!list) {
-            list = document.createElement('div');
-            list.id = 'request-list';
-            list.className = 'list-container';
-            list.innerHTML = '<div class="placeholder">요청할 사람을 검색하세요.</div>';
-            input.closest('.search-bar')?.after(list);
+        function ensureList() {
+            if (!list) {
+                list = document.createElement('div');
+                list.id = 'request-list';
+                list.className = 'list-container';
+                input.closest('.search-bar')?.after(list);
+            }
         }
 
         function renderEmpty(msg) {
+            ensureList();
             list.innerHTML = `<div class="placeholder">${msg}</div>`;
         }
 
         btn?.addEventListener('click', () => {
             const name = input.value.trim();
             if (!name) return;
+            ensureList();
             fetch(`/api/share/search?name=` + encodeURIComponent(name))
                 .then(res => res.json())
                 .then(data => {

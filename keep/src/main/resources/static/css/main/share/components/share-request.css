@@ -1,0 +1,11 @@
+#request-list {
+  margin: 10px 0;
+}
+
+.placeholder {
+  padding: 40px;
+  text-align: center;
+  color: #888;
+  width: 100%;
+  font-size: 2rem;
+}
