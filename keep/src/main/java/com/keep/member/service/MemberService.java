@@ -15,8 +15,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class MemberService {
-        private final MemberRepository memberRepository;
-        private final PasswordEncoder passwordEncoder;
+	private final MemberRepository memberRepository;
+	private final PasswordEncoder passwordEncoder;
 
 	// 회원가입
 	@Transactional
@@ -46,25 +46,21 @@ public class MemberService {
 				.orElse(false);
 	}
 
-        public Long findIdByEmail(String email) {
-                return memberRepository.findIdByEmail(email);
-        }
+	public Long findIdByEmail(String email) {
+		return memberRepository.findIdByEmail(email);
+	}
 
-        public String findHnameById(Long id) {
-                return memberRepository.findById(id)
-                                .map(MemberEntity::getHname)
-                                .orElse(null);
-        }
+	public String findHnameById(Long id) {
+		return memberRepository.findById(id).map(MemberEntity::getHname).orElse(null);
+	}
 
-        public java.util.List<MemberDTO> searchByName(String name) {
-                return memberRepository.searchByHname(name).stream()
-                                .map(e -> new MemberDTO(e.getId(), e.getEmail(), null, e.getHname(), null))
-                                .toList();
-        }
+	public java.util.List<MemberDTO> searchByName(String name) {
+		return memberRepository.searchByHname(name).stream()
+				.map(e -> new MemberDTO(e.getId(), e.getEmail(), null, e.getHname(), null)).toList();
+	}
 
-        public java.util.List<MemberDTO> searchAvailableForShare(Long scheduleId, String name) {
-                return memberRepository.searchAvailableForShare(scheduleId, name).stream()
-                                .map(e -> new MemberDTO(e.getId(), e.getEmail(), null, e.getHname(), null))
-                                .toList();
-        }
+	public java.util.List<MemberDTO> searchAvailableForShare(Long scheduleId, String name) {
+		return memberRepository.searchAvailableForShare(scheduleId, name).stream()
+				.map(e -> new MemberDTO(e.getId(), e.getEmail(), null, e.getHname(), null)).toList();
+	}
 }

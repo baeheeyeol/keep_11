@@ -15,21 +15,21 @@ import java.util.List;
 @RequestMapping("/api/schedules/{scheduleId}/share")
 @RequiredArgsConstructor
 public class ScheduleShareApiController {
-    private final MemberService memberService;
-    private final ScheduleShareService shareService;
+	private final MemberService memberService;
+	private final ScheduleShareService shareService;
 
-    @GetMapping("/search")
-    public List<MemberDTO> search(@PathVariable Long scheduleId, @RequestParam("name") String name) {
-        return memberService.searchAvailableForShare(scheduleId, name);
-    }
+	@GetMapping("/search")
+	public List<MemberDTO> search(@RequestParam("name") String name,Authentication authentication) {
+		Long scheduleId = Long.valueOf(authentication.getName());
+		return memberService.searchAvailableForShare(scheduleId, name);
+	}
 
-    @PostMapping("/invite")
-    public ResponseEntity<?> invite(Authentication authentication,
-                                    @PathVariable Long scheduleId,
-                                    @RequestBody ScheduleShareDTO dto) {
-        Long receiverId = dto.getReceiverId();
-        Long sharerId = Long.valueOf(authentication.getName());
-        shareService.invite(scheduleId, sharerId, receiverId);
-        return ResponseEntity.ok().build();
-    }
+	@PostMapping("/invite")
+	public ResponseEntity<?> invite(Authentication authentication, @PathVariable Long scheduleId,
+			@RequestBody ScheduleShareDTO dto) {
+		Long receiverId = dto.getReceiverId();
+		Long sharerId = Long.valueOf(authentication.getName());
+		shareService.invite(scheduleId, sharerId, receiverId);
+		return ResponseEntity.ok().build();
+	}
 }
