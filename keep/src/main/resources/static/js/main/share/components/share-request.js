@@ -3,7 +3,10 @@
     function initShareRequest() {
         const input = document.querySelector('.search-bar input');
         const btn = document.querySelector('.search-bar button');
+        const messageEl = document.querySelector('.request-message');
+        const requestBtn = document.querySelector('.request-btn');
         let list = document.getElementById('request-list');
+        let selectedId = null;
 
         function ensureList() {
             if (!list) {
@@ -46,12 +49,27 @@
                             });
                             button.textContent = '선택됨';
                             button.disabled = true;
+                            selectedId = m.id;
                         });
                         div.appendChild(span);
                         div.appendChild(button);
                         list.appendChild(div);
                     });
                 });
+        });
+
+        requestBtn?.addEventListener('click', () => {
+            if (!selectedId) return;
+            fetch('/api/share/request', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sharerId: selectedId, message: messageEl.value })
+            }).then(res => {
+                if (res.ok) {
+                    requestBtn.textContent = '요청 완료';
+                    requestBtn.disabled = true;
+                }
+            });
         });
     }
     window.initShareRequest = initShareRequest;

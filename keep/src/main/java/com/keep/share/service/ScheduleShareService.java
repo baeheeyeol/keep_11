@@ -34,6 +34,22 @@ public class ScheduleShareService {
         }
     }
 
+    public void request(Long sharerId, Long receiverId, String message) {
+        if (!repository.existsBySharerIdAndReceiverId(sharerId, receiverId)) {
+            ScheduleShareEntity entity = ScheduleShareEntity.builder()
+                    .sharerId(sharerId)
+                    .receiverId(receiverId)
+                    .canEdit("N")
+                    .acceptYn("N")
+                    .message(message)
+                    .createdBy(receiverId)
+                    .lastUpdatedBy(receiverId)
+                    .lastUpdateLogin(receiverId)
+                    .build();
+            repository.save(entity);
+        }
+    }
+
     public List<ScheduleShareEntity> findRequests(Long sharerId) {
         return repository.findBySharerIdAndAcceptYn(sharerId, "N");
     }
