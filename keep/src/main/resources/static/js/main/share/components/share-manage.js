@@ -43,7 +43,7 @@
         }
 
         async function load(type) {
-            const url = type === 'request' ? '/api/share/request' : '/api/share/invite';
+            const url = type === 'request' ? '/api/share/manage/request' : '/api/share/manage/invite';
             const data = await fetchList(url);
             render(data);
         }
