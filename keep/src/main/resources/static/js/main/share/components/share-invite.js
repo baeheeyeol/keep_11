@@ -13,7 +13,7 @@
                 btn?.addEventListener('click', () => {
                         const name = input.value.trim();
                         if (!name) return;
-                        fetch(`/api/share/${id}/search?name=` + encodeURIComponent(name))
+                        fetch(`/api/share/invite?name=` + encodeURIComponent(name))
                                 .then(res => res.json())
                                 .then(data => {
                                         if (data.length === 0) {
@@ -25,16 +25,6 @@
                                                 const div = document.createElement('div');
                                                 div.className = 'list-item';
                                                 div.innerHTML = `<span>${m.hname}</span><button class="invite-btn" data-id="${m.id}">초대하기</button>`;
-
-                                                const table = document.createElement('div');
-                                                table.className = 'hover-table';
-                                                table.innerHTML = `
-                                                        <table>
-                                                                <tr><th>이름</th><td>${m.hname}</td></tr>
-                                                                <tr><th>이메일</th><td>${m.email}</td></tr>
-                                                        </table>`;
-                                                div.appendChild(table);
-
                                                 list.appendChild(div);
                                         });
                                 });
@@ -42,12 +32,11 @@
 
 		list?.addEventListener('click', e => {
 			if (e.target.classList.contains('invite-btn')) {
-				const id = e.target.dataset.id;
-				console.log(id)
-				fetch(`/api/share/${id}/invite`, {
+				const receiverId = e.target.dataset.id;
+				fetch(`/api/share/invite`, {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ receiverId: id })
+					body: JSON.stringify({ receiverId: receiverId})
 				}).then(res => {
 					if (res.ok) {
 						e.target.textContent = '초대 완료';
