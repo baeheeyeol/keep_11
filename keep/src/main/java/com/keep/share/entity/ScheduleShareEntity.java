@@ -18,8 +18,6 @@ public class ScheduleShareEntity {
 
     // The actual column name in the database is SCHEDULE_ID.
     // Using SCHEDULES_ID results in ORA-00904 during queries.
-    @Column(name = "SCHEDULE_ID", nullable = false)
-    private Long scheduleId;
 
     @Column(name = "SHARER_ID", nullable = false)
     private Long sharerId;

@@ -28,7 +28,7 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
 			where lower(m.hname) like lower(concat('%', :name, '%'))
 			  and not exists (
 			      select 1 from ScheduleShareEntity s
-			      where s.scheduleId = :scheduleId
+			      where s.sharerId = :scheduleId
 			        and s.receiverId = m.id
 			  )
 			""")
