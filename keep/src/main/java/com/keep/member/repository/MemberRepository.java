@@ -16,4 +16,8 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
   
   @Query("select m.id from MemberEntity m where m.email = :email")
   Long findIdByEmail(@Param("email") String email);
+
+  // 이름 검색 (대소문자 구분 없음)
+  @Query("select m from MemberEntity m where lower(m.hname) like lower(concat('%', :name, '%'))")
+  java.util.List<MemberEntity> searchByHname(@Param("name") String name);
 }

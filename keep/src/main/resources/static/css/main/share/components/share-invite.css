@@ -1,0 +1,25 @@
+.list-container {
+  margin-top: 20px;
+}
+
+.placeholder {
+  padding: 40px;
+  text-align: center;
+  color: #888;
+}
+
+.list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.invite-btn {
+  background-color: #4CAF50;
+  color: #fff;
+  border: none;
+  padding: 4px 8px;
+  cursor: pointer;
+}
