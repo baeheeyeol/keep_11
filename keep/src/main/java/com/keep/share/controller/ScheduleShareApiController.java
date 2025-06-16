@@ -25,7 +25,10 @@ public class ScheduleShareApiController {
 	}
 
 	@PostMapping("/invite")
-	public ResponseEntity<?> invite(Authentication authentication, @PathVariable Long scheduleId,	@RequestBody ScheduleShareDTO dto) {
-		return ResponseEntity.ok().build();
-	}
+        public ResponseEntity<?> invite(Authentication authentication, @PathVariable Long scheduleId, @RequestBody ScheduleShareDTO dto) {
+                Long sharerId = Long.valueOf(authentication.getName());
+                Long receiverId = dto.getReceiverId();
+                shareService.invite(sharerId, receiverId);
+                return ResponseEntity.ok().build();
+        }
 }
