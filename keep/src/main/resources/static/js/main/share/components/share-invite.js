@@ -4,7 +4,7 @@
 		const list = document.getElementById('invite-list');
 		const input = document.getElementById('invite-search-input');
 		const btn = document.getElementById('invite-search-btn');
-		const scheduleId = document.getElementById('fragment-container').dataset.scheduleId;
+		const id = document.getElementById('fragment-container').dataset.Id;
 
 		function renderEmpty(msg) {
 			list.innerHTML = `<div class="placeholder">${msg}</div>`;
@@ -13,7 +13,7 @@
                 btn?.addEventListener('click', () => {
                         const name = input.value.trim();
                         if (!name) return;
-                        fetch(`/api/schedules/${scheduleId}/share/search?name=` + encodeURIComponent(name))
+                        fetch(`/api/share/${id}/search?name=` + encodeURIComponent(name))
                                 .then(res => res.json())
                                 .then(data => {
                                         if (data.length === 0) {
@@ -43,7 +43,8 @@
 		list?.addEventListener('click', e => {
 			if (e.target.classList.contains('invite-btn')) {
 				const id = e.target.dataset.id;
-				fetch(`/api/schedules/${scheduleId}/share/invite`, {
+				console.log(id)
+				fetch(`/api/share/${id}/invite`, {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({ receiverId: id })

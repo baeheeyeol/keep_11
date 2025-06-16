@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
 				document.getElementById('share-list-css').disabled = (view !== 'list');
 				document.getElementById('share-manage-css').disabled = (view !== 'manage');
 				if (view === 'invite') {
-					console.log(1)
 					if (window.initShareInvite()) {
 						window.initShareInvite();
 					}

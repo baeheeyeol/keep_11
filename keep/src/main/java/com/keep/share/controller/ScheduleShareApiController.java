@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/schedules/{scheduleId}/share")
+@RequestMapping("/api/share/{id}")
 @RequiredArgsConstructor
 public class ScheduleShareApiController {
 	private final MemberService memberService;
@@ -20,15 +20,16 @@ public class ScheduleShareApiController {
 
 	@GetMapping("/search")
 	public List<MemberDTO> search(@RequestParam("name") String name, Authentication authentication) {
-		Long scheduleId = Long.valueOf(authentication.getName());
-		return memberService.searchAvailableForShare(scheduleId, name);
+		Long sharerId = Long.valueOf(authentication.getName());
+		return memberService.searchAvailableForShare(sharerId, name);
 	}
 
 	@PostMapping("/invite")
-        public ResponseEntity<?> invite(Authentication authentication, @PathVariable Long scheduleId, @RequestBody ScheduleShareDTO dto) {
-                Long sharerId = Long.valueOf(authentication.getName());
-                Long receiverId = dto.getReceiverId();
-                shareService.invite(sharerId, receiverId);
-                return ResponseEntity.ok().build();
-        }
+	public ResponseEntity<?> invite(Authentication authentication, @PathVariable Long id,		@RequestBody ScheduleShareDTO dto) {
+		System.out.println("!@#!@");
+		Long sharerId = Long.valueOf(authentication.getName());
+		Long receiverId = dto.getReceiverId();
+		shareService.invite(sharerId, receiverId);
+		return ResponseEntity.ok().build();
+	}
 }
