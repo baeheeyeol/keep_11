@@ -18,6 +18,13 @@
                                 <a href="/friends" class="friend-icon" title="친구목록">👥</a>
                                 <a href="/dashboard" class="schedule-icon" title="일정">📅</a>
                         </div>
+                        <div class="notification">
+                                <button type="button" id="notification-btn" class="notification-icon" title="알림">🔔</button>
+                                <div id="notification-modal" class="notification-modal hidden">
+                                        <button type="button" id="notification-close" class="notification-close">&times;</button>
+                                        <p>알림이 없습니다.</p>
+                                </div>
+                        </div>
                         <div class="logout">
                                 <form action="/logout" method="post">
                                         <button type="submit">
