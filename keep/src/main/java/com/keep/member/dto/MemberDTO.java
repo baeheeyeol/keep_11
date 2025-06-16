@@ -12,11 +12,13 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class MemberDTO {
-	private Long id;
-	private String email;
-	private String password;
-	private String hname;
-	private String hname1;
+        private Long id;
+        private String email;
+        private String password;
+        private String hname;
+        private String hname1;
+        // 초대 가능 여부 표시용
+        private boolean invitable;
 	
 }
 

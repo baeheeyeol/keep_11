@@ -17,6 +17,10 @@
   position: relative;
 }
 
+.list-item:hover {
+  background-color: #f5f5f5;
+}
+
 .hover-table {
   display: none;
   position: absolute;
@@ -39,4 +43,9 @@
   border: none;
   padding: 4px 8px;
   cursor: pointer;
+}
+
+.invite-btn.disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
