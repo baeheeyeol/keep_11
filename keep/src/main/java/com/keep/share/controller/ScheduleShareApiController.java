@@ -20,11 +20,7 @@ public class ScheduleShareApiController {
 
     @GetMapping("/search")
     public List<MemberDTO> search(@PathVariable Long scheduleId, @RequestParam("name") String name) {
-        List<MemberDTO> members = memberService.searchByName(name);
-        List<Long> invitedIds = shareService.findReceiverIds(scheduleId);
-        return members.stream()
-                .filter(m -> !invitedIds.contains(m.getId()))
-                .toList();
+        return memberService.searchAvailableForShare(scheduleId, name);
     }
 
     @PostMapping("/invite")

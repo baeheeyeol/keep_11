@@ -20,4 +20,16 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
   // 이름 검색 (대소문자 구분 없음)
   @Query("select m from MemberEntity m where lower(m.hname) like lower(concat('%', :name, '%'))")
   java.util.List<MemberEntity> searchByHname(@Param("name") String name);
+
+  @Query("""
+      select m from MemberEntity m
+      where lower(m.hname) like lower(concat('%', :name, '%'))
+        and not exists (
+            select 1 from ScheduleShareEntity s
+            where s.scheduleId = :scheduleId
+              and s.receiverId = m.id
+        )
+      """)
+  java.util.List<MemberEntity> searchAvailableForShare(@Param("scheduleId") Long scheduleId,
+                                                      @Param("name") String name);
 }

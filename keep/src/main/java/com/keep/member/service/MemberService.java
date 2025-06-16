@@ -61,4 +61,10 @@ public class MemberService {
                                 .map(e -> new MemberDTO(e.getId(), e.getEmail(), null, e.getHname(), null))
                                 .toList();
         }
+
+        public java.util.List<MemberDTO> searchAvailableForShare(Long scheduleId, String name) {
+                return memberRepository.searchAvailableForShare(scheduleId, name).stream()
+                                .map(e -> new MemberDTO(e.getId(), e.getEmail(), null, e.getHname(), null))
+                                .toList();
+        }
 }
