@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="content">
+    <div class="list-toggle">
+        <button class="toggle-btn active" data-target="shared">공유한 인원</button>
+        <button class="toggle-btn" data-target="received">공유받은 인원</button>
+    </div>
+    <div class="list-container" id="share-list">
+        <div class="list-item"><span>사용자 이름</span></div>
+    </div>
 </div>
 </html>
-

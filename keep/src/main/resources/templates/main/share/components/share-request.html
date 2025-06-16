@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="content">
+    <div class="search-bar">
+        <input type="text" placeholder="이름 검색" />
+        <button type="button">검색</button>
+    </div>
+    <textarea class="request-message" rows="3" placeholder="메시지를 입력하세요"></textarea>
+    <button type="button" class="request-btn">요청하기</button>
 </div>
 </html>
-

@@ -1,7 +1,19 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="content">
+    <div class="list-toggle">
+        <button class="toggle-btn active" data-target="request">받은 요청</button>
+        <button class="toggle-btn" data-target="invite">받은 초대</button>
+    </div>
+    <div class="list-container">
+        <div class="list-item">
+            <span>사용자 이름</span>
+            <div>
+                <button class="accept-btn" type="button">수락</button>
+                <button class="reject-btn" type="button">거절</button>
+            </div>
+        </div>
+    </div>
 </div>
 </html>
-
