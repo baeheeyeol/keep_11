@@ -40,6 +40,15 @@ public class ScheduleShareApiController {
                 return ResponseEntity.ok().build();
         }
 
+        @PostMapping("/request")
+        public ResponseEntity<?> request(Authentication authentication,
+                                         @RequestBody ScheduleShareDTO scheduleShareDTO) {
+                shareService.request(scheduleShareDTO.getSharerId(),
+                        Long.parseLong(authentication.getName()),
+                        scheduleShareDTO.getMessage());
+                return ResponseEntity.ok().build();
+        }
+
         @GetMapping("/manage/request")
         public List<MemberDTO> loadRequests(Authentication authentication) {
                 Long sharerId = Long.parseLong(authentication.getName());
