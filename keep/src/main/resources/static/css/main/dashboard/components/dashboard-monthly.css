@@ -1,0 +1,126 @@
+:root {
+  --monthly-cell-height: 120px;
+}
+
+.monthly-calendar {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-auto-rows: var(--monthly-cell-height);
+  border-top: 1px solid #e5e7eb;
+  border-left: 1px solid #e5e7eb;
+  background: #fff;
+}
+
+.monthly-events-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+.monthly-events-overlay .event-bar {
+  position: absolute;
+  pointer-events: auto;
+  box-sizing: border-box;
+}
+
+.monthly-calendar .day-cell {
+  position: relative;
+  border-right: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 2px;
+  overflow: hidden;
+}
+
+.monthly-calendar .day-cell.other-month {
+  background: #f3f4f6;
+}
+
+.monthly-calendar .day-cell.other-month .day-number {
+  color: #9ca3af;
+}
+
+.monthly-calendar .day-number {
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  font-size: 0.75rem;
+  color: #555;
+  z-index: 2;
+}
+
+.monthly-calendar .day-cell.sun .day-number,
+.monthly-calendar .day-cell.sat .day-number {
+  color: #ef4444;
+}
+
+.monthly-calendar .events-container {
+  position: absolute;
+  top: 22px;
+  bottom: 2px;
+  left: 2px;
+  right: 2px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 2px;
+}
+
+.monthly-calendar .event-bar {
+  display: block;
+  border-radius: 3px;
+  padding: 0 2px;
+  font-size: 0.75rem;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ghost element shown while dragging */
+.drag-ghost {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.monthly-calendar .more-link {
+  font-size: 0.75rem;
+  color: #555;
+  cursor: pointer;
+}
+
+.weekday-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+.weekday-header .day-label {
+  text-align: center;
+  padding: 4px 0;
+  font-weight: 600;
+  border-right: 1px solid #e5e7eb;
+  color: #333;
+}
+.weekday-header .day-label:last-child {
+  border-right: none;
+}
+
+.monthly-calendar-container {
+  height: calc(100vh - var(--dashboard-header-height) - 20px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 1rem;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+.monthly-calendar {
+  flex: 1;
+  overflow: hidden;
+}
