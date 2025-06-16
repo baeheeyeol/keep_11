@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  min-height: 100vh;
+  min-height: 70vh;
 }
 
 .placeholder {
@@ -12,6 +12,10 @@
   color: #888;
   width: 100%;
   font-size: 1.6rem;
+  min-height: 60vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .list-item {
