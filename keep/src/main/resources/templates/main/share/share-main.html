@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"	xmlns:th="http://www.thymeleaf.org"	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"	layout:decorate="layouts/layout">
+<!--/* title */-->
+<th:block layout:fragment="title">
+	<title>리스트</title>
+</th:block>
+
+<!--/* style */-->
+<th:block layout:fragment="add-css">
+<!-- dash.html head -->
+</th:block>
+<!--/* content */-->
+<th:block layout:fragment="content">
+	<div class="dashboard-header">
+		<!-- 좌측: 비워둔 영역 (추후 아이콘 등 추가 가능) -->
+		<div class="header-left"></div>
+		<!-- 우측: 뷰 토글 버튼 -->
+		<div class="dashboard-header-right">
+			<button class="view-btn" data-view="today">목록</button>
+			<button class="view-btn" data-view="daily">공유할인원</button>
+			<button class="view-btn active" data-view="weekly">공유요청하기</button>
+			<button class="view-btn" data-view="monthly">요청관리</button>
+		</div>
+	</div>
+	<div id="fragment-container"></div>
+	<!-- 	daily.html 등록 모달 -->	
+             <div th:replace="~{main/dashboard/components/modal/save-toast :: save-toast}"></div>
+
+</th:block>
+<!--/* script */-->
+<th:block layout:fragment="script">
+        <script th:src="@{/js/main/components/save-toast.js}"></script>
+</th:block>
+
+</html>
+  
