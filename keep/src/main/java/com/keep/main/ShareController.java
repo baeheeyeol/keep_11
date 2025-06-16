@@ -19,6 +19,6 @@ public class ShareController {
     // fragment 만 뽑아 주는 엔드포인트
     @GetMapping("/fragment/{view}")
     public String fragment(@PathVariable("view") String view) {
-      return "main/share/components/" + view + " :: content";
+      return "main/share/components/share-" + view + " :: content";
     }
 }
