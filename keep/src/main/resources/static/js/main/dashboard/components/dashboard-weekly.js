@@ -1,5 +1,4 @@
-/* static/js/main/components/weekly.js
-*/
+/* static/js/main/dashboard/components/dashboard-weekly.js */
 
 (function() {
 	/**

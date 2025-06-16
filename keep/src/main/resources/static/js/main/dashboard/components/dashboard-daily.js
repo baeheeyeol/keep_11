@@ -1,4 +1,4 @@
-// static/js/main/components/daily.js 
+// static/js/main/dashboard/components/dashboard-daily.js
 (function() {
 	let draggingEvt = null;
 	let ghostEl = null;
