@@ -8,10 +8,10 @@
 <!--/* style */-->
 <th:block layout:fragment="add-css">
         <link rel="stylesheet" th:href="@{/css/main/share/share.css}" />
-        <link rel="stylesheet" th:href="@{/css/main/share/components/share-invite.css}" />
-        <link rel="stylesheet" th:href="@{/css/main/share/components/share-list.css}" />
-        <link rel="stylesheet" th:href="@{/css/main/share/components/share-manage.css}" />
-        <link rel="stylesheet" th:href="@{/css/main/share/components/share-request.css}" />
+        <link id="share-invite-css" rel="stylesheet" th:href="@{/css/main/share/components/share-invite.css}" />
+        <link id="share-list-css"rel="stylesheet" th:href="@{/css/main/share/components/share-list.css}" />
+        <link id="share-manage-css"rel="stylesheet" th:href="@{/css/main/share/components/share-manage.css}" />
+        <link id="share-request-css"rel="stylesheet" th:href="@{/css/main/share/components/share-request.css}" />
 </th:block>
 <!--/* content */-->
 <th:block layout:fragment="content">
@@ -28,7 +28,7 @@
                         <button class="view-btn" data-view="manage">관리</button>
                 </div>
         </div>
-        <div id="fragment-container" th:data-schedule-id="${param.scheduleId}"></div>
+        <div id="fragment-container"></div>
 
 </th:block>
 <!--/* script */-->
