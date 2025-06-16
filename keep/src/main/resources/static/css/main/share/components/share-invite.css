@@ -3,7 +3,8 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  min-height: 70vh;
+  /* Ensure the footer is visible without scrolling */
+  min-height: calc(100vh - 220px);
 }
 
 .placeholder {
@@ -12,7 +13,8 @@
   color: #888;
   width: 100%;
   font-size: 1.6rem;
-  min-height: 60vh;
+  /* Match container height to occupy remaining space */
+  min-height: calc(100vh - 220px);
   display: flex;
   justify-content: center;
   align-items: center;
