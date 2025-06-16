@@ -7,16 +7,19 @@
 
 <!--/* style */-->
 <th:block layout:fragment="add-css">
-        <link rel="stylesheet" th:href="@{/css/main/dashboard.css}" />
-        <link rel="stylesheet" th:href="@{/css/main/share.css}" />
+        <link rel="stylesheet" th:href="@{/css/main/share/share.css}" />
+        <link rel="stylesheet" th:href="@{/css/main/share/components/share-invite.css}" />
+        <link rel="stylesheet" th:href="@{/css/main/share/components/share-list.css}" />
+        <link rel="stylesheet" th:href="@{/css/main/share/components/share-manage.css}" />
+        <link rel="stylesheet" th:href="@{/css/main/share/components/share-request.css}" />
 </th:block>
 <!--/* content */-->
 <th:block layout:fragment="content">
-        <div class="dashboard-header">
+        <div class="share-header">
                 <!-- 좌측: 비워둔 영역 (추후 아이콘 등 추가 가능) -->
                 <div class="header-left"></div>
                 <!-- 우측: 뷰 토글 버튼 -->
-                <div class="dashboard-header-right">
+                <div class="share-header-right">
                         <button class="view-btn" data-view="list">목록</button>
                         <button class="view-btn" data-view="request">요청</button>
                         <button class="view-btn active" data-view="invite">초대</button>
