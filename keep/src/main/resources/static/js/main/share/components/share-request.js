@@ -8,6 +8,22 @@
         let list = document.getElementById('request-list');
         let selectedId = null;
 
+        hideControls();
+        renderEmpty('요청할 사람을 선택해 주세요.');
+
+        function hideControls() {
+            messageEl.style.display = 'none';
+            requestBtn.style.display = 'none';
+            requestBtn.textContent = '요청하기';
+            requestBtn.disabled = false;
+            messageEl.value = '';
+        }
+
+        function showControls() {
+            messageEl.style.display = '';
+            requestBtn.style.display = '';
+        }
+
         function ensureList() {
             if (!list) {
                 list = document.createElement('div');
@@ -25,6 +41,8 @@
         btn?.addEventListener('click', () => {
             const name = input.value.trim();
             if (!name) return;
+            hideControls();
+            selectedId = null;
             ensureList();
             fetch(`/api/share/search?name=` + encodeURIComponent(name))
                 .then(res => res.json())
@@ -42,15 +60,24 @@
                         const button = document.createElement('button');
                         button.className = 'select-btn';
                         button.dataset.id = m.id;
-                        button.textContent = '선택';
-                        button.addEventListener('click', () => {
-                            Array.from(list.children).forEach(item => {
-                                if (item !== div) item.remove();
-                            });
-                            button.textContent = '선택됨';
+
+                        if (!m.invitable) {
+                            button.textContent = '선택완료';
                             button.disabled = true;
-                            selectedId = m.id;
-                        });
+                            button.classList.add('disabled');
+                        } else {
+                            button.textContent = '선택';
+                            button.addEventListener('click', () => {
+                                Array.from(list.children).forEach(item => {
+                                    if (item !== div) item.remove();
+                                });
+                                button.textContent = '선택완료';
+                                button.disabled = true;
+                                button.classList.add('disabled');
+                                selectedId = m.id;
+                                showControls();
+                            });
+                        }
                         div.appendChild(span);
                         div.appendChild(button);
                         list.appendChild(div);
