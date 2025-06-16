@@ -37,12 +37,13 @@
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({ receiverId: receiverId})
-				}).then(res => {
-					if (res.ok) {
-						e.target.textContent = '초대 완료';
-						e.target.disabled = true;
-					}
-				});
+                                }).then(res => {
+                                        if (res.ok) {
+                                                e.target.textContent = '초대 완료';
+                                                e.target.disabled = true;
+                                                e.target.classList.add('done');
+                                        }
+                                });
 			}
 		});
 	}
