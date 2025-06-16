@@ -19,6 +19,6 @@ public class DashBoardController {
     // fragment 만 뽑아 주는 엔드포인트
     @GetMapping("/fragment/{view}")
     public String fragment(@PathVariable("view") String view) {
-      return "main/dashboard/components/" + view + " :: content";
+      return "main/dashboard/components/dashboard-" + view + " :: content";
     }
 }
