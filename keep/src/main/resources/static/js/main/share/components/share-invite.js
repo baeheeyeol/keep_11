@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
             fetch(`/api/schedules/${scheduleId}/share/invite`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({inviteeId: id})
+                body: JSON.stringify({receiverId: id})
             }).then(res => {
                 if (res.ok) {
                     e.target.textContent = '초대 완료';

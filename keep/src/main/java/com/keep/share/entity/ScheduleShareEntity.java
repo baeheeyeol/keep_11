@@ -19,9 +19,42 @@ public class ScheduleShareEntity {
     @Column(name = "SCHEDULES_ID", nullable = false)
     private Long scheduleId;
 
-    @Column(name = "INVITER_ID", nullable = false)
-    private Long inviterId;
+    @Column(name = "SHARER_ID", nullable = false)
+    private Long sharerId;
 
-    @Column(name = "INVITEE_ID", nullable = false)
-    private Long inviteeId;
+    @Column(name = "RECEIVER_ID", nullable = false)
+    private Long receiverId;
+
+    @Column(name = "CAN_EDIT")
+    private String canEdit;
+
+    @Column(name = "ACCEPT_YN")
+    private String acceptYn;
+
+    @Column(name = "CREATED_BY")
+    private Long createdBy;
+
+    @Column(name = "CREATION_DATE")
+    private java.time.LocalDateTime creationDate;
+
+    @Column(name = "LAST_UPDATED_BY")
+    private Long lastUpdatedBy;
+
+    @Column(name = "LAST_UPDATE_DATE")
+    private java.time.LocalDateTime lastUpdateDate;
+
+    @Column(name = "LAST_UPDATE_LOGIN")
+    private Long lastUpdateLogin;
+
+    @PrePersist
+    protected void onCreate() {
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+        this.creationDate = now;
+        this.lastUpdateDate = now;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.lastUpdateDate = java.time.LocalDateTime.now();
+    }
 }

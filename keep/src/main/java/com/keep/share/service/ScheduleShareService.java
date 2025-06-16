@@ -13,18 +13,23 @@ import java.util.stream.Collectors;
 public class ScheduleShareService {
     private final ScheduleShareRepository repository;
 
-    public List<Long> findInviteeIds(Long scheduleId) {
+    public List<Long> findReceiverIds(Long scheduleId) {
         return repository.findByScheduleId(scheduleId).stream()
-                .map(ScheduleShareEntity::getInviteeId)
+                .map(ScheduleShareEntity::getReceiverId)
                 .collect(Collectors.toList());
     }
 
-    public void invite(Long scheduleId, Long inviterId, Long inviteeId) {
-        if (!repository.existsByScheduleIdAndInviteeId(scheduleId, inviteeId)) {
+    public void invite(Long scheduleId, Long sharerId, Long receiverId) {
+        if (!repository.existsByScheduleIdAndReceiverId(scheduleId, receiverId)) {
             ScheduleShareEntity entity = ScheduleShareEntity.builder()
                     .scheduleId(scheduleId)
-                    .inviterId(inviterId)
-                    .inviteeId(inviteeId)
+                    .sharerId(sharerId)
+                    .receiverId(receiverId)
+                    .canEdit("N")
+                    .acceptYn("N")
+                    .createdBy(sharerId)
+                    .lastUpdatedBy(sharerId)
+                    .lastUpdateLogin(sharerId)
                     .build();
             repository.save(entity);
         }
