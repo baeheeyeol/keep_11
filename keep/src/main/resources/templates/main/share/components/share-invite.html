@@ -3,10 +3,11 @@
       xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="content">
     <div class="search-bar">
-        <input type="text" placeholder="이름 검색" />
-        <button type="button">검색</button>
+        <input type="text" id="invite-search-input" placeholder="이름 검색" />
+        <button type="button" id="invite-search-btn">검색</button>
     </div>
-    <div class="list-container">
+    <div class="list-container" id="invite-list">
+        <div class="placeholder">초대할 사람을 검색하세요.</div>
     </div>
 </div>
 </html>

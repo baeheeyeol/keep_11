@@ -55,4 +55,10 @@ public class MemberService {
                                 .map(MemberEntity::getHname)
                                 .orElse(null);
         }
+
+        public java.util.List<MemberDTO> searchByName(String name) {
+                return memberRepository.searchByHname(name).stream()
+                                .map(e -> new MemberDTO(e.getId(), e.getEmail(), null, e.getHname(), null))
+                                .toList();
+        }
 }
