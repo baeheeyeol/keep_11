@@ -1,0 +1,60 @@
+:root {
+  --more-modal-width: 260px;
+}
+
+#monthly-more-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--more-modal-width);
+  height: 100%;
+  background: #fff;
+  box-shadow: 2px 0 6px rgba(0,0,0,0.1);
+  padding: 1rem;
+  overflow-y: auto;
+  z-index: 101;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+
+#monthly-more-modal.show {
+  transform: translateX(0);
+}
+
+#monthly-more-modal.hidden {
+  display: none;
+}
+
+#monthly-more-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem;
+}
+
+#monthly-more-list li {
+  padding: 4px 8px;
+  margin-bottom: 4px;
+  cursor: pointer;
+  border-left-width: 4px;
+  border-left-style: solid;
+  transition: background-color 0.2s ease;
+}
+
+#monthly-more-list li:hover {
+  background: #f3f4f6;
+}
+
+#monthly-more-close {
+  display: block;
+  width: 100%;
+  padding: 6px 0;
+  background: #f3f4f6;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#monthly-more-close:hover {
+  background: #e5e7eb;
+}

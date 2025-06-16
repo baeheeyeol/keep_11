@@ -1,0 +1,224 @@
+/* static/css/main/components/schedule-modal.css */
+:root {
+  --modal-width: 360px;
+}
+
+/* 오버레이 */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.3);
+  z-index: 100;
+}
+
+/* 일정 등록 모달은 다른 모달보다 위에 표시 */
+#schedule-modal-overlay {
+  z-index: 200;
+}
+.modal-overlay.hidden {
+  display: none;
+}
+
+/* 모달 박스 */
+.modal {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: var(--modal-width);
+  background: #fff;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  padding: 1rem 1.25rem;
+  z-index: 101;
+}
+.modal.hidden {
+  display: none;
+}
+
+/* 일정 등록 모달 상자 z-index 조정 */
+#schedule-modal {
+  z-index: 201;
+}
+
+.modal-title {
+  margin: 0 0 1rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #333;
+}
+
+/* 폼 그룹 */
+.form-group {
+  margin-bottom: 1rem;
+}
+.form-group label {
+  display: flex;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+  color: #555;
+}
+.form-group input[type="text"],
+.form-group textarea,
+.form-group input[type="datetime-local"] {
+  width: 40%;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  box-sizing: border-box;
+}
+.form-group select{
+  width: 20%;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  box-sizing: border-box;
+}
+
+/* datetime 그룹: label 아래에 inputs 표시 */
+.datetime-group {
+  display: block;
+}
+.datetime-group label {
+  margin-bottom: 0.5rem;
+}
+.datetime-group input[type="datetime-local"] {
+  margin-bottom: 0.5rem;
+}
+.datetime-group .dash {
+  display: block;
+  text-align: center;
+  margin: 0.25rem 0;
+  color: #777;
+}
+
+/* 범주 색상 선택 */
+.category-picker {
+  display: flex;
+  gap: 0.5rem;
+}
+.cat-color {
+  width: 24px;
+  height: 24px;
+  border: 2px solid transparent;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+.cat-color.selected {
+  border-color: #333;
+}
+#sched-color {
+  display: none;
+}
+
+/* 파일 업로드 스타일 */
+.form-group input[type="file"] {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  background-color: #f9fafb;
+  cursor: pointer;
+}
+.form-group input[type="file"]::-webkit-file-upload-button {
+  background-color: #4f46e5;
+  color: #fff;
+  border: none;
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+.form-group input[type="file"]::-ms-browse {
+  background-color: #4f46e5;
+  color: #fff;
+  border: none;
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+/* 모달 버튼 */
+.modal-actions {
+  text-align: right;
+  margin-top: 1rem;
+}
+.btn-primary {
+  background: #4f46e5;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  margin-right: 0.5rem;
+}
+.btn-danger {
+  background: #ef4444;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  margin-right: 0.5rem;
+}
+.btn-danger.hidden {
+  visibility: hidden;
+}
+.btn-secondary {
+  background: #f3f4f6;
+  color: #555;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+/* flatpickr 기본 테마 대신 Dashboard 스타일 적용 */
+.dashboard-flatpickr {
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border-radius: 0.75rem;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+.dashboard-flatpickr .flatpickr-months {
+  background: #f8f9fa;
+  padding: 0.5rem;
+}
+.dashboard-flatpickr .flatpickr-monthDropdown-months,
+.dashboard-flatpickr .flatpickr-yearDropdown-months {
+  margin: 0 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+  background: #fff;
+  border: 1px solid #d1d5db;
+  cursor: pointer;
+}
+.dashboard-flatpickr .flatpickr-weekdays {
+  background: #f1f3f5;
+}
+.dashboard-flatpickr .flatpickr-day {
+  border-radius: 0.5rem;
+  margin: 2px;
+}
+.dashboard-flatpickr .flatpickr-day:hover {
+  background: #e0e7ff;
+}
+.dashboard-flatpickr .flatpickr-day.today {
+  background: #d0d7ff;
+}
+.dashboard-flatpickr .flatpickr-time {
+  padding: 0.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+.dashboard-flatpickr .flatpickr-time .flatpickr-hour,
+.dashboard-flatpickr .flatpickr-time .flatpickr-minute,
+.dashboard-flatpickr .flatpickr-time .flatpickr-am-pm {
+  width: auto;
+  margin: 0 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  background: #fff;
+  font-size: 0.875rem;
+}
+
