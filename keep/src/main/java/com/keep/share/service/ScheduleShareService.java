@@ -34,4 +34,11 @@ public class ScheduleShareService {
         }
     }
 
+    public List<ScheduleShareEntity> findRequests(Long sharerId) {
+        return repository.findBySharerIdAndAcceptYn(sharerId, "N");
+    }
+
+    public List<ScheduleShareEntity> findInvites(Long receiverId) {
+        return repository.findByReceiverIdAndAcceptYn(receiverId, "N");
+    }
 }

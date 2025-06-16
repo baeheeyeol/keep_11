@@ -29,14 +29,32 @@ public class ScheduleShareApiController {
                 return members;
         }
 
-	@GetMapping(path = "/invite")
-	public List<MemberDTO> search(@RequestParam("name") String name, Authentication authentication) {
-		Long sharerId = Long.valueOf(authentication.getName());
-		return memberService.searchAvailableForShare(sharerId, name);
-	}
-	@PostMapping("/invite")
-	public ResponseEntity<?> invite(Authentication authentication,@RequestBody ScheduleShareDTO scheduleShareDTO	) {
-		shareService.invite(Long.parseLong(authentication.getName()), scheduleShareDTO.getReceiverId());
-		return ResponseEntity.ok().build();
-	}
+        @GetMapping(path = "/invite")
+        public List<MemberDTO> search(@RequestParam("name") String name, Authentication authentication) {
+                Long sharerId = Long.valueOf(authentication.getName());
+                return memberService.searchAvailableForShare(sharerId, name);
+        }
+        @PostMapping("/invite")
+        public ResponseEntity<?> invite(Authentication authentication,@RequestBody ScheduleShareDTO scheduleShareDTO    ) {
+                shareService.invite(Long.parseLong(authentication.getName()), scheduleShareDTO.getReceiverId());
+                return ResponseEntity.ok().build();
+        }
+
+        @GetMapping("/manage/request")
+        public List<MemberDTO> loadRequests(Authentication authentication) {
+                Long sharerId = Long.parseLong(authentication.getName());
+                return shareService.findRequests(sharerId).stream()
+                        .map(e -> new MemberDTO(e.getReceiverId(), null, null,
+                                memberService.findHnameById(e.getReceiverId()), null, false))
+                        .toList();
+        }
+
+        @GetMapping("/manage/invite")
+        public List<MemberDTO> loadInvites(Authentication authentication) {
+                Long receiverId = Long.parseLong(authentication.getName());
+                return shareService.findInvites(receiverId).stream()
+                        .map(e -> new MemberDTO(e.getSharerId(), null, null,
+                                memberService.findHnameById(e.getSharerId()), null, false))
+                        .toList();
+        }
 }
