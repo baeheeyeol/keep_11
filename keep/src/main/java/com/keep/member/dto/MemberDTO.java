@@ -16,9 +16,6 @@ public class MemberDTO {
         private String email;
         private String password;
         private String hname;
-        private String hname1;
-        // 초대 가능 여부 표시용
-        private boolean invitable;
 	
 }
 

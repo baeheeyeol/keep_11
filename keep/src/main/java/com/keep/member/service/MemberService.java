@@ -53,14 +53,4 @@ public class MemberService {
 	public String findHnameById(Long id) {
 		return memberRepository.findById(id).map(MemberEntity::getHname).orElse(null);
 	}
-
-        public java.util.List<MemberDTO> searchByName(String name) {
-                return memberRepository.searchByHname(name).stream()
-                                .map(e -> new MemberDTO(e.getId(), e.getEmail(), null, e.getHname(), null, false)).toList();
-        }
-
-        public java.util.List<MemberDTO> searchAvailableForShare(Long scheduleId, String name) {
-                return memberRepository.searchAvailableForShare(scheduleId, name).stream()
-                                .map(e -> new MemberDTO(e.getId(), e.getEmail(), null, e.getHname(), null, true)).toList();
-        }
 }

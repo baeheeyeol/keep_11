@@ -36,9 +36,6 @@ public class ScheduleShareApiController {
                 Long receiverId = Long.valueOf(authentication.getName());
                 List<Long> sharers = shareService.findSharerIds(receiverId);
                 List<MemberDTO> members = memberService.searchByName(name);
-                for (MemberDTO dto : members) {
-                        dto.setInvitable(!sharers.contains(dto.getId()));
-                }
                 return members;
         }
 
@@ -51,21 +48,4 @@ public class ScheduleShareApiController {
                 return ResponseEntity.ok().build();
         }
 
-        @GetMapping("/manage/request")
-        public List<MemberDTO> loadRequests(Authentication authentication) {
-                Long sharerId = Long.parseLong(authentication.getName());
-                return shareService.findRequests(sharerId).stream()
-                        .map(e -> new MemberDTO(e.getReceiverId(), null, null,
-                                memberService.findHnameById(e.getReceiverId()), null, false))
-                        .toList();
-        }
-
-        @GetMapping("/manage/invite")
-        public List<MemberDTO> loadInvites(Authentication authentication) {
-                Long receiverId = Long.parseLong(authentication.getName());
-                return shareService.findInvites(receiverId).stream()
-                        .map(e -> new MemberDTO(e.getSharerId(), null, null,
-                                memberService.findHnameById(e.getSharerId()), null, false))
-                        .toList();
-        }
 }
