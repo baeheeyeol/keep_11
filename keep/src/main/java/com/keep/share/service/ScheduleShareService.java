@@ -19,6 +19,12 @@ public class ScheduleShareService {
                 .collect(Collectors.toList());
     }
 
+    public List<Long> findSharerIds(Long receiverId) {
+        return repository.findByReceiverId(receiverId).stream()
+                .map(ScheduleShareEntity::getSharerId)
+                .collect(Collectors.toList());
+    }
+
     public void invite(Long sharerId, Long receiverId) {
         if (!repository.existsBySharerIdAndReceiverId(sharerId, receiverId)) {
             ScheduleShareEntity entity = ScheduleShareEntity.builder()

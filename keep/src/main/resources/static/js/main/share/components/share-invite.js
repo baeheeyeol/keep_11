@@ -29,14 +29,18 @@
 						button.className = 'invite-btn';
 						button.dataset.id = m.id;
 
-						if (!m.invitable) {
-							button.textContent = '초대완료';
-							button.disabled = true;
-							button.classList.add('disabled');
-						} else {
-							button.textContent = '초대하기';
-							button.addEventListener('click', () => {
-								fetch(`/api/share/invite`, {
+                                                if (m.requested) {
+                                                        button.textContent = '요청완료';
+                                                        button.disabled = true;
+                                                        button.classList.add('disabled');
+                                                } else if (!m.invitable) {
+                                                        button.textContent = '초대완료';
+                                                        button.disabled = true;
+                                                        button.classList.add('disabled');
+                                                } else {
+                                                        button.textContent = '초대하기';
+                                                        button.addEventListener('click', () => {
+                                                                fetch(`/api/share/invite`, {
 									method: 'POST',
 									headers: { 'Content-Type': 'application/json' },
 									body: JSON.stringify({ receiverId: m.id })
