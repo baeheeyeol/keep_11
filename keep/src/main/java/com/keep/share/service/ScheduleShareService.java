@@ -42,11 +42,12 @@ public class ScheduleShareService {
             repository.save(entity);
     }
 
-		public List<ScheduleShareUserDTO> searchAvailableForInvite(Long sharerId, String name) {
-			return null;
-		}
-		public List<ScheduleShareUserDTO> searchAvailableForRequest(Long sharerId, String name) {
-			return null;
-		}
+    public List<ScheduleShareUserDTO> searchAvailableForInvite(Long sharerId, String name) {
+        return repository.searchAvailableForInvite(sharerId, name);
+    }
+
+    public List<ScheduleShareUserDTO> searchAvailableForRequest(Long sharerId, String name) {
+        return repository.searchAvailableForRequest(sharerId, name);
+    }
 
 }
