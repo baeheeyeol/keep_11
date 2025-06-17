@@ -58,3 +58,7 @@
   background-color: #ccc;
   cursor: not-allowed;
 }
+
+#invite-list .list-item:last-child {
+  border-bottom: 1px solid #ddd;
+}
