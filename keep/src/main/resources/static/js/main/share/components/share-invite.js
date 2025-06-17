@@ -10,12 +10,12 @@
                         list.innerHTML = `<div class="placeholder">${msg}</div>`;
                 }
 
-		btn?.addEventListener('click', () => {
-			const name = input.value.trim();
-			if (!name) return;
-			fetch(`/api/share/search?name=` + encodeURIComponent(name))
-				.then(res => res.json())
-				.then(data => {
+                btn?.addEventListener('click', () => {
+                        const name = input.value.trim();
+                        if (!name) return;
+                        fetch(`/api/share/invite?name=` + encodeURIComponent(name))
+                                .then(res => res.json())
+                                .then(data => {
 					if (data.length === 0) {
 						renderEmpty('검색 결과가 없습니다.');
 						return;
@@ -29,11 +29,7 @@
 						button.className = 'invite-btn';
 						button.dataset.id = m.id;
 
-                                                if (m.requested) {
-                                                        button.textContent = '요청완료';
-                                                        button.disabled = true;
-                                                        button.classList.add('disabled');
-                                                } else if (!m.invitable) {
+                                                if (!m.invitable) {
                                                         button.textContent = '초대완료';
                                                         button.disabled = true;
                                                         button.classList.add('disabled');
