@@ -40,15 +40,18 @@
 									method: 'POST',
 									headers: { 'Content-Type': 'application/json' },
 									body: JSON.stringify({ receiverId: m.id })
-								}).then(res => {
-									if (res.ok) {
-										button.textContent = '초대 완료';
-										button.disabled = true;
-										button.classList.add('disabled');
-									}
-								});
-							});
-						}
+                                                                }).then(res => {
+                                                                        if (res.ok) {
+                                                                               button.textContent = '초대 완료';
+                                                                               button.disabled = true;
+                                                                               button.classList.add('disabled');
+                                                                               if (window.saveToast && window.saveToast.showMessage) {
+                                                                                       window.saveToast.showMessage('초대가 완료되었습니다');
+                                                                               }
+                                                                        }
+                                                                });
+                                                        });
+                                                }
 						div.appendChild(document.createElement('span')).textContent = m.hname;
 						div.appendChild(button);
 						list.appendChild(div);
