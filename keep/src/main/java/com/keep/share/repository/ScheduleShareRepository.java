@@ -5,9 +5,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEntity, Long> {
-    List<ScheduleShareEntity> findBySharerId(Long sharerId);
-    List<ScheduleShareEntity> findBySharerIdAndAcceptYn(Long sharerId, String acceptYn);
-    List<ScheduleShareEntity> findByReceiverIdAndAcceptYn(Long receiverId, String acceptYn);
-    List<ScheduleShareEntity> findByReceiverId(Long receiverId);
-    boolean existsBySharerIdAndReceiverId(Long sharerId, Long receiverId);
 }

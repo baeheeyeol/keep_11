@@ -1,6 +1,7 @@
 package com.keep.share.service;
 
 import com.keep.share.dto.ScheduleShareDTO;
+import com.keep.share.dto.ScheduleShareUserDTO;
 import com.keep.share.entity.ScheduleShareEntity;
 import com.keep.share.repository.ScheduleShareRepository;
 import com.keep.share.mapper.ShareMapper;
@@ -16,20 +17,7 @@ public class ScheduleShareService {
     private final ScheduleShareRepository repository;
     private final ShareMapper mapper;
 
-    public List<Long> findReceiverIds(Long sharerId) {
-        return repository.findBySharerId(sharerId).stream()
-                .map(ScheduleShareEntity::getReceiverId)
-                .collect(Collectors.toList());
-    }
-
-    public List<Long> findSharerIds(Long receiverId) {
-        return repository.findByReceiverId(receiverId).stream()
-                .map(ScheduleShareEntity::getSharerId)
-                .collect(Collectors.toList());
-    }
-
     public void invite(Long sharerId, Long receiverId) {
-        if (!repository.existsBySharerIdAndReceiverId(sharerId, receiverId)) {
             ScheduleShareEntity entity = ScheduleShareEntity.builder()
                     .sharerId(sharerId)
                     .receiverId(receiverId)
@@ -40,11 +28,9 @@ public class ScheduleShareService {
                     .lastUpdateLogin(sharerId)
                     .build();
             repository.save(entity);
-        }
     }
 
     public void request(Long sharerId, Long receiverId, String message) {
-        if (!repository.existsBySharerIdAndReceiverId(sharerId, receiverId)) {
             ScheduleShareEntity entity = ScheduleShareEntity.builder()
                     .sharerId(sharerId)
                     .receiverId(receiverId)
@@ -56,18 +42,13 @@ public class ScheduleShareService {
                     .lastUpdateLogin(receiverId)
                     .build();
             repository.save(entity);
-        }
     }
 
-    public List<ScheduleShareDTO> findRequests(Long sharerId) {
-        return repository.findBySharerIdAndAcceptYn(sharerId, "N").stream()
-                .map(mapper::toDto)
-                .collect(Collectors.toList());
-    }
+		public List<ScheduleShareUserDTO> searchAvailableForInvite(Long sharerId, String name) {
+			return null;
+		}
+		public List<ScheduleShareUserDTO> searchAvailableForRequest(Long sharerId, String name) {
+			return null;
+		}
 
-    public List<ScheduleShareDTO> findInvites(Long receiverId) {
-        return repository.findByReceiverIdAndAcceptYn(receiverId, "N").stream()
-                .map(mapper::toDto)
-                .collect(Collectors.toList());
-    }
 }
