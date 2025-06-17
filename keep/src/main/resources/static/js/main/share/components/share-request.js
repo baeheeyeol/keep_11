@@ -35,7 +35,8 @@
 
         function renderEmpty(msg) {
             ensureList();
-            list.innerHTML = `<div class="placeholder">${msg}</div>`;
+            list.style.minHeight = '';
+            list.innerHTML = `<div class=\"placeholder\">${msg}</div>`;
         }
 
         btn?.addEventListener('click', () => {
@@ -52,6 +53,7 @@
                         return;
                     }
                     list.innerHTML = '';
+                    list.style.minHeight = 'auto';
                     data.forEach(m => {
                         const div = document.createElement('div');
                         div.className = 'list-item';
@@ -71,6 +73,7 @@
                                 Array.from(list.children).forEach(item => {
                                     if (item !== div) item.remove();
                                 });
+                                list.style.minHeight = 'auto';
                                 button.textContent = '선택완료';
                                 button.disabled = true;
                                 button.classList.add('disabled');

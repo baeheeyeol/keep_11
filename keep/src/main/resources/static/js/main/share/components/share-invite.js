@@ -5,9 +5,10 @@
 		const input = document.getElementById('invite-search-input');
 		const btn = document.getElementById('invite-search-btn');
 
-		function renderEmpty(msg) {
-			list.innerHTML = `<div class="placeholder">${msg}</div>`;
-		}
+                function renderEmpty(msg) {
+                        list.style.minHeight = '';
+                        list.innerHTML = `<div class="placeholder">${msg}</div>`;
+                }
 
 		btn?.addEventListener('click', () => {
 			const name = input.value.trim();
@@ -19,8 +20,9 @@
 						renderEmpty('검색 결과가 없습니다.');
 						return;
 					}
-					list.innerHTML = '';
-					data.forEach(m => {
+                                        list.innerHTML = '';
+                                        list.style.minHeight = 'auto';
+                                        data.forEach(m => {
 						const div = document.createElement('div');
 						div.className = 'list-item';
 						const button = document.createElement('button');
