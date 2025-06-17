@@ -56,11 +56,11 @@ public class MemberService {
 
         public java.util.List<MemberDTO> searchByName(String name) {
                 return memberRepository.searchByHname(name).stream()
-                                .map(e -> new MemberDTO(e.getId(), e.getEmail(), null, e.getHname(), null, false)).toList();
+                                .map(e -> new MemberDTO(e.getId(), e.getEmail(), null, e.getHname(), null, false, false)).toList();
         }
 
         public java.util.List<MemberDTO> searchAvailableForShare(Long scheduleId, String name) {
                 return memberRepository.searchAvailableForShare(scheduleId, name).stream()
-                                .map(e -> new MemberDTO(e.getId(), e.getEmail(), null, e.getHname(), null, true)).toList();
+                                .map(e -> new MemberDTO(e.getId(), e.getEmail(), null, e.getHname(), null, true, false)).toList();
         }
 }

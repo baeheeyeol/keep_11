@@ -19,6 +19,8 @@ public class MemberDTO {
         private String hname1;
         // 초대 가능 여부 표시용
         private boolean invitable;
+        // 요청 완료 여부 표시용
+        private boolean requested;
 	
 }
 

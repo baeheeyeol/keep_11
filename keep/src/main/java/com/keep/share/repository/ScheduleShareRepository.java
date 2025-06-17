@@ -8,5 +8,6 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
     List<ScheduleShareEntity> findBySharerId(Long sharerId);
     List<ScheduleShareEntity> findBySharerIdAndAcceptYn(Long sharerId, String acceptYn);
     List<ScheduleShareEntity> findByReceiverIdAndAcceptYn(Long receiverId, String acceptYn);
+    List<ScheduleShareEntity> findByReceiverId(Long receiverId);
     boolean existsBySharerIdAndReceiverId(Long sharerId, Long receiverId);
 }

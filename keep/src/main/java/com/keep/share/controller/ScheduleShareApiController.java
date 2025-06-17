@@ -20,11 +20,13 @@ public class ScheduleShareApiController {
 
         @GetMapping(path = "/search")
         public List<MemberDTO> searchAll(@RequestParam("name") String name, Authentication authentication) {
-                Long sharerId = Long.valueOf(authentication.getName());
-                List<Long> receivers = shareService.findReceiverIds(sharerId);
+                Long memberId = Long.valueOf(authentication.getName());
+                List<Long> receivers = shareService.findReceiverIds(memberId);
+                List<Long> requested = shareService.findSharerIds(memberId);
                 List<MemberDTO> members = memberService.searchByName(name);
                 for (MemberDTO dto : members) {
                         dto.setInvitable(!receivers.contains(dto.getId()));
+                        dto.setRequested(requested.contains(dto.getId()));
                 }
                 return members;
         }
@@ -54,7 +56,7 @@ public class ScheduleShareApiController {
                 Long sharerId = Long.parseLong(authentication.getName());
                 return shareService.findRequests(sharerId).stream()
                         .map(e -> new MemberDTO(e.getReceiverId(), null, null,
-                                memberService.findHnameById(e.getReceiverId()), null, false))
+                                memberService.findHnameById(e.getReceiverId()), null, false, false))
                         .toList();
         }
 
@@ -63,7 +65,7 @@ public class ScheduleShareApiController {
                 Long receiverId = Long.parseLong(authentication.getName());
                 return shareService.findInvites(receiverId).stream()
                         .map(e -> new MemberDTO(e.getSharerId(), null, null,
-                                memberService.findHnameById(e.getSharerId()), null, false))
+                                memberService.findHnameById(e.getSharerId()), null, false, false))
                         .toList();
         }
 }
