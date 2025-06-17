@@ -1,7 +1,9 @@
 package com.keep.share.service;
 
+import com.keep.share.dto.ScheduleShareDTO;
 import com.keep.share.entity.ScheduleShareEntity;
 import com.keep.share.repository.ScheduleShareRepository;
+import com.keep.share.mapper.ShareMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ScheduleShareService {
     private final ScheduleShareRepository repository;
+    private final ShareMapper mapper;
 
     public List<Long> findReceiverIds(Long sharerId) {
         return repository.findBySharerId(sharerId).stream()
@@ -56,11 +59,15 @@ public class ScheduleShareService {
         }
     }
 
-    public List<ScheduleShareEntity> findRequests(Long sharerId) {
-        return repository.findBySharerIdAndAcceptYn(sharerId, "N");
+    public List<ScheduleShareDTO> findRequests(Long sharerId) {
+        return repository.findBySharerIdAndAcceptYn(sharerId, "N").stream()
+                .map(mapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    public List<ScheduleShareEntity> findInvites(Long receiverId) {
-        return repository.findByReceiverIdAndAcceptYn(receiverId, "N");
+    public List<ScheduleShareDTO> findInvites(Long receiverId) {
+        return repository.findByReceiverIdAndAcceptYn(receiverId, "N").stream()
+                .map(mapper::toDto)
+                .collect(Collectors.toList());
     }
 }
