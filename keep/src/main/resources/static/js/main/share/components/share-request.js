@@ -88,6 +88,18 @@
                 });
         });
 
+        function showToast(message, duration = 3000) {
+            const toast = document.createElement('div');
+            toast.className = 'request-toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            requestAnimationFrame(() => toast.classList.add('show'));
+            setTimeout(() => {
+                toast.classList.remove('show');
+                toast.addEventListener('transitionend', () => toast.remove(), { once: true });
+            }, duration);
+        }
+
         requestBtn?.addEventListener('click', () => {
             if (!selectedId) return;
             fetch('/api/share/request', {
@@ -96,8 +108,11 @@
                 body: JSON.stringify({ sharerId: selectedId, message: messageEl.value })
             }).then(res => {
                 if (res.ok) {
-                    requestBtn.textContent = '요청 완료';
-                    requestBtn.disabled = true;
+                    showToast('요청이 완료되었습니다.');
+                    input.value = '';
+                    selectedId = null;
+                    hideControls();
+                    renderEmpty('요청할 사람을 선택해 주세요.');
                 }
             });
         });
