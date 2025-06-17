@@ -12,6 +12,8 @@
         <link id="share-list-css"rel="stylesheet" th:href="@{/css/main/share/components/share-list.css}" />
         <link id="share-manage-css"rel="stylesheet" th:href="@{/css/main/share/components/share-manage.css}" />
         <link id="share-request-css"rel="stylesheet" th:href="@{/css/main/share/components/share-request.css}" />
+        <!-- Toast style reuse -->
+        <link rel="stylesheet" th:href="@{/css/main/dashboard/modal/save-toast.css}" />
 </th:block>
 <!--/* content */-->
 <th:block layout:fragment="content">
@@ -29,6 +31,7 @@
                 </div>
         </div>
         <div id="fragment-container" data-id ="${session.memberId}"></div>
+        <div th:replace="~{common/toast :: save-toast}"></div>
 
 </th:block>
 <!--/* script */-->
@@ -38,6 +41,7 @@
         <script th:src="@{/js/main/share/components/share-list.js}"></script>
         <script th:src="@{/js/main/share/components/share-request.js}"></script>
         <script th:src="@{/js/main/share/components/share-manage.js}"></script>
+        <script th:src="@{/js/main/common/toast.js}"></script>
 </th:block>
 
 </html>
