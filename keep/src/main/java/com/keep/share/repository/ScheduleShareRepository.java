@@ -87,4 +87,40 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
                         order by m.hname
                         """)
         List<ScheduleShareUserDTO> findPendingRequests(@Param("sharerId") Long sharerId);
+
+        @Query("""
+                        select new com.keep.share.dto.ScheduleShareUserDTO(
+                            s.sharerId,
+                            s.receiverId,
+                            s.canEdit,
+                            s.acceptYn,
+                            m.id,
+                            m.hname,
+                            false
+                        )
+                        from ScheduleShareEntity s
+                        join MemberEntity m on m.id = s.receiverId
+                        where s.sharerId = :sharerId
+                          and s.acceptYn = 'Y'
+                        order by m.hname
+                        """)
+        List<ScheduleShareUserDTO> findAcceptedShares(@Param("sharerId") Long sharerId);
+
+        @Query("""
+                        select new com.keep.share.dto.ScheduleShareUserDTO(
+                            s.sharerId,
+                            s.receiverId,
+                            s.canEdit,
+                            s.acceptYn,
+                            m.id,
+                            m.hname,
+                            false
+                        )
+                        from ScheduleShareEntity s
+                        join MemberEntity m on m.id = s.sharerId
+                        where s.receiverId = :receiverId
+                          and s.acceptYn = 'Y'
+                        order by m.hname
+                        """)
+        List<ScheduleShareUserDTO> findAcceptedReceived(@Param("receiverId") Long receiverId);
 }

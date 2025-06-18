@@ -112,6 +112,10 @@
   color: #fff;
   margin-right: 4px;
 }
+.accept-btn.disabled {
+  background-color: #666;
+  cursor: not-allowed;
+}
 .reject-btn {
   background-color: #e5e7eb;
 }
