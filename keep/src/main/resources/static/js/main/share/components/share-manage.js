@@ -27,15 +27,23 @@
                 div.className = 'list-item';
                 div.appendChild(document.createElement('span')).textContent = m.hname;
                 const action = document.createElement('div');
-                const acceptBtn = document.createElement('button');
-                acceptBtn.className = 'accept-btn';
-                acceptBtn.type = 'button';
-                acceptBtn.textContent = '수락';
+                const readBtn = document.createElement('button');
+                readBtn.className = 'accept-btn';
+                readBtn.type = 'button';
+                readBtn.textContent = '읽기만 허용';
+
+                const editBtn = document.createElement('button');
+                editBtn.className = 'accept-btn';
+                editBtn.type = 'button';
+                editBtn.textContent = '수정까지 허용';
+
                 const rejectBtn = document.createElement('button');
                 rejectBtn.className = 'reject-btn';
                 rejectBtn.type = 'button';
                 rejectBtn.textContent = '거절';
-                action.appendChild(acceptBtn);
+
+                action.appendChild(readBtn);
+                action.appendChild(editBtn);
                 action.appendChild(rejectBtn);
                 div.appendChild(action);
                 listContainer.appendChild(div);

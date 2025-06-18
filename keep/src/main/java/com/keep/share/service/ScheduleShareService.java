@@ -50,4 +50,12 @@ public class ScheduleShareService {
         return repository.searchAvailableForRequest(sharerId, name);
     }
 
+    public List<ScheduleShareUserDTO> getPendingInvites(Long receiverId) {
+        return repository.findPendingInvites(receiverId);
+    }
+
+    public List<ScheduleShareUserDTO> getPendingRequests(Long sharerId) {
+        return repository.findPendingRequests(sharerId);
+    }
+
 }
