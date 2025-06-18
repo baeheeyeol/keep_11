@@ -42,7 +42,7 @@
 									body: JSON.stringify({ receiverId: m.id })
 								}).then(res => {
 									if (res.ok) {
-										button.textContent = '초대 완료';
+										button.textContent = '초대완료';
 										button.disabled = true;
 										button.classList.add('disabled');
 										if (window.saveToast && window.saveToast.showMessage) {
