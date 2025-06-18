@@ -1,5 +1,4 @@
-// JS for share Manage view
-//keep/src/main/resources/static/js/main/share/components/share-manage.js 에서 받은요청 토글에서는 내가 받은 요청 리스트가 표기되고 받은 초대토글에서는 내가 받은 초대 요청리스트가 표기되도록 수정
+//keep/src/main/resources/static/js/main/share/components/share-manage.js
 (function() {
     async function initShareManage() {
         const toggleBtns = document.querySelectorAll('.list-toggle .toggle-btn');
@@ -43,7 +42,7 @@
         }
 
         async function load(type) {
-            const url = type === 'request' ? '/api/share/manage/request' : '/api/share/manage/invite';
+            const url = type === 'request' ? '/api/share/manage/requests' : '/api/share/manage/invitations';
             const data = await fetchList(url);
             render(data);
         }

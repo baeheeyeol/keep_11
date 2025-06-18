@@ -23,10 +23,10 @@ document.addEventListener('DOMContentLoaded', () => {
 					if (window.initShareRequest()) {
 						window.initShareRequest();
 					}
-                                } else if (view === 'list') {
-                                        if (typeof window.initShareList === 'function') {
-                                                window.initShareList();
-                                        }
+				} else if (view === 'list') {
+					if (typeof window.initShareList === 'function') {
+						window.initShareList();
+					}
 				} else if (view === 'manage') {
 					if (window.initShareManage()) {
 						window.initShareManage();

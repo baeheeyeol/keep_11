@@ -50,4 +50,12 @@ public class ScheduleShareService {
         return repository.searchAvailableForRequest(sharerId, name);
     }
 
+		public List<ScheduleShareUserDTO> searchReceivedRequests(Long shareId) {
+			return null;
+		}
+
+		public List<ScheduleShareUserDTO> searchReceivedInvitations(Long receiverId) {
+			return null;
+		}
+
 }
