@@ -43,4 +43,16 @@ public class ScheduleShareApiController {
                 return ResponseEntity.ok().build();
         }
 
+        @GetMapping("/manage/invite")
+        public List<ScheduleShareUserDTO> getInvites(Authentication authentication) {
+                Long receiverId = Long.valueOf(authentication.getName());
+                return shareService.getPendingInvites(receiverId);
+        }
+
+        @GetMapping("/manage/request")
+        public List<ScheduleShareUserDTO> getRequests(Authentication authentication) {
+                Long sharerId = Long.valueOf(authentication.getName());
+                return shareService.getPendingRequests(sharerId);
+        }
+
 }
