@@ -1,17 +1,19 @@
 //keep/src/main/resources/static/js/main/share/components/share-invite.js 에서
 (function() {
-	async function initShareInvite() {
-		const list = document.getElementById('invite-list');
-		const input = document.getElementById('invite-search-input');
-		const btn = document.getElementById('invite-search-btn');
+        async function initShareInvite() {
+                const list = document.querySelector('#invite-list');
+                const input = document.querySelector('#invite-search-input');
+                const btn = document.querySelector('#invite-search-btn');
 
 		function renderEmpty(msg) {
 			list.style.minHeight = '';
 			list.innerHTML = `<div class="placeholder">${msg}</div>`;
 		}
-		btn?.addEventListener('click', () => {
-			const name = input.value.trim();
-			if (!name) return;
+                if (btn && !btn.dataset.bound) {
+                        btn.dataset.bound = 'true';
+                        btn.addEventListener('click', () => {
+                                const name = input.value.trim();
+                                if (!name) return;
 			fetch(`/api/share/invite?name=` + encodeURIComponent(name))
 				.then(res => res.json())
 				.then(data => {
@@ -48,15 +50,16 @@
 											window.saveToast.showMessage('초대가 완료되었습니다');
 										}
 									}
-								});
-							});
-						}
-						div.appendChild(document.createElement('span')).textContent = m.hname;
-						div.appendChild(button);
-						list.appendChild(div);
-					});
-				});
-		});
+                                                                });
+                                                        });
+                                                }
+                                                div.appendChild(document.createElement('span')).textContent = m.hname;
+                                                div.appendChild(button);
+                                                list.appendChild(div);
+                                        });
+                                });
+                        });
+                }
 	}
 	window.initShareInvite = initShareInvite;
 })();
