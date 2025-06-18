@@ -61,8 +61,7 @@ public class ScheduleShareApiController {
 	// 5) 조회: 내가 받은 요청 목록 조회
 	// —————————————————————————————————————————————————————————
 	@GetMapping("/manage/requests")
-	public List<ScheduleShareUserDTO> listReceivedRequests(@RequestParam("name") String name,
-			Authentication authentication) {
+	public List<ScheduleShareUserDTO> listReceivedRequests(Authentication authentication) {
 		Long shareId = Long.valueOf(authentication.getName());
 		return shareService.searchReceivedRequests(shareId);
 	}
@@ -71,8 +70,7 @@ public class ScheduleShareApiController {
 	// 6) 조회: 내가 받은 초대(Invitation) 목록 조회
 	// —————————————————————————————————————————————————————————
 	@GetMapping("/manage/invitations")
-	public List<ScheduleShareUserDTO> listReceivedInvitations(@RequestParam("name") String name,
-			Authentication authentication) {
+	public List<ScheduleShareUserDTO> listReceivedInvitations(Authentication authentication) {
 		Long receiverId = Long.valueOf(authentication.getName());
 		return shareService.searchReceivedInvitations(receiverId);
 	}

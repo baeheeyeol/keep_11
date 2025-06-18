@@ -14,7 +14,7 @@
 			btn.addEventListener('click', () => {
 				const name = input.value.trim();
 				if (!name) return;
-				fetch(`/api/share/invite?name=` + encodeURIComponent(name))
+				fetch(`/api/share/invite/users?name=` + encodeURIComponent(name))
 					.then(res => res.json())
 					.then(data => {
 						if (data.length === 0) {

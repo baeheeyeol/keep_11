@@ -37,11 +37,11 @@ public class ScheduleShareService {
 	}
 
 	public List<ScheduleShareUserDTO> searchReceivedRequests(Long shareId) {
-		return null;
+		return repository.findPendingRequests(shareId);
 	}
 
 	public List<ScheduleShareUserDTO> searchReceivedInvitations(Long receiverId) {
-		return null;
+		return repository.findPendingInvites(receiverId);
 	}
 
 }

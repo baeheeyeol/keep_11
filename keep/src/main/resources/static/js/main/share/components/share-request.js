@@ -44,7 +44,7 @@
 			hideControls();
 			selectedId = null;
 			ensureList();
-			fetch(`/api/share/request?name=` + encodeURIComponent(name))
+			fetch(`/api/share/request/users?name=` + encodeURIComponent(name))
 				.then(res => res.json())
 				.then(data => {
 					if (data.length === 0) {
