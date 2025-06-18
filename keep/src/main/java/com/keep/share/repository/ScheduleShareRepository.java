@@ -24,7 +24,7 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
                         left join ScheduleShareEntity s
                           on s.sharerId = :sharerId
                          and s.receiverId = m.id
-                         and s.scheduleShare = 'I'
+                         and s.actionType = 'I'
 			where lower(m.hname) like lower(concat('%', :name, '%'))
 			order by m.hname
 			""")
@@ -44,7 +44,7 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
                         left join ScheduleShareEntity s
                           on s.receiverId = :sharerId
                          and s.sharerId = m.id
-                         and s.scheduleShare = 'R'
+                         and s.actionType = 'R'
 			where lower(m.hname) like lower(concat('%', :name, '%'))
 			order by m.hname
 			""")
@@ -64,7 +64,7 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
                         join MemberEntity m on m.id = s.sharerId
                         where s.receiverId = :receiverId
                           and s.acceptYn = 'N'
-                          and s.scheduleShare = 'I'
+                          and s.actionType = 'I'
                         order by m.hname
                         """)
         List<ScheduleShareUserDTO> findPendingInvites(@Param("receiverId") Long receiverId);
@@ -83,7 +83,7 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
                         join MemberEntity m on m.id = s.receiverId
                         where s.sharerId = :sharerId
                           and s.acceptYn = 'N'
-                          and s.scheduleShare = 'R'
+                          and s.actionType = 'R'
                         order by m.hname
                         """)
         List<ScheduleShareUserDTO> findPendingRequests(@Param("sharerId") Long sharerId);

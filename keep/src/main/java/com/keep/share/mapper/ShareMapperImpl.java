@@ -19,7 +19,7 @@ public class ShareMapperImpl implements ShareMapper {
                 .canEdit(entity.getCanEdit())
                 .acceptYn(entity.getAcceptYn())
                 .message(entity.getMessage())
-                .scheduleShare(entity.getScheduleShare())
+                .actionType(entity.getActionType())
                 .build();
     }
 
@@ -35,7 +35,7 @@ public class ShareMapperImpl implements ShareMapper {
                 .canEdit(dto.getCanEdit())
                 .acceptYn(dto.getAcceptYn())
                 .message(dto.getMessage())
-                .scheduleShare(dto.getScheduleShare())
+                .actionType(dto.getActionType())
                 .build();
     }
 }
