@@ -15,18 +15,34 @@ public class ScheduleShareService {
 	private final ScheduleShareRepository repository;
 	private final ShareMapper mapper;
 
-	public void invite(Long sharerId, Long receiverId) {
-		ScheduleShareEntity entity = ScheduleShareEntity.builder().sharerId(sharerId).receiverId(receiverId).canEdit("N")
-				.acceptYn("N").createdBy(sharerId).lastUpdatedBy(sharerId).lastUpdateLogin(sharerId).build();
-		repository.save(entity);
-	}
+        public void invite(Long sharerId, Long receiverId) {
+                ScheduleShareEntity entity = ScheduleShareEntity.builder()
+                                .sharerId(sharerId)
+                                .receiverId(receiverId)
+                                .canEdit("N")
+                                .acceptYn("N")
+                                .scheduleShare("I")
+                                .createdBy(sharerId)
+                                .lastUpdatedBy(sharerId)
+                                .lastUpdateLogin(sharerId)
+                                .build();
+                repository.save(entity);
+        }
 
-	public void request(Long sharerId, Long receiverId, String message) {
-		ScheduleShareEntity entity = ScheduleShareEntity.builder().sharerId(sharerId).receiverId(receiverId).canEdit("N")
-				.acceptYn("N").message(message).createdBy(receiverId).lastUpdatedBy(receiverId).lastUpdateLogin(receiverId)
-				.build();
-		repository.save(entity);
-	}
+        public void request(Long sharerId, Long receiverId, String message) {
+                ScheduleShareEntity entity = ScheduleShareEntity.builder()
+                                .sharerId(sharerId)
+                                .receiverId(receiverId)
+                                .canEdit("N")
+                                .acceptYn("N")
+                                .scheduleShare("R")
+                                .message(message)
+                                .createdBy(receiverId)
+                                .lastUpdatedBy(receiverId)
+                                .lastUpdateLogin(receiverId)
+                                .build();
+                repository.save(entity);
+        }
 
 	public List<ScheduleShareUserDTO> searchAvailableForInvite(Long sharerId, String name) {
 		return repository.searchAvailableForInvite(sharerId, name);

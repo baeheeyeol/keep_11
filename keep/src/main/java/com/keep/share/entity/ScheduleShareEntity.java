@@ -28,8 +28,11 @@ public class ScheduleShareEntity {
 	@Column(name = "CAN_EDIT")
 	private String canEdit;
 
-	@Column(name = "ACCEPT_YN")
-	private String acceptYn;
+        @Column(name = "ACCEPT_YN")
+        private String acceptYn;
+
+        @Column(name = "SCHEDULE_SHARE")
+        private String scheduleShare;
 	
 	@Lob
 	@Column(name = "MESSAGE")
