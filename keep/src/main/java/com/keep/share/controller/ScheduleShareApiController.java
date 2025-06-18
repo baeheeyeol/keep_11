@@ -69,10 +69,24 @@ public class ScheduleShareApiController {
 	// —————————————————————————————————————————————————————————
 	// 6) 조회: 내가 받은 초대(Invitation) 목록 조회
 	// —————————————————————————————————————————————————————————
-	@GetMapping("/manage/invitations")
-	public List<ScheduleShareUserDTO> listReceivedInvitations(Authentication authentication) {
-		Long receiverId = Long.valueOf(authentication.getName());
-		return shareService.searchReceivedInvitations(receiverId);
-	}
+        @GetMapping("/manage/invitations")
+        public List<ScheduleShareUserDTO> listReceivedInvitations(Authentication authentication) {
+                Long receiverId = Long.valueOf(authentication.getName());
+                return shareService.searchReceivedInvitations(receiverId);
+        }
+
+        // —————————————————————————————————————————————————————————
+        // 7) 조회: 공유 목록(공유한/공유받은)
+        // —————————————————————————————————————————————————————————
+        @GetMapping("/list")
+        public List<ScheduleShareUserDTO> listShares(@RequestParam("type") String type,
+                                                     Authentication authentication) {
+                Long userId = Long.valueOf(authentication.getName());
+                if ("shared".equals(type)) {
+                        return shareService.listShared(userId);
+                } else {
+                        return shareService.listReceived(userId);
+                }
+        }
 
 }

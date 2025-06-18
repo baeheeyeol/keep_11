@@ -19,6 +19,33 @@
                     const div = document.createElement('div');
                     div.className = 'list-item';
                     div.appendChild(document.createElement('span')).textContent = m.hname;
+
+                    const action = document.createElement('div');
+                    const readBtn = document.createElement('button');
+                    readBtn.className = 'accept-btn';
+                    readBtn.type = 'button';
+                    readBtn.textContent = '읽기';
+                    const editBtn = document.createElement('button');
+                    editBtn.className = 'accept-btn';
+                    editBtn.type = 'button';
+                    editBtn.textContent = '수정';
+                    const delBtn = document.createElement('button');
+                    delBtn.className = 'reject-btn';
+                    delBtn.type = 'button';
+                    delBtn.textContent = '권한 삭제';
+
+                    if (m.canEdit === 'Y') {
+                        editBtn.disabled = true;
+                        editBtn.classList.add('disabled');
+                    } else {
+                        readBtn.disabled = true;
+                        readBtn.classList.add('disabled');
+                    }
+
+                    action.appendChild(readBtn);
+                    action.appendChild(editBtn);
+                    action.appendChild(delBtn);
+                    div.appendChild(action);
                     listEl.appendChild(div);
                 });
             } catch (e) {
