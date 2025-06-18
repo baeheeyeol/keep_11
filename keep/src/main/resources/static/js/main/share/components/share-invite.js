@@ -9,7 +9,6 @@
 			list.style.minHeight = '';
 			list.innerHTML = `<div class="placeholder">${msg}</div>`;
 		}
-
 		btn?.addEventListener('click', () => {
 			const name = input.value.trim();
 			if (!name) return;

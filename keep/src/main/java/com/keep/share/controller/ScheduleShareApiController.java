@@ -16,13 +16,12 @@ import java.util.List;
 @RequestMapping("/api/share")
 @RequiredArgsConstructor
 public class ScheduleShareApiController {
-        private final MemberService memberService;
         private final ScheduleShareService shareService;
-
 
         @GetMapping(path = "/invite")
         public List<ScheduleShareUserDTO> searchInvite(@RequestParam("name") String name, Authentication authentication) {
                 Long sharerId = Long.valueOf(authentication.getName());
+                System.out.println("!@#");
                 return shareService.searchAvailableForInvite(sharerId, name);
         }
  
