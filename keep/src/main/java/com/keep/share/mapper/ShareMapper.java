@@ -8,6 +8,7 @@ import com.keep.share.entity.ScheduleShareEntity;
 @Mapper(componentModel = "spring")
 public interface ShareMapper {
     @Mapping(target = "scheduleShareId", source = "id")
+    @Mapping(target = "scheduleShare", source = "scheduleShare")
     ScheduleShareDTO toDto(ScheduleShareEntity entity);
 
     @Mapping(target = "id", source = "scheduleShareId")
@@ -16,5 +17,6 @@ public interface ShareMapper {
     @Mapping(target = "lastUpdatedBy", ignore = true)
     @Mapping(target = "lastUpdateDate", ignore = true)
     @Mapping(target = "lastUpdateLogin", ignore = true)
+    @Mapping(target = "scheduleShare", source = "scheduleShare")
     ScheduleShareEntity toEntity(ScheduleShareDTO dto);
 }

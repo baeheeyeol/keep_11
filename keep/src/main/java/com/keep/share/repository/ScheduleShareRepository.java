@@ -21,9 +21,10 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
 			    case when s.id is null then true else false end
 			)
 			from MemberEntity m
-			left join ScheduleShareEntity s
-			  on s.sharerId = :sharerId
-			 and s.receiverId = m.id
+                        left join ScheduleShareEntity s
+                          on s.sharerId = :sharerId
+                         and s.receiverId = m.id
+                         and s.scheduleShare = 'I'
 			where lower(m.hname) like lower(concat('%', :name, '%'))
 			order by m.hname
 			""")
@@ -40,9 +41,10 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
 			    case when s.id is null then true else false end
 			)
 			from MemberEntity m
-			left join ScheduleShareEntity s
-			  on s.receiverId = :sharerId
-			 and s.sharerId = m.id
+                        left join ScheduleShareEntity s
+                          on s.receiverId = :sharerId
+                         and s.sharerId = m.id
+                         and s.scheduleShare = 'R'
 			where lower(m.hname) like lower(concat('%', :name, '%'))
 			order by m.hname
 			""")
@@ -62,6 +64,7 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
                         join MemberEntity m on m.id = s.sharerId
                         where s.receiverId = :receiverId
                           and s.acceptYn = 'N'
+                          and s.scheduleShare = 'I'
                         order by m.hname
                         """)
         List<ScheduleShareUserDTO> findPendingInvites(@Param("receiverId") Long receiverId);
@@ -80,6 +83,7 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
                         join MemberEntity m on m.id = s.receiverId
                         where s.sharerId = :sharerId
                           and s.acceptYn = 'N'
+                          and s.scheduleShare = 'R'
                         order by m.hname
                         """)
         List<ScheduleShareUserDTO> findPendingRequests(@Param("sharerId") Long sharerId);
