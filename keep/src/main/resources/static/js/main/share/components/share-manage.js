@@ -3,6 +3,9 @@
     async function initShareManage() {
         const toggleBtns = document.querySelectorAll('.list-toggle .toggle-btn');
         const listContainer = document.querySelector('.list-container');
+        const acceptAllBtn = document.getElementById('accept-all-btn');
+        const rejectAllBtn = document.getElementById('reject-all-btn');
+        let currentType = 'request';
 
         async function fetchList(url) {
             try {
@@ -50,10 +53,27 @@
         }
 
         async function load(type) {
+            currentType = type;
             const url = type === 'request' ? '/api/share/manage/requests' : '/api/share/manage/invitations';
             const data = await fetchList(url);
             render(data);
         }
+
+        acceptAllBtn?.addEventListener('click', async () => {
+            const url = currentType === 'request'
+                ? '/api/share/manage/requests/accept-all'
+                : '/api/share/manage/invitations/accept-all';
+            await fetch(url, { method: 'POST' });
+            load(currentType);
+        });
+
+        rejectAllBtn?.addEventListener('click', async () => {
+            const url = currentType === 'request'
+                ? '/api/share/manage/requests/reject-all'
+                : '/api/share/manage/invitations/reject-all';
+            await fetch(url, { method: 'POST' });
+            load(currentType);
+        });
 
         toggleBtns.forEach(btn => {
             btn.addEventListener('click', () => {
