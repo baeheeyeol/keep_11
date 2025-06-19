@@ -11,144 +11,145 @@ import java.util.List;
 public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEntity, Long> {
 
 	@Query("""
-                        select new com.keep.share.dto.ScheduleShareUserDTO(
-                            r.id,
-                            s.sharerId,
-                            s.receiverId,
-                            s.canEdit,
-                            s.acceptYn,
-                            m.id,
-                            m.hname,
-                            case when s.id is null then true else false end,
-                            case when r.id is not null then true else false end
-                        )
-                        from MemberEntity m
-                        left join ScheduleShareEntity s
-                          on s.sharerId = :sharerId
-                         and s.receiverId = m.id
-                         and s.actionType = 'I'
-                        left join ScheduleShareEntity r
-                          on r.sharerId = :sharerId
-                         and r.receiverId = m.id
-                         and r.actionType = 'R'
-                         and r.acceptYn = 'N'
-                        where lower(m.hname) like lower(concat('%', :name, '%'))
-                         and m.id <> :sharerId
-                        order by m.hname
+			                     select new com.keep.share.dto.ScheduleShareUserDTO(
+			                         r.id,
+			                         s.sharerId,
+			                         s.receiverId,
+			                         s.canEdit,
+			                         s.acceptYn,
+			                         m.id,
+			                         m.hname,
+			                         case when s.id is null then true else false end,
+			                         case when r.id is not null then true else false end
+			                     )
+			                     from MemberEntity m
+			                     left join ScheduleShareEntity s
+			                       on s.sharerId = :sharerId
+			                      and s.receiverId = m.id
+			                      and s.actionType = 'I'
+			                     left join ScheduleShareEntity r
+			                       on r.sharerId = :sharerId
+			                      and r.receiverId = m.id
+			                      and r.actionType = 'R'
+			                      and r.acceptYn = 'N'
+			                     where lower(m.hname) like lower(concat('%', :name, '%'))
+			                      and m.id <> :sharerId
+			                     order by m.hname
 			""")
 	List<ScheduleShareUserDTO> searchAvailableForInvite(@Param("sharerId") Long sharerId, @Param("name") String name);
-	
+
 	@Query("""
-                        select new com.keep.share.dto.ScheduleShareUserDTO(
-                            s.id,
-                            s.sharerId,
-                            s.receiverId,
-                            s.canEdit,
-                            s.acceptYn,
-                            m.id,
-                            m.hname,
-                            case when s.id is null then true else false end,                            
-                            case when r.id is not null then true else false end
-                        )
+			                     select new com.keep.share.dto.ScheduleShareUserDTO(
+			                         s.id,
+			                         s.sharerId,
+			                         s.receiverId,
+			                         s.canEdit,
+			                         s.acceptYn,
+			                         m.id,
+			                         m.hname,
+			                         case when s.id is null then true else false end,
+			                         case when r.id is not null then true else false end
+			                     )
 			from MemberEntity m
-                        left join ScheduleShareEntity s
-                          on s.receiverId = :sharerId
-                         and s.sharerId = m.id
-                         and s.actionType = 'R'
-                        left join ScheduleShareEntity r
-                          on s.sharerId = :sharerId
-                         and s.receiverId = m.id
-                         and s.actionType = 'I'
-                         and r.acceptYn = 'N'
+			                     left join ScheduleShareEntity s
+			                       on s.receiverId = :sharerId
+			                      and s.sharerId = m.id
+			                      and s.actionType = 'R'
+			                     left join ScheduleShareEntity r
+			                       on s.sharerId = m.id
+			                      and s.receiverId = :sharerId
+			                      and s.actionType = 'I'
+			                      and r.acceptYn = 'N'
 			where lower(m.hname) like lower(concat('%', :name, '%'))
 			      and m.id <> :sharerId
 			order by m.hname
 			""")
-        List<ScheduleShareUserDTO> searchAvailableForRequest(@Param("sharerId") Long sharerId, @Param("name") String name);
+	List<ScheduleShareUserDTO> searchAvailableForRequest(@Param("sharerId") Long sharerId, @Param("name") String name);
 
-        @Query("""
-                        select new com.keep.share.dto.ScheduleShareUserDTO(
-                            s.id,
-                            s.sharerId,
-                            s.receiverId,
-                            s.canEdit,
-                            s.acceptYn,
-                            m.id,
-                            m.hname,
-                            false,
-                            false
-                        )
-                        from ScheduleShareEntity s
-                        join MemberEntity m on m.id = s.sharerId
-                        where s.receiverId = :receiverId
-                          and s.acceptYn = 'N'
-                          and s.actionType = 'I'
-                        order by m.hname
-                        """)
-        List<ScheduleShareUserDTO> findPendingInvites(@Param("receiverId") Long receiverId);
+	@Query("""
+			select new com.keep.share.dto.ScheduleShareUserDTO(
+			    s.id,
+			    s.sharerId,
+			    s.receiverId,
+			    s.canEdit,
+			    s.acceptYn,
+			    m.id,
+			    m.hname,
+			    false,
+			    false
+			)
+			from ScheduleShareEntity s
+			join MemberEntity m on m.id = s.sharerId
+			where s.receiverId = :receiverId
+			  and s.acceptYn = 'N'
+			  and s.actionType = 'I'
+			order by m.hname
+			""")
+	List<ScheduleShareUserDTO> findPendingInvites(@Param("receiverId") Long receiverId);
 
-        @Query("""
-                        select new com.keep.share.dto.ScheduleShareUserDTO(
-                            s.id,
-                            s.sharerId,
-                            s.receiverId,
-                            s.canEdit,
-                            s.acceptYn,
-                            m.id,
-                            m.hname,
-                            false,
-                            false
-                        )
-                        from ScheduleShareEntity s
-                        join MemberEntity m on m.id = s.receiverId
-                        where s.sharerId = :sharerId
-                          and s.acceptYn = 'N'
-                          and s.actionType = 'R'
-                        order by m.hname
-                        """)
-        List<ScheduleShareUserDTO> findPendingRequests(@Param("sharerId") Long sharerId);
+	@Query("""
+			select new com.keep.share.dto.ScheduleShareUserDTO(
+			    s.id,
+			    s.sharerId,
+			    s.receiverId,
+			    s.canEdit,
+			    s.acceptYn,
+			    m.id,
+			    m.hname,
+			    false,
+			    false
+			)
+			from ScheduleShareEntity s
+			join MemberEntity m on m.id = s.receiverId
+			where s.sharerId = :sharerId
+			  and s.acceptYn = 'N'
+			  and s.actionType = 'R'
+			order by m.hname
+			""")
+	List<ScheduleShareUserDTO> findPendingRequests(@Param("sharerId") Long sharerId);
 
-        @Query("""
-                        select new com.keep.share.dto.ScheduleShareUserDTO(
-                            s.id,
-                            s.sharerId,
-                            s.receiverId,
-                            s.canEdit,
-                            s.acceptYn,
-                            m.id,
-                            m.hname,
-                            false,
-                            false
-                        )
-                        from ScheduleShareEntity s
-                        join MemberEntity m on m.id = s.receiverId
-                        where s.sharerId = :sharerId
-                          and s.acceptYn = 'Y'
-                        order by m.hname
-                        """)
-        List<ScheduleShareUserDTO> findAcceptedShares(@Param("sharerId") Long sharerId);
+	@Query("""
+			select new com.keep.share.dto.ScheduleShareUserDTO(
+			    s.id,
+			    s.sharerId,
+			    s.receiverId,
+			    s.canEdit,
+			    s.acceptYn,
+			    m.id,
+			    m.hname,
+			    false,
+			    false
+			)
+			from ScheduleShareEntity s
+			join MemberEntity m on m.id = s.receiverId
+			where s.sharerId = :sharerId
+			  and s.acceptYn = 'Y'
+			order by m.hname
+			""")
+	List<ScheduleShareUserDTO> findAcceptedShares(@Param("sharerId") Long sharerId);
 
-        @Query("""
-                        select new com.keep.share.dto.ScheduleShareUserDTO(
-                            s.id,
-                            s.sharerId,
-                            s.receiverId,
-                            s.canEdit,
-                            s.acceptYn,
-                            m.id,
-                            m.hname,
-                            false,
-                            false
-                        )
-                        from ScheduleShareEntity s
-                        join MemberEntity m on m.id = s.sharerId
-                        where s.receiverId = :receiverId
-                          and s.acceptYn = 'Y'
-                        order by m.hname
-                        """)
-        List<ScheduleShareUserDTO> findAcceptedReceived(@Param("receiverId") Long receiverId);
+	@Query("""
+			select new com.keep.share.dto.ScheduleShareUserDTO(
+			    s.id,
+			    s.sharerId,
+			    s.receiverId,
+			    s.canEdit,
+			    s.acceptYn,
+			    m.id,
+			    m.hname,
+			    false,
+			    false
+			)
+			from ScheduleShareEntity s
+			join MemberEntity m on m.id = s.sharerId
+			where s.receiverId = :receiverId
+			  and s.acceptYn = 'Y'
+			order by m.hname
+			""")
+	List<ScheduleShareUserDTO> findAcceptedReceived(@Param("receiverId") Long receiverId);
 
-        java.util.Optional<ScheduleShareEntity> findFirstBySharerIdAndReceiverIdAndActionTypeAndAcceptYn(Long sharerId, Long receiverId, String actionType, String acceptYn);
+	java.util.Optional<ScheduleShareEntity> findFirstBySharerIdAndReceiverIdAndActionTypeAndAcceptYn(Long sharerId,
+			Long receiverId, String actionType, String acceptYn);
 
-        void deleteBySharerIdAndReceiverIdAndActionType(Long sharerId, Long receiverId, String actionType);
+	void deleteBySharerIdAndReceiverIdAndActionType(Long sharerId, Long receiverId, String actionType);
 }
