@@ -12,6 +12,7 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
 
 	@Query("""
                         select new com.keep.share.dto.ScheduleShareUserDTO(
+                            r.id,
                             s.sharerId,
                             s.receiverId,
                             s.canEdit,
@@ -39,6 +40,7 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
 	
 	@Query("""
                         select new com.keep.share.dto.ScheduleShareUserDTO(
+                            s.id,
                             s.sharerId,
                             s.receiverId,
                             s.canEdit,
@@ -61,6 +63,7 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
 
         @Query("""
                         select new com.keep.share.dto.ScheduleShareUserDTO(
+                            s.id,
                             s.sharerId,
                             s.receiverId,
                             s.canEdit,
@@ -81,6 +84,7 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
 
         @Query("""
                         select new com.keep.share.dto.ScheduleShareUserDTO(
+                            s.id,
                             s.sharerId,
                             s.receiverId,
                             s.canEdit,
@@ -101,6 +105,7 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
 
         @Query("""
                         select new com.keep.share.dto.ScheduleShareUserDTO(
+                            s.id,
                             s.sharerId,
                             s.receiverId,
                             s.canEdit,
@@ -120,6 +125,7 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
 
         @Query("""
                         select new com.keep.share.dto.ScheduleShareUserDTO(
+                            s.id,
                             s.sharerId,
                             s.receiverId,
                             s.canEdit,
