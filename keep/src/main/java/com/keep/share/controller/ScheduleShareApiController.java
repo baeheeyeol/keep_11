@@ -61,11 +61,25 @@ public class ScheduleShareApiController {
 	// —————————————————————————————————————————————————————————
 	// 5) 조회: 내가 받은 요청 목록 조회
 	// —————————————————————————————————————————————————————————
-	@GetMapping("/manage/requests")
-	public List<ScheduleShareUserDTO> listReceivedRequests(Authentication authentication) {
-		Long shareId = Long.valueOf(authentication.getName());
-		return shareService.searchReceivedRequests(shareId);
-	}
+        @GetMapping("/manage/requests")
+        public List<ScheduleShareUserDTO> listReceivedRequests(Authentication authentication) {
+                Long shareId = Long.valueOf(authentication.getName());
+                return shareService.searchReceivedRequests(shareId);
+        }
+
+        @PostMapping("/manage/requests/accept")
+        public ResponseEntity<Void> acceptRequest(Authentication authentication, @RequestBody ScheduleShareDTO dto) {
+                Long receiverId = Long.valueOf(authentication.getName());
+                shareService.acceptRequest(dto.getSharerId(), receiverId, dto.getCanEdit());
+                return ResponseEntity.ok().build();
+        }
+
+        @DeleteMapping("/manage/requests")
+        public ResponseEntity<Void> rejectRequest(Authentication authentication, @RequestParam("sharerId") Long sharerId) {
+                Long receiverId = Long.valueOf(authentication.getName());
+                shareService.deleteRequest(sharerId, receiverId);
+                return ResponseEntity.ok().build();
+        }
 
 	// —————————————————————————————————————————————————————————
 	// 6) 조회: 내가 받은 초대(Invitation) 목록 조회

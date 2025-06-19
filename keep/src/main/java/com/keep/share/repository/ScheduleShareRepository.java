@@ -134,4 +134,8 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
                         order by m.hname
                         """)
         List<ScheduleShareUserDTO> findAcceptedReceived(@Param("receiverId") Long receiverId);
+
+        java.util.Optional<ScheduleShareEntity> findFirstBySharerIdAndReceiverIdAndActionTypeAndAcceptYn(Long sharerId, Long receiverId, String actionType, String acceptYn);
+
+        void deleteBySharerIdAndReceiverIdAndActionType(Long sharerId, Long receiverId, String actionType);
 }
