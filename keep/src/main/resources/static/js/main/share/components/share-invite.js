@@ -35,18 +35,6 @@
             target.appendChild(done);
         }
 
-        function showToast(message, duration = 3000) {
-            const toast = document.createElement('div');
-            toast.className = 'invite-toast';
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            requestAnimationFrame(() => toast.classList.add('show'));
-            setTimeout(() => {
-                toast.classList.remove('show');
-                toast.addEventListener('transitionend', () => toast.remove(), { once: true });
-            }, duration);
-        }
-
         async function handleAccept(id, canEdit, container, name) {
             await fetch('/api/share/manage/requests/accept', {
                 method: 'POST',
@@ -55,7 +43,9 @@
             });
             replaceWithDone(container);
             const perm = canEdit === 'Y' ? '수정' : '읽기';
-            showToast(`${name}에게 ${perm} 권한이 부여되었습니다.`);
+            if (window.saveToast && window.saveToast.showMessage) {
+                window.saveToast.showMessage(`${name}에게 ${perm} 권한이 부여되었습니다.`);
+            }
         }
 
         async function handleReject(id, container, name) {
@@ -63,7 +53,9 @@
                 method: 'DELETE'
             });
             replaceWithDone(container, '거절완료');
-            showToast(`${name}의 요청을 거절했습니다.`);
+            if (window.saveToast && window.saveToast.showMessage) {
+                window.saveToast.showMessage(`${name}의 요청을 거절했습니다.`);
+            }
         }
 
         btn?.addEventListener('click', () => {
@@ -137,7 +129,9 @@
                                             inviteBtn.textContent = '초대완료';
                                             inviteBtn.disabled = true;
                                             inviteBtn.classList.add('disabled');
-                                            showToast(`${m.hname}에게 초대가 완료되었습니다.`);
+                                            if (window.saveToast && window.saveToast.showMessage) {
+                                                window.saveToast.showMessage(`${m.hname}에게 초대가 완료되었습니다.`);
+                                            }
                                         }
                                     });
                                 });
