@@ -47,14 +47,19 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
                             s.acceptYn,
                             m.id,
                             m.hname,
-                            case when s.id is null then true else false end,
-                            false
+                            case when s.id is null then true else false end,                            
+                            case when r.id is not null then true else false end
                         )
 			from MemberEntity m
                         left join ScheduleShareEntity s
                           on s.receiverId = :sharerId
                          and s.sharerId = m.id
                          and s.actionType = 'R'
+                        left join ScheduleShareEntity r
+                          on s.sharerId = :sharerId
+                         and s.receiverId = m.id
+                         and s.actionType = 'I'
+                         and r.acceptYn = 'N'
 			where lower(m.hname) like lower(concat('%', :name, '%'))
 			      and m.id <> :sharerId
 			order by m.hname

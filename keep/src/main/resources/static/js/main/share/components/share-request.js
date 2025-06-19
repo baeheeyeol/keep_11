@@ -1,4 +1,5 @@
-//keep/src/main/resources/static/js/main/share/components/share-request.js
+//keep/src/main/resources/static/js/main/share/components/share-request.js 에서 조회시 리스트에 내가 초대 받은경우에는 선택 버튼대신 수락과 거절 버튼이 생성되도록 수정. 그리고 ScheduleShareUserDTO에서 
+  //Boolean pendingShare; 로 변경되었으니 invite.js에서도 관련 로직 수정
 (function() {
 	function initShareRequest() {
 		const input = document.querySelector('.search-bar input');

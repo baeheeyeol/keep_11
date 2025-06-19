@@ -33,6 +33,6 @@ public class ScheduleShareUserDTO {
     /** 초대 가능 여부 */
     Boolean invitable;
 
-    /** 나에게 요청했는지 여부 */
-    Boolean requested;
+    /** 나에게 요청 또는 초대 했는지 여부 */
+    Boolean pendingShare;
 }
