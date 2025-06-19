@@ -1,8 +1,9 @@
 (function() {
 	async function initShareInvite() {
-		const list = document.querySelector('#invite-list');
-		const input = document.querySelector('#invite-search-input');
-		const btn = document.querySelector('#invite-search-btn');
+                const list = document.querySelector('#invite-list');
+                const input = document.querySelector('#invite-search-input');
+                const btn = document.querySelector('#invite-search-btn');
+                const scheduleShareId = window.SCHEDULE_SHARE_ID;
 
 		function renderEmpty(msg) {
 			list.style.minHeight = '';
@@ -19,10 +20,10 @@
 			});
 		}
 
-		function createInviteButtons(action, id) {
-			const readBtn = document.createElement('button');
-			readBtn.className = 'invite-btn';
-			readBtn.textContent = '읽기 초대';
+                function createInviteButtons(action, id) {
+                        const readBtn = document.createElement('button');
+                        readBtn.className = 'invite-btn';
+                        readBtn.textContent = '읽기 초대';
 
 			const editBtn = document.createElement('button');
 			editBtn.className = 'invite-btn';
@@ -49,11 +50,96 @@
 			});
 
 			action.appendChild(readBtn);
-			action.appendChild(editBtn);
-		}
+                        action.appendChild(editBtn);
+                }
 
-		if (btn && !btn.dataset.bound) {
-			btn.dataset.bound = 'true';
+                if (scheduleShareId) {
+                        try {
+                                const res = await fetch('/api/share/manage/requests');
+                                if (!res.ok) throw new Error('network');
+                                const data = await res.json();
+                                const m = data.find(u => String(u.sharerId) === String(scheduleShareId));
+                                if (m) {
+                                        list.innerHTML = '';
+                                        list.style.minHeight = 'auto';
+
+                                        const div = document.createElement('div');
+                                        div.className = 'list-item';
+                                        const span = document.createElement('span');
+                                        span.textContent = m.hname + ' (나에게 요청한 유저)';
+                                        div.appendChild(span);
+
+                                        const action = document.createElement('div');
+                                        const readBtn = document.createElement('button');
+                                        readBtn.className = 'accept-btn';
+                                        readBtn.textContent = '읽기허용';
+
+                                        const editBtn = document.createElement('button');
+                                        editBtn.className = 'accept-btn';
+                                        editBtn.textContent = '수정허용';
+
+                                        const rejectBtn = document.createElement('button');
+                                        rejectBtn.className = 'reject-btn';
+                                        rejectBtn.textContent = '거절';
+
+                                        readBtn.addEventListener('click', () => {
+                                                fetch('/api/share/manage/requests/accept', {
+                                                        method: 'POST',
+                                                        headers: { 'Content-Type': 'application/json' },
+                                                        body: JSON.stringify({ sharerId: m.id, canEdit: 'N' })
+                                                }).then(res => {
+                                                        if (res.ok) {
+                                                                editBtn.remove();
+                                                                rejectBtn.remove();
+                                                                readBtn.textContent = '처리완료';
+                                                                readBtn.disabled = true;
+                                                        }
+                                                });
+                                        });
+
+                                        editBtn.addEventListener('click', () => {
+                                                fetch('/api/share/manage/requests/accept', {
+                                                        method: 'POST',
+                                                        headers: { 'Content-Type': 'application/json' },
+                                                        body: JSON.stringify({ sharerId: m.id, canEdit: 'Y' })
+                                                }).then(res => {
+                                                        if (res.ok) {
+                                                                readBtn.remove();
+                                                                rejectBtn.remove();
+                                                                editBtn.textContent = '처리완료';
+                                                                editBtn.disabled = true;
+                                                        }
+                                                });
+                                        });
+
+                                        rejectBtn.addEventListener('click', () => {
+                                                fetch(`/api/share/manage/requests?sharerId=${m.id}`, { method: 'DELETE' })
+                                                        .then(res => {
+                                                                if (res.ok) {
+                                                                        action.innerHTML = '';
+                                                                        createInviteButtons(action, m.id);
+                                                                }
+                                                        });
+                                        });
+
+                                        action.appendChild(readBtn);
+                                        action.appendChild(editBtn);
+                                        action.appendChild(rejectBtn);
+
+                                        div.appendChild(action);
+                                        list.appendChild(div);
+                                } else {
+                                        renderEmpty('요청 정보를 찾을 수 없습니다.');
+                                }
+                        } catch (e) {
+                                console.error(e);
+                                renderEmpty('요청 정보를 불러오지 못했습니다.');
+                        }
+                        return;
+                }
+
+                if (btn && !btn.dataset.bound) {
+                        btn.dataset.bound = 'true';
 			btn.addEventListener('click', () => {
 				const name = input.value.trim();
 				if (!name) return;
