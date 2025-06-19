@@ -1,4 +1,5 @@
 (function() {
+	//keep/src/main/resources/static/js/main/share/components/share-invite.js 에서 조회할때 SCHEDULE_SHARE_ID 값이 있으면 가져와서 바인딩 해놓고 해당 값으로 나에게 요청한 유저의 정보를 바로 delete와 update 할수 있도록 수정. 값이 없으면 기존처럼 등록 하는 방식사용 
 	async function initShareInvite() {
 		const list = document.querySelector('#invite-list');
 		const input = document.querySelector('#invite-search-input');
@@ -103,7 +104,6 @@
 										}
 									});
 								});
-
 								editBtn.addEventListener('click', () => {
 									fetch('/api/share/manage/requests/accept', {
 										method: 'POST',
