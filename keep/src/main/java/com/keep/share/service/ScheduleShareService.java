@@ -16,34 +16,19 @@ public class ScheduleShareService {
 	private final ScheduleShareRepository repository;
 	private final ShareMapper mapper;
 
-        public void invite(Long sharerId, Long receiverId, String canEdit) {
-                ScheduleShareEntity entity = ScheduleShareEntity.builder()
-                                .sharerId(sharerId)
-                                .receiverId(receiverId)
-                                .canEdit(canEdit)
-                                .acceptYn("N")
-                                .actionType("I")
-                                .createdBy(sharerId)
-                                .lastUpdatedBy(sharerId)
-                                .lastUpdateLogin(sharerId)
-                                .build();
-                repository.save(entity);
-        }
+	public void invite(Long sharerId, Long receiverId, String canEdit) {
+		ScheduleShareEntity entity = ScheduleShareEntity.builder().sharerId(sharerId).receiverId(receiverId)
+				.canEdit(canEdit).acceptYn("N").actionType("I").createdBy(sharerId).lastUpdatedBy(sharerId)
+				.lastUpdateLogin(sharerId).build();
+		repository.save(entity);
+	}
 
-        public void request(Long sharerId, Long receiverId, String message) {
-                ScheduleShareEntity entity = ScheduleShareEntity.builder()
-                                .sharerId(sharerId)
-                                .receiverId(receiverId)
-                                .canEdit("N")
-                                .acceptYn("N")
-                                .actionType("R")
-                                .message(message)
-                                .createdBy(receiverId)
-                                .lastUpdatedBy(receiverId)
-                                .lastUpdateLogin(receiverId)
-                                .build();
-                repository.save(entity);
-        }
+	public void request(Long sharerId, Long receiverId, String message) {
+		ScheduleShareEntity entity = ScheduleShareEntity.builder().sharerId(sharerId).receiverId(receiverId).canEdit("N")
+				.acceptYn("N").actionType("R").message(message).createdBy(receiverId).lastUpdatedBy(receiverId)
+				.lastUpdateLogin(receiverId).build();
+		repository.save(entity);
+	}
 
 	public List<ScheduleShareUserDTO> searchAvailableForInvite(Long sharerId, String name) {
 		return repository.searchAvailableForInvite(sharerId, name);
@@ -57,33 +42,33 @@ public class ScheduleShareService {
 		return repository.findPendingRequests(shareId);
 	}
 
-        public List<ScheduleShareUserDTO> searchReceivedInvitations(Long receiverId) {
-                return repository.findPendingInvites(receiverId);
-        }
+	public List<ScheduleShareUserDTO> searchReceivedInvitations(Long receiverId) {
+		return repository.findPendingInvites(receiverId);
+	}
 
-        public List<ScheduleShareUserDTO> listShared(Long sharerId) {
-                return repository.findAcceptedShares(sharerId);
-        }
+	public List<ScheduleShareUserDTO> listShared(Long sharerId) {
+		return repository.findAcceptedShares(sharerId);
+	}
 
-        public List<ScheduleShareUserDTO> listReceived(Long receiverId) {
-                return repository.findAcceptedReceived(receiverId);
-        }
+	public List<ScheduleShareUserDTO> listReceived(Long receiverId) {
+		return repository.findAcceptedReceived(receiverId);
+	}
 
-        @Transactional
-        public void acceptRequest(Long sharerId, Long receiverId, String canEdit) {
-                repository.findFirstBySharerIdAndReceiverIdAndActionTypeAndAcceptYn(sharerId, receiverId, "R", "N")
-                        .ifPresent(entity -> {
-                                entity.setAcceptYn("Y");
-                                if ("Y".equals(canEdit)) {
-                                        entity.setCanEdit("Y");
-                                }
-                                repository.save(entity);
-                        });
-        }
+	@Transactional
+	public void acceptRequest(Long sharerId, Long receiverId, String canEdit) {
+		repository.findFirstBySharerIdAndReceiverIdAndActionTypeAndAcceptYn(sharerId, receiverId, "R", "N")
+				.ifPresent(entity -> {
+					entity.setAcceptYn("Y");
+					if ("Y".equals(canEdit)) {
+						entity.setCanEdit("Y");
+					}
+					repository.save(entity);
+				});
+	}
 
-        @Transactional
-        public void deleteRequest(Long sharerId, Long receiverId) {
-                repository.deleteBySharerIdAndReceiverIdAndActionType(sharerId, receiverId, "R");
-        }
+	@Transactional
+	public void deleteRequest(Long sharerId, Long receiverId) {
+		repository.deleteBySharerIdAndReceiverIdAndActionType(sharerId, receiverId, "R");
+	}
 
 }

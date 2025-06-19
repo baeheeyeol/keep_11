@@ -22,3 +22,14 @@
     </div>
 </div>
 </html>
+        fetch(`/api/share/request/users?name=` + encodeURIComponent(name))
+                                .then(res => res.json())
+                                .then(data => {
+                                        if (myId) {
+                                                data = data.filter(m => String(m.id) !== String(myId));
+                                        }
+                                        if (data.length === 0) {
+                                                renderEmpty('검색 결과가 없습니다.');
+                                                return;
+                                        }
+                                        해당 방식과 애초에 쿼리문에서 나의 id를 제외하는 방식중에 어떤것이 좋은가

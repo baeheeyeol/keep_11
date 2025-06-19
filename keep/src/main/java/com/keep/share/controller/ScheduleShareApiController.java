@@ -30,13 +30,13 @@ public class ScheduleShareApiController {
 	// —————————————————————————————————————————————————————————
 	// 2) 실행: 사용자에게 초대 보내기
 	// —————————————————————————————————————————————————————————
-        @PostMapping("/invite")
-        public ResponseEntity<Void> sendInvitation(Authentication authentication, @RequestBody ScheduleShareDTO dto) {
-                Long sharerId = Long.valueOf(authentication.getName());
-                String canEdit = dto.getCanEdit() == null ? "N" : dto.getCanEdit();
-                shareService.invite(sharerId, dto.getReceiverId(), canEdit);
-                return ResponseEntity.ok().build();
-        }
+	@PostMapping("/invite")
+	public ResponseEntity<Void> sendInvitation(Authentication authentication, @RequestBody ScheduleShareDTO dto) {
+		Long sharerId = Long.valueOf(authentication.getName());
+		String canEdit = dto.getCanEdit() == null ? "N" : dto.getCanEdit();
+		shareService.invite(sharerId, dto.getReceiverId(), canEdit);
+		return ResponseEntity.ok().build();
+	}
 
 	// —————————————————————————————————————————————————————————
 	// 3) 검색: 내가 요청할 수 있는 유저 목록 조회
@@ -61,47 +61,46 @@ public class ScheduleShareApiController {
 	// —————————————————————————————————————————————————————————
 	// 5) 조회: 내가 받은 요청 목록 조회
 	// —————————————————————————————————————————————————————————
-        @GetMapping("/manage/requests")
-        public List<ScheduleShareUserDTO> listReceivedRequests(Authentication authentication) {
-                Long shareId = Long.valueOf(authentication.getName());
-                return shareService.searchReceivedRequests(shareId);
-        }
+	@GetMapping("/manage/requests")
+	public List<ScheduleShareUserDTO> listReceivedRequests(Authentication authentication) {
+		Long shareId = Long.valueOf(authentication.getName());
+		return shareService.searchReceivedRequests(shareId);
+	}
 
-        @PostMapping("/manage/requests/accept")
-        public ResponseEntity<Void> acceptRequest(Authentication authentication, @RequestBody ScheduleShareDTO dto) {
-                Long receiverId = Long.valueOf(authentication.getName());
-                shareService.acceptRequest(dto.getSharerId(), receiverId, dto.getCanEdit());
-                return ResponseEntity.ok().build();
-        }
+	@PostMapping("/manage/requests/accept")
+	public ResponseEntity<Void> acceptRequest(Authentication authentication, @RequestBody ScheduleShareDTO dto) {
+		Long receiverId = Long.valueOf(authentication.getName());
+		shareService.acceptRequest(dto.getSharerId(), receiverId, dto.getCanEdit());
+		return ResponseEntity.ok().build();
+	}
 
-        @DeleteMapping("/manage/requests")
-        public ResponseEntity<Void> rejectRequest(Authentication authentication, @RequestParam("sharerId") Long sharerId) {
-                Long receiverId = Long.valueOf(authentication.getName());
-                shareService.deleteRequest(sharerId, receiverId);
-                return ResponseEntity.ok().build();
-        }
+	@DeleteMapping("/manage/requests")
+	public ResponseEntity<Void> rejectRequest(Authentication authentication, @RequestParam("sharerId") Long sharerId) {
+		Long receiverId = Long.valueOf(authentication.getName());
+		shareService.deleteRequest(sharerId, receiverId);
+		return ResponseEntity.ok().build();
+	}
 
 	// —————————————————————————————————————————————————————————
 	// 6) 조회: 내가 받은 초대(Invitation) 목록 조회
 	// —————————————————————————————————————————————————————————
-        @GetMapping("/manage/invitations")
-        public List<ScheduleShareUserDTO> listReceivedInvitations(Authentication authentication) {
-                Long receiverId = Long.valueOf(authentication.getName());
-                return shareService.searchReceivedInvitations(receiverId);
-        }
+	@GetMapping("/manage/invitations")
+	public List<ScheduleShareUserDTO> listReceivedInvitations(Authentication authentication) {
+		Long receiverId = Long.valueOf(authentication.getName());
+		return shareService.searchReceivedInvitations(receiverId);
+	}
 
-        // —————————————————————————————————————————————————————————
-        // 7) 조회: 공유 목록(공유한/공유받은)
-        // —————————————————————————————————————————————————————————
-        @GetMapping("/list")
-        public List<ScheduleShareUserDTO> listShares(@RequestParam("type") String type,
-                                                     Authentication authentication) {
-                Long userId = Long.valueOf(authentication.getName());
-                if ("shared".equals(type)) {
-                        return shareService.listShared(userId);
-                } else {
-                        return shareService.listReceived(userId);
-                }
-        }
+	// —————————————————————————————————————————————————————————
+	// 7) 조회: 공유 목록(공유한/공유받은)
+	// —————————————————————————————————————————————————————————
+	@GetMapping("/list")
+	public List<ScheduleShareUserDTO> listShares(@RequestParam("type") String type, Authentication authentication) {
+		Long userId = Long.valueOf(authentication.getName());
+		if ("shared".equals(type)) {
+			return shareService.listShared(userId);
+		} else {
+			return shareService.listReceived(userId);
+		}
+	}
 
 }

@@ -27,11 +27,12 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
                          and s.receiverId = m.id
                          and s.actionType = 'I'
                         left join ScheduleShareEntity r
-                          on r.sharerId = m.id
-                         and r.receiverId = :sharerId
+                          on r.sharerId = :sharerId
+                         and r.receiverId = m.id
                          and r.actionType = 'R'
                          and r.acceptYn = 'N'
                         where lower(m.hname) like lower(concat('%', :name, '%'))
+                         and m.id <> :sharerId
                         order by m.hname
 			""")
 	List<ScheduleShareUserDTO> searchAvailableForInvite(@Param("sharerId") Long sharerId, @Param("name") String name);
@@ -53,6 +54,7 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
                          and s.sharerId = m.id
                          and s.actionType = 'R'
 			where lower(m.hname) like lower(concat('%', :name, '%'))
+			      and m.id <> :sharerId
 			order by m.hname
 			""")
         List<ScheduleShareUserDTO> searchAvailableForRequest(@Param("sharerId") Long sharerId, @Param("name") String name);
