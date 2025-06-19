@@ -54,24 +54,13 @@ public class ScheduleShareService {
 		return repository.findAcceptedReceived(receiverId);
 	}
 
-        @Transactional
-        public void acceptRequest(Long scheduleShareId, Long receiverId, String canEdit) {
-                repository.findById(scheduleShareId)
-                        .filter(entity -> entity.getReceiverId().equals(receiverId))
-                        .ifPresent(entity -> {
-                                entity.setAcceptYn("Y");
-                                if ("Y".equals(canEdit)) {
-                                        entity.setCanEdit("Y");
-                                }
-                                repository.save(entity);
-                        });
-        }
+	@Transactional
+	public void acceptRequest(Long scheduleShareId, String canEdit) {
 
-        @Transactional
-        public void deleteRequest(Long scheduleShareId, Long receiverId) {
-                repository.findById(scheduleShareId)
-                        .filter(entity -> entity.getReceiverId().equals(receiverId))
-                        .ifPresent(repository::delete);
-        }
+	}
+
+	@Transactional
+	public void deleteRequest(Long scheduleShareId) {
+	}
 
 }

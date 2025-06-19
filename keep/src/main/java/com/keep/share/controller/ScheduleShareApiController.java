@@ -67,19 +67,18 @@ public class ScheduleShareApiController {
 		return shareService.searchReceivedRequests(shareId);
 	}
 
-        @PostMapping("/manage/requests/accept")
-        public ResponseEntity<Void> acceptRequest(Authentication authentication, @RequestBody ScheduleShareDTO dto) {
-                Long receiverId = Long.valueOf(authentication.getName());
-                shareService.acceptRequest(dto.getScheduleShareId(), receiverId, dto.getCanEdit());
-                return ResponseEntity.ok().build();
-        }
+	@PostMapping("/manage/requests/accept")
+	public ResponseEntity<Void> acceptRequest(Authentication authentication, @RequestBody ScheduleShareDTO dto) {
+		shareService.acceptRequest(dto.getScheduleShareId(), dto.getCanEdit());
+		return ResponseEntity.ok().build();
+	}
 
-        @DeleteMapping("/manage/requests")
-        public ResponseEntity<Void> rejectRequest(Authentication authentication, @RequestParam("scheduleShareId") Long scheduleShareId) {
-                Long receiverId = Long.valueOf(authentication.getName());
-                shareService.deleteRequest(scheduleShareId, receiverId);
-                return ResponseEntity.ok().build();
-        }
+	@DeleteMapping("/manage/requests")
+	public ResponseEntity<Void> rejectRequest(Authentication authentication,
+			@RequestParam("scheduleShareId") Long scheduleShareId) {
+		shareService.deleteRequest(scheduleShareId);
+		return ResponseEntity.ok().build();
+	}
 
 	// —————————————————————————————————————————————————————————
 	// 6) 조회: 내가 받은 초대(Invitation) 목록 조회
