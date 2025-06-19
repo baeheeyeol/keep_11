@@ -54,13 +54,18 @@ public class ScheduleShareService {
 		return repository.findAcceptedReceived(receiverId);
 	}
 
-	@Transactional
-	public void acceptRequest(Long scheduleShareId, String canEdit) {
+        @Transactional
+        public void acceptRequest(Long scheduleShareId, String canEdit) {
+                repository.findById(scheduleShareId).ifPresent(entity -> {
+                        entity.setCanEdit(canEdit);
+                        entity.setAcceptYn("Y");
+                        repository.save(entity);
+                });
+        }
 
-	}
-
-	@Transactional
-	public void deleteRequest(Long scheduleShareId) {
-	}
+        @Transactional
+        public void deleteRequest(Long scheduleShareId) {
+                repository.deleteById(scheduleShareId);
+        }
 
 }
