@@ -6,6 +6,7 @@ import com.keep.share.repository.ScheduleShareRepository;
 import com.keep.share.mapper.ShareMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -66,6 +67,23 @@ public class ScheduleShareService {
 
         public List<ScheduleShareUserDTO> listReceived(Long receiverId) {
                 return repository.findAcceptedReceived(receiverId);
+        }
+
+        @Transactional
+        public void acceptRequest(Long sharerId, Long receiverId, String canEdit) {
+                repository.findFirstBySharerIdAndReceiverIdAndActionTypeAndAcceptYn(sharerId, receiverId, "R", "N")
+                        .ifPresent(entity -> {
+                                entity.setAcceptYn("Y");
+                                if ("Y".equals(canEdit)) {
+                                        entity.setCanEdit("Y");
+                                }
+                                repository.save(entity);
+                        });
+        }
+
+        @Transactional
+        public void deleteRequest(Long sharerId, Long receiverId) {
+                repository.deleteBySharerIdAndReceiverIdAndActionType(sharerId, receiverId, "R");
         }
 
 }

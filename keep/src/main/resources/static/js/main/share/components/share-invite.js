@@ -19,6 +19,39 @@
             });
         }
 
+        function createInviteButtons(action, id) {
+            const readBtn = document.createElement('button');
+            readBtn.className = 'invite-btn';
+            readBtn.textContent = '읽기 초대';
+
+            const editBtn = document.createElement('button');
+            editBtn.className = 'invite-btn';
+            editBtn.textContent = '수정 초대';
+
+            readBtn.addEventListener('click', () => {
+                sendInvite(id, 'N', () => {
+                    readBtn.textContent = '초대완료';
+                    readBtn.disabled = true;
+                    readBtn.classList.add('disabled');
+                    editBtn.disabled = true;
+                    window.saveToast?.showMessage('초대가 완료되었습니다');
+                });
+            });
+
+            editBtn.addEventListener('click', () => {
+                sendInvite(id, 'Y', () => {
+                    readBtn.disabled = true;
+                    editBtn.textContent = '초대완료';
+                    editBtn.disabled = true;
+                    editBtn.classList.add('disabled');
+                    window.saveToast?.showMessage('초대가 완료되었습니다');
+                });
+            });
+
+            action.appendChild(readBtn);
+            action.appendChild(editBtn);
+        }
+
         if (btn && !btn.dataset.bound) {
             btn.dataset.bound = 'true';
             btn.addEventListener('click', () => {
@@ -57,21 +90,43 @@
                                 rejectBtn.textContent = '거절';
 
                                 readBtn.addEventListener('click', () => {
-                                    sendInvite(m.id, 'N', () => {
-                                        readBtn.disabled = true;
-                                        editBtn.disabled = true;
-                                        rejectBtn.disabled = true;
-                                        window.saveToast?.showMessage('초대가 완료되었습니다');
+                                    fetch('/api/share/manage/requests/accept', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ sharerId: m.id, canEdit: 'N' })
+                                    }).then(res => {
+                                        if (res.ok) {
+                                            editBtn.remove();
+                                            rejectBtn.remove();
+                                            readBtn.textContent = '처리완료';
+                                            readBtn.disabled = true;
+                                        }
                                     });
                                 });
 
                                 editBtn.addEventListener('click', () => {
-                                    sendInvite(m.id, 'Y', () => {
-                                        readBtn.disabled = true;
-                                        editBtn.disabled = true;
-                                        rejectBtn.disabled = true;
-                                        window.saveToast?.showMessage('초대가 완료되었습니다');
+                                    fetch('/api/share/manage/requests/accept', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ sharerId: m.id, canEdit: 'Y' })
+                                    }).then(res => {
+                                        if (res.ok) {
+                                            readBtn.remove();
+                                            rejectBtn.remove();
+                                            editBtn.textContent = '처리완료';
+                                            editBtn.disabled = true;
+                                        }
                                     });
+                                });
+
+                                rejectBtn.addEventListener('click', () => {
+                                    fetch(`/api/share/manage/requests?sharerId=${m.id}`, { method: 'DELETE' })
+                                        .then(res => {
+                                            if (res.ok) {
+                                                action.innerHTML = '';
+                                                createInviteButtons(action, m.id);
+                                            }
+                                        });
                                 });
 
                                 action.appendChild(readBtn);
