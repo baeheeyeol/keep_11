@@ -1,65 +1,127 @@
-//keep/src/main/resources/static/js/main/share/components/share-invite.js 에서
 (function() {
-	async function initShareInvite() {
-		const list = document.querySelector('#invite-list');
-		const input = document.querySelector('#invite-search-input');
-		const btn = document.querySelector('#invite-search-btn');
+    async function initShareInvite() {
+        const list = document.querySelector('#invite-list');
+        const input = document.querySelector('#invite-search-input');
+        const btn = document.querySelector('#invite-search-btn');
 
-		function renderEmpty(msg) {
-			list.style.minHeight = '';
-			list.innerHTML = `<div class="placeholder">${msg}</div>`;
-		}
-		if (btn && !btn.dataset.bound) {
-			btn.dataset.bound = 'true';
-			btn.addEventListener('click', () => {
-				const name = input.value.trim();
-				if (!name) return;
-				fetch(`/api/share/invite/users?name=` + encodeURIComponent(name))
-					.then(res => res.json())
-					.then(data => {
-						if (data.length === 0) {
-							renderEmpty('검색 결과가 없습니다.');
-							return;
-						}
-						list.innerHTML = '';
-						list.style.minHeight = 'auto';
-						data.forEach(m => {
-							const div = document.createElement('div');
-							div.className = 'list-item';
-							const button = document.createElement('button');
-							button.className = 'invite-btn';
-							button.dataset.id = m.id;
+        function renderEmpty(msg) {
+            list.style.minHeight = '';
+            list.innerHTML = `<div class="placeholder">${msg}</div>`;
+        }
 
-							if (!m.invitable) {
-								button.textContent = '초대완료';
-								button.disabled = true;
-								button.classList.add('disabled');
-							} else {
-								button.textContent = '초대하기';
-								button.addEventListener('click', () => {
-									fetch(`/api/share/invite`, {
-										method: 'POST',
-										headers: { 'Content-Type': 'application/json' },
-										body: JSON.stringify({ receiverId: m.id })
-									}).then(res => {
-										if (res.ok) {
-											button.textContent = '초대완료';
-											button.disabled = true;
-											button.classList.add('disabled');
-											if (window.saveToast && window.saveToast.showMessage) {
-												window.saveToast.showMessage('초대가 완료되었습니다');
-											}
-										}
-									});
-								});
-							}
-							div.appendChild(document.createElement('span')).textContent = m.hname;
-							div.appendChild(button);
-							list.appendChild(div);
-						});
-					});
-			});
-		}
-	}
-	window.initShareInvite = initShareInvite;
+        function sendInvite(id, canEdit, cb) {
+            fetch('/api/share/invite', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ receiverId: id, canEdit })
+            }).then(res => {
+                if (res.ok && cb) cb();
+            });
+        }
+
+        if (btn && !btn.dataset.bound) {
+            btn.dataset.bound = 'true';
+            btn.addEventListener('click', () => {
+                const name = input.value.trim();
+                if (!name) return;
+                fetch(`/api/share/invite/users?name=` + encodeURIComponent(name))
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.length === 0) {
+                            renderEmpty('검색 결과가 없습니다.');
+                            return;
+                        }
+                        list.innerHTML = '';
+                        list.style.minHeight = 'auto';
+                        data.forEach(m => {
+                            const div = document.createElement('div');
+                            div.className = 'list-item';
+
+                            const span = document.createElement('span');
+                            span.textContent = m.hname + (m.requested ? ' (요청됨)' : '');
+                            div.appendChild(span);
+
+                            const action = document.createElement('div');
+
+                            if (m.requested) {
+                                const readBtn = document.createElement('button');
+                                readBtn.className = 'accept-btn';
+                                readBtn.textContent = '읽기 허용';
+
+                                const editBtn = document.createElement('button');
+                                editBtn.className = 'accept-btn';
+                                editBtn.textContent = '수정 허용';
+
+                                const rejectBtn = document.createElement('button');
+                                rejectBtn.className = 'reject-btn';
+                                rejectBtn.textContent = '거절';
+
+                                readBtn.addEventListener('click', () => {
+                                    sendInvite(m.id, 'N', () => {
+                                        readBtn.disabled = true;
+                                        editBtn.disabled = true;
+                                        rejectBtn.disabled = true;
+                                        window.saveToast?.showMessage('초대가 완료되었습니다');
+                                    });
+                                });
+
+                                editBtn.addEventListener('click', () => {
+                                    sendInvite(m.id, 'Y', () => {
+                                        readBtn.disabled = true;
+                                        editBtn.disabled = true;
+                                        rejectBtn.disabled = true;
+                                        window.saveToast?.showMessage('초대가 완료되었습니다');
+                                    });
+                                });
+
+                                action.appendChild(readBtn);
+                                action.appendChild(editBtn);
+                                action.appendChild(rejectBtn);
+                            } else if (!m.invitable) {
+                                const done = document.createElement('button');
+                                done.className = 'invite-btn disabled';
+                                done.textContent = '초대완료';
+                                done.disabled = true;
+                                action.appendChild(done);
+                            } else {
+                                const readBtn = document.createElement('button');
+                                readBtn.className = 'invite-btn';
+                                readBtn.textContent = '읽기 초대';
+
+                                const editBtn = document.createElement('button');
+                                editBtn.className = 'invite-btn';
+                                editBtn.textContent = '수정 초대';
+
+                                readBtn.addEventListener('click', () => {
+                                    sendInvite(m.id, 'N', () => {
+                                        readBtn.textContent = '초대완료';
+                                        readBtn.disabled = true;
+                                        readBtn.classList.add('disabled');
+                                        editBtn.disabled = true;
+                                        window.saveToast?.showMessage('초대가 완료되었습니다');
+                                    });
+                                });
+
+                                editBtn.addEventListener('click', () => {
+                                    sendInvite(m.id, 'Y', () => {
+                                        readBtn.disabled = true;
+                                        editBtn.textContent = '초대완료';
+                                        editBtn.disabled = true;
+                                        editBtn.classList.add('disabled');
+                                        window.saveToast?.showMessage('초대가 완료되었습니다');
+                                    });
+                                });
+
+                                action.appendChild(readBtn);
+                                action.appendChild(editBtn);
+                            }
+
+                            div.appendChild(action);
+                            list.appendChild(div);
+                        });
+                    });
+            });
+        }
+    }
+    window.initShareInvite = initShareInvite;
 })();

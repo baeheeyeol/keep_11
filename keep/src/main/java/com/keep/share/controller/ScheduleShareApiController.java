@@ -30,12 +30,13 @@ public class ScheduleShareApiController {
 	// —————————————————————————————————————————————————————————
 	// 2) 실행: 사용자에게 초대 보내기
 	// —————————————————————————————————————————————————————————
-	@PostMapping("/invite")
-	public ResponseEntity<Void> sendInvitation(Authentication authentication, @RequestBody ScheduleShareDTO dto) {
-		Long sharerId = Long.valueOf(authentication.getName());
-		shareService.invite(sharerId, dto.getReceiverId());
-		return ResponseEntity.ok().build();
-	}
+        @PostMapping("/invite")
+        public ResponseEntity<Void> sendInvitation(Authentication authentication, @RequestBody ScheduleShareDTO dto) {
+                Long sharerId = Long.valueOf(authentication.getName());
+                String canEdit = dto.getCanEdit() == null ? "N" : dto.getCanEdit();
+                shareService.invite(sharerId, dto.getReceiverId(), canEdit);
+                return ResponseEntity.ok().build();
+        }
 
 	// —————————————————————————————————————————————————————————
 	// 3) 검색: 내가 요청할 수 있는 유저 목록 조회

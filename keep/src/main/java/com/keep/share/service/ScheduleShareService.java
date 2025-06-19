@@ -15,11 +15,11 @@ public class ScheduleShareService {
 	private final ScheduleShareRepository repository;
 	private final ShareMapper mapper;
 
-        public void invite(Long sharerId, Long receiverId) {
+        public void invite(Long sharerId, Long receiverId, String canEdit) {
                 ScheduleShareEntity entity = ScheduleShareEntity.builder()
                                 .sharerId(sharerId)
                                 .receiverId(receiverId)
-                                .canEdit("N")
+                                .canEdit(canEdit)
                                 .acceptYn("N")
                                 .actionType("I")
                                 .createdBy(sharerId)

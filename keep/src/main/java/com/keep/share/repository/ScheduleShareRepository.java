@@ -11,35 +11,42 @@ import java.util.List;
 public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEntity, Long> {
 
 	@Query("""
-			select new com.keep.share.dto.ScheduleShareUserDTO(
-			    s.sharerId,
-			    s.receiverId,
-			    s.canEdit,
-			    s.acceptYn,
-			    m.id,
-			    m.hname,
-			    case when s.id is null then true else false end
-			)
-			from MemberEntity m
+                        select new com.keep.share.dto.ScheduleShareUserDTO(
+                            s.sharerId,
+                            s.receiverId,
+                            s.canEdit,
+                            s.acceptYn,
+                            m.id,
+                            m.hname,
+                            case when s.id is null then true else false end,
+                            case when r.id is not null then true else false end
+                        )
+                        from MemberEntity m
                         left join ScheduleShareEntity s
                           on s.sharerId = :sharerId
                          and s.receiverId = m.id
                          and s.actionType = 'I'
-			where lower(m.hname) like lower(concat('%', :name, '%'))
-			order by m.hname
+                        left join ScheduleShareEntity r
+                          on r.sharerId = m.id
+                         and r.receiverId = :sharerId
+                         and r.actionType = 'R'
+                         and r.acceptYn = 'N'
+                        where lower(m.hname) like lower(concat('%', :name, '%'))
+                        order by m.hname
 			""")
 	List<ScheduleShareUserDTO> searchAvailableForInvite(@Param("sharerId") Long sharerId, @Param("name") String name);
 	
 	@Query("""
-			select new com.keep.share.dto.ScheduleShareUserDTO(
-			    s.sharerId,
-			    s.receiverId,
-			    s.canEdit,
-			    s.acceptYn,
-			    m.id,
-			    m.hname,
-			    case when s.id is null then true else false end
-			)
+                        select new com.keep.share.dto.ScheduleShareUserDTO(
+                            s.sharerId,
+                            s.receiverId,
+                            s.canEdit,
+                            s.acceptYn,
+                            m.id,
+                            m.hname,
+                            case when s.id is null then true else false end,
+                            false
+                        )
 			from MemberEntity m
                         left join ScheduleShareEntity s
                           on s.receiverId = :sharerId
@@ -58,6 +65,7 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
                             s.acceptYn,
                             m.id,
                             m.hname,
+                            false,
                             false
                         )
                         from ScheduleShareEntity s
@@ -77,6 +85,7 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
                             s.acceptYn,
                             m.id,
                             m.hname,
+                            false,
                             false
                         )
                         from ScheduleShareEntity s
@@ -96,6 +105,7 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
                             s.acceptYn,
                             m.id,
                             m.hname,
+                            false,
                             false
                         )
                         from ScheduleShareEntity s
@@ -114,6 +124,7 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
                             s.acceptYn,
                             m.id,
                             m.hname,
+                            false,
                             false
                         )
                         from ScheduleShareEntity s

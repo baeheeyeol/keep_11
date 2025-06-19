@@ -29,4 +29,7 @@ public class ScheduleShareUserDTO {
 
     /** 초대 가능 여부 */
     Boolean invitable;
+
+    /** 나에게 요청했는지 여부 */
+    Boolean requested;
 }
