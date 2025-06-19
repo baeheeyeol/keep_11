@@ -1,24 +1,24 @@
-(function() { 
+(function() {
 	const toast = document.getElementById('save-toast');
 	const msgEl = document.getElementById('save-toast-message');
 	const undoBtn = document.getElementById('save-toast-undo');
 	let hideTimer = null;
 	let lastId = null;
-      function err(message = '오류가 발생했습니다') {
-              if (!toast) return;
-              clearTimeout(hideTimer);
-              msgEl.textContent = message;
-              undoBtn.style.display = 'none';
-              toast.classList.remove('hidden');
-              requestAnimationFrame(() => toast.classList.add('show'));
-              hideTimer = setTimeout(() => {
-                      hide();
-              }, 4000);
-      }
+	function err(message = '오류가 발생했습니다') {
+		if (!toast) return;
+		clearTimeout(hideTimer);
+		msgEl.textContent = message;
+		undoBtn.style.display = 'none';
+		toast.classList.remove('hidden');
+		requestAnimationFrame(() => toast.classList.add('show'));
+		hideTimer = setTimeout(() => {
+			hide();
+		}, 4000);
+	}
 
-      function showMessage(message) {
-              err(message);
-      }
+	function showMessage(message) {
+		err(message);
+	}
 
 	function hide() {
 		if (!toast) return;
@@ -52,10 +52,11 @@
 		}, 4000);
 	}
 
-        window.saveToast = {
-                showSaving,
-                showSaved,
-                showMessage,
-                hide
-        };
+	window.saveToast = {
+		showSaving,
+		showSaved,
+		showMessage,
+		hide
+	};
 })();
+
