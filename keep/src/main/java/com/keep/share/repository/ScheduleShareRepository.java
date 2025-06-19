@@ -4,6 +4,7 @@ import com.keep.share.dto.ScheduleShareUserDTO;
 import com.keep.share.entity.ScheduleShareEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
@@ -134,4 +135,57 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
                         order by m.hname
                         """)
         List<ScheduleShareUserDTO> findAcceptedReceived(@Param("receiverId") Long receiverId);
+
+        // ------------------------------------------------------------------
+        // Update operations for managing requests/invitations
+        // ------------------------------------------------------------------
+
+        @Modifying
+        @Query("update ScheduleShareEntity s set s.canEdit=:canEdit, s.acceptYn='Y' " +
+               "where s.sharerId=:sharerId and s.receiverId=:receiverId " +
+               "and s.actionType='R' and s.acceptYn='N'")
+        int acceptRequest(@Param("sharerId") Long sharerId,
+                          @Param("receiverId") Long receiverId,
+                          @Param("canEdit") String canEdit);
+
+        @Modifying
+        @Query("update ScheduleShareEntity s set s.acceptYn='R' " +
+               "where s.sharerId=:sharerId and s.receiverId=:receiverId " +
+               "and s.actionType='R' and s.acceptYn='N'")
+        int rejectRequest(@Param("sharerId") Long sharerId,
+                          @Param("receiverId") Long receiverId);
+
+        @Modifying
+        @Query("update ScheduleShareEntity s set s.acceptYn='Y' " +
+               "where s.sharerId=:sharerId and s.receiverId=:receiverId " +
+               "and s.actionType='I' and s.acceptYn='N'")
+        int acceptInvitation(@Param("sharerId") Long sharerId,
+                             @Param("receiverId") Long receiverId);
+
+        @Modifying
+        @Query("update ScheduleShareEntity s set s.acceptYn='R' " +
+               "where s.sharerId=:sharerId and s.receiverId=:receiverId " +
+               "and s.actionType='I' and s.acceptYn='N'")
+        int rejectInvitation(@Param("sharerId") Long sharerId,
+                             @Param("receiverId") Long receiverId);
+
+        @Modifying
+        @Query("update ScheduleShareEntity s set s.acceptYn='Y' " +
+               "where s.sharerId=:sharerId and s.actionType='R' and s.acceptYn='N'")
+        int acceptAllRequests(@Param("sharerId") Long sharerId);
+
+        @Modifying
+        @Query("update ScheduleShareEntity s set s.acceptYn='R' " +
+               "where s.sharerId=:sharerId and s.actionType='R' and s.acceptYn='N'")
+        int rejectAllRequests(@Param("sharerId") Long sharerId);
+
+        @Modifying
+        @Query("update ScheduleShareEntity s set s.acceptYn='Y' " +
+               "where s.receiverId=:receiverId and s.actionType='I' and s.acceptYn='N'")
+        int acceptAllInvitations(@Param("receiverId") Long receiverId);
+
+        @Modifying
+        @Query("update ScheduleShareEntity s set s.acceptYn='R' " +
+               "where s.receiverId=:receiverId and s.actionType='I' and s.acceptYn='N'")
+        int rejectAllInvitations(@Param("receiverId") Long receiverId);
 }

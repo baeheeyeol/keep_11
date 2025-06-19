@@ -29,24 +29,81 @@
                 div.className = 'list-item';
                 div.appendChild(document.createElement('span')).textContent = m.hname;
                 const action = document.createElement('div');
-                const readBtn = document.createElement('button');
-                readBtn.className = 'accept-btn';
-                readBtn.type = 'button';
-                readBtn.textContent = '읽기만 허용';
 
-                const editBtn = document.createElement('button');
-                editBtn.className = 'accept-btn';
-                editBtn.type = 'button';
-                editBtn.textContent = '수정까지 허용';
+                if (currentType === 'request') {
+                    const readBtn = document.createElement('button');
+                    readBtn.className = 'accept-btn';
+                    readBtn.type = 'button';
+                    readBtn.textContent = '읽기만 허용';
+                    readBtn.addEventListener('click', async () => {
+                        await fetch('/api/share/manage/requests/accept', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ receiverId: m.id, canEdit: 'N' })
+                        });
+                        load(currentType);
+                    });
 
-                const rejectBtn = document.createElement('button');
-                rejectBtn.className = 'reject-btn';
-                rejectBtn.type = 'button';
-                rejectBtn.textContent = '거절';
+                    const editBtn = document.createElement('button');
+                    editBtn.className = 'accept-btn';
+                    editBtn.type = 'button';
+                    editBtn.textContent = '수정까지 허용';
+                    editBtn.addEventListener('click', async () => {
+                        await fetch('/api/share/manage/requests/accept', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ receiverId: m.id, canEdit: 'Y' })
+                        });
+                        load(currentType);
+                    });
 
-                action.appendChild(readBtn);
-                action.appendChild(editBtn);
-                action.appendChild(rejectBtn);
+                    const rejectBtn = document.createElement('button');
+                    rejectBtn.className = 'reject-btn';
+                    rejectBtn.type = 'button';
+                    rejectBtn.textContent = '거절';
+                    rejectBtn.addEventListener('click', async () => {
+                        await fetch('/api/share/manage/requests/reject', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ receiverId: m.id })
+                        });
+                        load(currentType);
+                    });
+
+                    action.appendChild(readBtn);
+                    action.appendChild(editBtn);
+                    action.appendChild(rejectBtn);
+                } else {
+                    const acceptBtn = document.createElement('button');
+                    acceptBtn.className = 'accept-btn';
+                    acceptBtn.type = 'button';
+                    acceptBtn.textContent = '수락';
+                    acceptBtn.addEventListener('click', async () => {
+                        await fetch('/api/share/manage/invitations/accept', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ sharerId: m.id })
+                        });
+                        load(currentType);
+                    });
+
+                    const rejectBtn = document.createElement('button');
+                    rejectBtn.className = 'reject-btn';
+                    rejectBtn.type = 'button';
+                    rejectBtn.textContent = '거절';
+                    rejectBtn.addEventListener('click', async () => {
+                        await fetch('/api/share/manage/invitations/reject', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ sharerId: m.id })
+                        });
+                        load(currentType);
+                    });
+
+                    action.appendChild(acceptBtn);
+                    action.appendChild(rejectBtn);
+                }
+
                 div.appendChild(action);
                 listContainer.appendChild(div);
             });

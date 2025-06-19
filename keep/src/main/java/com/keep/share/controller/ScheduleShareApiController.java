@@ -76,6 +76,71 @@ public class ScheduleShareApiController {
                 return shareService.searchReceivedInvitations(receiverId);
         }
 
+        // ------------------------------------------------------------------
+        // 6-1) 개별/일괄 처리 APIs
+        // ------------------------------------------------------------------
+
+        @PostMapping("/manage/requests/accept")
+        public ResponseEntity<Void> acceptRequest(Authentication authentication,
+                                                  @RequestBody ScheduleShareDTO dto) {
+                Long sharerId = Long.valueOf(authentication.getName());
+                shareService.acceptRequest(sharerId, dto.getReceiverId(),
+                        dto.getCanEdit() == null ? "N" : dto.getCanEdit());
+                return ResponseEntity.ok().build();
+        }
+
+        @PostMapping("/manage/requests/reject")
+        public ResponseEntity<Void> rejectRequest(Authentication authentication,
+                                                  @RequestBody ScheduleShareDTO dto) {
+                Long sharerId = Long.valueOf(authentication.getName());
+                shareService.rejectRequest(sharerId, dto.getReceiverId());
+                return ResponseEntity.ok().build();
+        }
+
+        @PostMapping("/manage/invitations/accept")
+        public ResponseEntity<Void> acceptInvitation(Authentication authentication,
+                                                     @RequestBody ScheduleShareDTO dto) {
+                Long receiverId = Long.valueOf(authentication.getName());
+                shareService.acceptInvitation(dto.getSharerId(), receiverId);
+                return ResponseEntity.ok().build();
+        }
+
+        @PostMapping("/manage/invitations/reject")
+        public ResponseEntity<Void> rejectInvitation(Authentication authentication,
+                                                     @RequestBody ScheduleShareDTO dto) {
+                Long receiverId = Long.valueOf(authentication.getName());
+                shareService.rejectInvitation(dto.getSharerId(), receiverId);
+                return ResponseEntity.ok().build();
+        }
+
+        @PostMapping("/manage/requests/accept-all")
+        public ResponseEntity<Void> acceptAllRequests(Authentication authentication) {
+                Long sharerId = Long.valueOf(authentication.getName());
+                shareService.acceptAllRequests(sharerId);
+                return ResponseEntity.ok().build();
+        }
+
+        @PostMapping("/manage/requests/reject-all")
+        public ResponseEntity<Void> rejectAllRequests(Authentication authentication) {
+                Long sharerId = Long.valueOf(authentication.getName());
+                shareService.rejectAllRequests(sharerId);
+                return ResponseEntity.ok().build();
+        }
+
+        @PostMapping("/manage/invitations/accept-all")
+        public ResponseEntity<Void> acceptAllInvitations(Authentication authentication) {
+                Long receiverId = Long.valueOf(authentication.getName());
+                shareService.acceptAllInvitations(receiverId);
+                return ResponseEntity.ok().build();
+        }
+
+        @PostMapping("/manage/invitations/reject-all")
+        public ResponseEntity<Void> rejectAllInvitations(Authentication authentication) {
+                Long receiverId = Long.valueOf(authentication.getName());
+                shareService.rejectAllInvitations(receiverId);
+                return ResponseEntity.ok().build();
+        }
+
         // —————————————————————————————————————————————————————————
         // 7) 조회: 공유 목록(공유한/공유받은)
         // —————————————————————————————————————————————————————————

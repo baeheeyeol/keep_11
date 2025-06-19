@@ -6,6 +6,7 @@ import com.keep.share.repository.ScheduleShareRepository;
 import com.keep.share.mapper.ShareMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -66,6 +67,50 @@ public class ScheduleShareService {
 
         public List<ScheduleShareUserDTO> listReceived(Long receiverId) {
                 return repository.findAcceptedReceived(receiverId);
+        }
+
+        // ------------------------------------------------------------------
+        // Manage requests and invitations
+        // ------------------------------------------------------------------
+
+        @Transactional
+        public void acceptRequest(Long sharerId, Long receiverId, String canEdit) {
+                repository.acceptRequest(sharerId, receiverId, canEdit);
+        }
+
+        @Transactional
+        public void rejectRequest(Long sharerId, Long receiverId) {
+                repository.rejectRequest(sharerId, receiverId);
+        }
+
+        @Transactional
+        public void acceptInvitation(Long sharerId, Long receiverId) {
+                repository.acceptInvitation(sharerId, receiverId);
+        }
+
+        @Transactional
+        public void rejectInvitation(Long sharerId, Long receiverId) {
+                repository.rejectInvitation(sharerId, receiverId);
+        }
+
+        @Transactional
+        public void acceptAllRequests(Long sharerId) {
+                repository.acceptAllRequests(sharerId);
+        }
+
+        @Transactional
+        public void rejectAllRequests(Long sharerId) {
+                repository.rejectAllRequests(sharerId);
+        }
+
+        @Transactional
+        public void acceptAllInvitations(Long receiverId) {
+                repository.acceptAllInvitations(receiverId);
+        }
+
+        @Transactional
+        public void rejectAllInvitations(Long receiverId) {
+                repository.rejectAllInvitations(receiverId);
         }
 
 }
