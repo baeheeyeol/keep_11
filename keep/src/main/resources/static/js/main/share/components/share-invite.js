@@ -84,7 +84,7 @@
 
                         const action = document.createElement('div');
 
-                        if (m.requested) {
+                        if (m.pendingShare) {
                             const readBtn = document.createElement('button');
                             readBtn.className = 'invite-btn';
                             readBtn.type = 'button';

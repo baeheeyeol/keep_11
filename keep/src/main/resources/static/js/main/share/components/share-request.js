@@ -59,31 +59,75 @@
 						div.className = 'list-item';
 						const span = document.createElement('span');
 						span.textContent = m.hname;
-						const button = document.createElement('button');
-						button.className = 'select-btn';
-						button.dataset.id = m.id;
+                                                const action = document.createElement('div');
 
-						if (!m.invitable) {
-							button.textContent = '선택완료';
-							button.disabled = true;
-							button.classList.add('disabled');
-						} else {
-							button.textContent = '선택';
-							button.addEventListener('click', () => {
-								Array.from(list.children).forEach(item => {
-									if (item !== div) item.remove();
-								});
-								list.style.minHeight = 'auto';
-								button.textContent = '선택완료';
-								button.disabled = true;
-								button.classList.add('disabled');
-								selectedId = m.id;
-								showControls();
-							});
-						}
-						div.appendChild(span);
-						div.appendChild(button);
-						list.appendChild(div);
+                                                if (m.pendingShare) {
+                                                        const acceptBtn = document.createElement('button');
+                                                        acceptBtn.className = 'accept-btn';
+                                                        acceptBtn.type = 'button';
+                                                        acceptBtn.textContent = '수락';
+                                                        acceptBtn.addEventListener('click', () => {
+                                                                fetch('/api/share/manage/invitations/accept', {
+                                                                        method: 'POST',
+                                                                        headers: { 'Content-Type': 'application/json' },
+                                                                        body: JSON.stringify({ scheduleShareId: m.scheduleShareId })
+                                                                }).then(res => {
+                                                                        if (res.ok) {
+                                                                                acceptBtn.textContent = '수락완료';
+                                                                                acceptBtn.disabled = true;
+                                                                                acceptBtn.classList.add('disabled');
+                                                                                rejectBtn.remove();
+                                                                        }
+                                                                });
+                                                        });
+
+                                                        const rejectBtn = document.createElement('button');
+                                                        rejectBtn.className = 'reject-btn';
+                                                        rejectBtn.type = 'button';
+                                                        rejectBtn.textContent = '거절';
+                                                        rejectBtn.addEventListener('click', () => {
+                                                                fetch(`/api/share/manage/invitations?scheduleShareId=${m.scheduleShareId}`, {
+                                                                        method: 'DELETE'
+                                                                }).then(res => {
+                                                                        if (res.ok) {
+                                                                                rejectBtn.textContent = '거절완료';
+                                                                                rejectBtn.disabled = true;
+                                                                                rejectBtn.classList.add('disabled');
+                                                                                acceptBtn.remove();
+                                                                        }
+                                                                });
+                                                        });
+
+                                                        action.appendChild(acceptBtn);
+                                                        action.appendChild(rejectBtn);
+                                                } else {
+                                                        const button = document.createElement('button');
+                                                        button.className = 'select-btn';
+                                                        button.dataset.id = m.id;
+
+                                                        if (!m.invitable) {
+                                                                button.textContent = '선택완료';
+                                                                button.disabled = true;
+                                                                button.classList.add('disabled');
+                                                        } else {
+                                                                button.textContent = '선택';
+                                                                button.addEventListener('click', () => {
+                                                                        Array.from(list.children).forEach(item => {
+                                                                                if (item !== div) item.remove();
+                                                                        });
+                                                                        list.style.minHeight = 'auto';
+                                                                        button.textContent = '선택완료';
+                                                                        button.disabled = true;
+                                                                        button.classList.add('disabled');
+                                                                        selectedId = m.id;
+                                                                        showControls();
+                                                                });
+                                                        }
+                                                        action.appendChild(button);
+                                                }
+                                                div.appendChild(span);
+                                                div.appendChild(action);
+                                                list.appendChild(div);
 					});
 				});
 		});
