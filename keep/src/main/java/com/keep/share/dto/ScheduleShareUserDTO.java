@@ -9,6 +9,9 @@ import lombok.Value;
 @Value
 @Builder
 public class ScheduleShareUserDTO {
+    /** 스케줄 공유 ID */
+    Long scheduleShareId;
+
     /** 초대자 ID */
     Long sharerId;
 

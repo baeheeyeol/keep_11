@@ -59,7 +59,7 @@
                                 const res = await fetch('/api/share/manage/requests');
                                 if (!res.ok) throw new Error('network');
                                 const data = await res.json();
-                                const m = data.find(u => String(u.sharerId) === String(scheduleShareId));
+                const m = data.find(u => String(u.scheduleShareId) === String(scheduleShareId));
                                 if (m) {
                                         list.innerHTML = '';
                                         list.style.minHeight = 'auto';
@@ -87,7 +87,7 @@
                                                 fetch('/api/share/manage/requests/accept', {
                                                         method: 'POST',
                                                         headers: { 'Content-Type': 'application/json' },
-                                                        body: JSON.stringify({ sharerId: m.id, canEdit: 'N' })
+                                                        body: JSON.stringify({ scheduleShareId: m.scheduleShareId, canEdit: 'N' })
                                                 }).then(res => {
                                                         if (res.ok) {
                                                                 editBtn.remove();
@@ -102,7 +102,7 @@
                                                 fetch('/api/share/manage/requests/accept', {
                                                         method: 'POST',
                                                         headers: { 'Content-Type': 'application/json' },
-                                                        body: JSON.stringify({ sharerId: m.id, canEdit: 'Y' })
+                                                        body: JSON.stringify({ scheduleShareId: m.scheduleShareId, canEdit: 'Y' })
                                                 }).then(res => {
                                                         if (res.ok) {
                                                                 readBtn.remove();
@@ -114,7 +114,7 @@
                                         });
 
                                         rejectBtn.addEventListener('click', () => {
-                                                fetch(`/api/share/manage/requests?sharerId=${m.id}`, { method: 'DELETE' })
+                                                fetch(`/api/share/manage/requests?scheduleShareId=${m.scheduleShareId}`, { method: 'DELETE' })
                                                         .then(res => {
                                                                 if (res.ok) {
                                                                         action.innerHTML = '';
@@ -177,11 +177,11 @@
 								rejectBtn.textContent = '거절';
 
 								readBtn.addEventListener('click', () => {
-									fetch('/api/share/manage/requests/accept', {
-										method: 'POST',
-										headers: { 'Content-Type': 'application/json' },
-										body: JSON.stringify({ sharerId: m.id, canEdit: 'N' })
-									}).then(res => {
+                                                                        fetch('/api/share/manage/requests/accept', {
+                                                                               method: 'POST',
+                                                                               headers: { 'Content-Type': 'application/json' },
+                                                                               body: JSON.stringify({ scheduleShareId: m.scheduleShareId, canEdit: 'N' })
+                                                                        }).then(res => {
 										if (res.ok) {
 											editBtn.remove();
 											rejectBtn.remove();
@@ -191,11 +191,11 @@
 									});
 								});
 								editBtn.addEventListener('click', () => {
-									fetch('/api/share/manage/requests/accept', {
-										method: 'POST',
-										headers: { 'Content-Type': 'application/json' },
-										body: JSON.stringify({ sharerId: m.id, canEdit: 'Y' })
-									}).then(res => {
+                                                                        fetch('/api/share/manage/requests/accept', {
+                                                                               method: 'POST',
+                                                                               headers: { 'Content-Type': 'application/json' },
+                                                                               body: JSON.stringify({ scheduleShareId: m.scheduleShareId, canEdit: 'Y' })
+                                                                        }).then(res => {
 										if (res.ok) {
 											readBtn.remove();
 											rejectBtn.remove();
@@ -206,8 +206,8 @@
 								});
 
 								rejectBtn.addEventListener('click', () => {
-									fetch(`/api/share/manage/requests?sharerId=${m.id}`, { method: 'DELETE' })
-										.then(res => {
+                                                                        fetch(`/api/share/manage/requests?scheduleShareId=${m.scheduleShareId}`, { method: 'DELETE' })
+                                                                               .then(res => {
 											if (res.ok) {
 												action.innerHTML = '';
 												createInviteButtons(action, m.id);
