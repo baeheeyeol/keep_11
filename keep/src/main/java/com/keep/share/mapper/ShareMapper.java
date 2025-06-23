@@ -2,10 +2,13 @@ package com.keep.share.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
+
 import com.keep.share.dto.RequestPermissionDTO;
 import com.keep.share.entity.ScheduleShareEntity;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",
+unmappedTargetPolicy = ReportingPolicy.WARN)  // or IGNORE
 public interface ShareMapper {
     @Mapping(target = "scheduleShareId", source = "id")
     @Mapping(target = "actionType", source = "actionType")
