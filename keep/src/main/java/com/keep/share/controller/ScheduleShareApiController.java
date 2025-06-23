@@ -65,6 +65,7 @@ public class ScheduleShareApiController {
 		Long shareId = Long.valueOf(authentication.getName());
 		return shareService.searchReceivedRequests(shareId);
 	}
+	
 	// —————————————————————————————————————————————————————————
 	// 6) 수정: 수락하기
 	// —————————————————————————————————————————————————————————
@@ -74,7 +75,7 @@ public class ScheduleShareApiController {
 		return ResponseEntity.ok().build();
 	}
 	// —————————————————————————————————————————————————————————
-	// 6) 수정: 수락및 권한부여 하기
+	// 7) 수정: 수락및 권한부여 하기
 	// —————————————————————————————————————————————————————————	
 	@PatchMapping("/manage/requests/{id}/permissions")
 	public ResponseEntity<Void> acceptAndSetPermissions(@PathVariable(value="id") Long scheduleShareId,@RequestBody  ScheduleShareDTO dto) {
@@ -82,7 +83,7 @@ public class ScheduleShareApiController {
 		return ResponseEntity.ok().build();
 	}
 	// —————————————————————————————————————————————————————————
-	// 6) 삭제: 요청 삭제하기
+	// 8) 삭제: 요청 삭제하기
 	// —————————————————————————————————————————————————————————
 	@DeleteMapping("/manage/requests/{id}")
 	public ResponseEntity<Void> rejectRequest(@PathVariable(value="id") Long scheduleShareId) {
@@ -91,7 +92,7 @@ public class ScheduleShareApiController {
 	}
 	
 	// —————————————————————————————————————————————————————————
-	// 6) 조회: 내가 받은 초대(Invitation) 목록 조회
+	// 9) 조회: 내가 받은 초대(Invitation) 목록 조회
 	// —————————————————————————————————————————————————————————
 	@GetMapping("/manage/invitations")
 	public List<ScheduleShareUserDTO> listReceivedInvitations(Authentication authentication) {
@@ -100,7 +101,7 @@ public class ScheduleShareApiController {
 	}
 
 	// —————————————————————————————————————————————————————————
-	// 7) 조회: 공유 목록(공유한/공유받은)
+	// 10) 조회: 공유 목록(공유한/공유받은)
 	// —————————————————————————————————————————————————————————
 	@GetMapping("/list")
 	public List<ScheduleShareUserDTO> listShares(@RequestParam("type") String type, Authentication authentication) {
