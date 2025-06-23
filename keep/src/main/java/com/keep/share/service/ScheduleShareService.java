@@ -45,9 +45,9 @@ public class ScheduleShareService {
 		return repository.searchAvailableForRequest(sharerId, name);
 	}
 
-	public List<ScheduleShareUserDTO> searchReceivedRequests(Long shareId) {
-		return repository.findPendingRequests(shareId);
-	}
+        public List<ScheduleShareUserDTO> getReceivedRequests(Long shareId) {
+                return repository.findPendingRequests(shareId);
+        }
 
 	public List<ScheduleShareUserDTO> searchReceivedInvitations(Long receiverId) {
 		return repository.findPendingInvites(receiverId);

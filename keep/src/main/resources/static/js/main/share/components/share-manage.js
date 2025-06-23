@@ -21,12 +21,12 @@
 			container.appendChild(done);
 		}
 
-		async function acceptWithPermission(id, canEdit, container, name) {
-			await fetch(`/api/share/manage/requests/${id}/permissions`, {
-				method: 'PATCH',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ canEdit })
-			});
+                async function acceptWithPermission(id, canEdit, container, name) {
+                        await fetch(`/api/requests/${id}`, {
+                                method: 'PATCH',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ canEdit })
+                        });
 			replaceWithDone(container, '완료');
 			const perm = canEdit === 'Y' ? '수정' : '읽기';
 			if (window.saveToast && window.saveToast.showMessage) {
@@ -34,20 +34,21 @@
 			}
 		}
 
-		async function acceptRequest(id, container, name) {
-			await fetch(`/api/share/manage/requests/${id}/accept`, {
-				method: 'PATCH'
-			});
+                async function acceptRequest(id, container, name) {
+                        await fetch(`/api/invitations/${id}`, {
+                                method: 'PATCH'
+                        });
 			replaceWithDone(container, '수락완료');
 			if (window.saveToast && window.saveToast.showMessage) {
 				window.saveToast.showMessage(`${name}의 초대를 수락했습니다.`);
 			}
 		}
 
-		async function rejectRequest(id, container, name) {
-			await fetch(`/api/share/manage/requests/${id}`, {
-				method: 'DELETE'
-			});
+                async function rejectRequest(id, isInvitation, container, name) {
+                        const base = isInvitation ? '/api/invitations' : '/api/requests';
+                        await fetch(`${base}/${id}`, {
+                                method: 'DELETE'
+                        });
 			replaceWithDone(container, '거절완료');
 			if (window.saveToast && window.saveToast.showMessage) {
 				window.saveToast.showMessage(`${name}의 요청을 거절했습니다.`);
@@ -96,9 +97,9 @@
 					rejectBtn.className = 'reject-btn';
 					rejectBtn.type = 'button';
 					rejectBtn.textContent = '거절';
-					rejectBtn.addEventListener('click', () => {
-						rejectRequest(m.scheduleShareId, action, m.hname);
-					});
+                                        rejectBtn.addEventListener('click', () => {
+                                                rejectRequest(m.scheduleShareId, false, action, m.hname);
+                                        });
 
 					action.appendChild(readBtn);
 					action.appendChild(editBtn);
@@ -125,9 +126,9 @@
 					rejectBtn.className = 'reject-btn';
 					rejectBtn.type = 'button';
 					rejectBtn.textContent = '거절';
-					rejectBtn.addEventListener('click', () => {
-						rejectRequest(m.scheduleShareId, action, m.hname);
-					});
+                                        rejectBtn.addEventListener('click', () => {
+                                                rejectRequest(m.scheduleShareId, true, action, m.hname);
+                                        });
 
 					action.appendChild(acceptBtn);
 					action.appendChild(rejectBtn);
@@ -139,11 +140,11 @@
 
 		}
 
-		async function load(type) {
-			const url = type === 'request' ? '/api/share/manage/requests' : '/api/share/manage/invitations';
-			const data = await fetchList(url);
-			render(data, type);
-		}
+                async function load(type) {
+                        const url = type === 'request' ? '/api/requests/received' : '/api/invitations/received';
+                        const data = await fetchList(url);
+                        render(data, type);
+                }
 
                 toggleBtns.forEach(btn => {
                         if (!btn.dataset.listenerAttached) {

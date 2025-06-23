@@ -45,7 +45,7 @@
 			hideControls();
 			selectedId = null;
 			ensureList();
-			fetch(`/api/share/request/users?name=` + encodeURIComponent(name))
+                        fetch(`/api/requests/users?name=` + encodeURIComponent(name))
 				.then(res => res.json())
 				.then(data => {
 					if (data.length === 0) {
@@ -73,7 +73,7 @@
 								acceptBtn.type = 'button';
 								acceptBtn.textContent = '수락';
 								acceptBtn.addEventListener('click', () => {
-									fetch(`/api/share/manage/requests/${m.scheduleShareId}/accept`, {
+                                                                        fetch(`/api/invitations/${m.scheduleShareId}`, {
 										method: 'PATCH'
 									}).then(res => {
 										if (res.ok) {
@@ -90,7 +90,7 @@
 								rejectBtn.type = 'button';
 								rejectBtn.textContent = '거절';
 								rejectBtn.addEventListener('click', () => {
-									fetch(`/api/share/manage/requests/${m.scheduleShareId}`, {
+                                                                        fetch(`/api/invitations/${m.scheduleShareId}`, {
 										method: 'DELETE'
 									}).then(res => {
 										if (res.ok) {
@@ -151,7 +151,7 @@
 
 		requestBtn?.addEventListener('click', () => {
 			if (!selectedId) return;
-			fetch('/api/share/request', {
+                        fetch('/api/requests', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ sharerId: selectedId, message: messageEl.value })
