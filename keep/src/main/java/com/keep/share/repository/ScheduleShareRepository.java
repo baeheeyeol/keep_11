@@ -27,7 +27,7 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
 			                     left join ScheduleShareEntity s
 			                       on s.sharerId = :sharerId
 			                      and s.receiverId = m.id
-			                      and s.actionType = 'I'
+			                      
 			                     left join ScheduleShareEntity r
 			                       on r.sharerId = :sharerId
 			                      and r.receiverId = m.id
@@ -55,7 +55,7 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
 			                     left join ScheduleShareEntity s
 			                       on s.receiverId = :sharerId
 			                      and s.sharerId = m.id
-			                      and s.actionType = 'R'
+			                      
 			                     left join ScheduleShareEntity r
 			                       on r.sharerId = m.id
 			                      and r.receiverId = :sharerId
@@ -164,5 +164,5 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
 
 	@Modifying
 	@Query("UPDATE ScheduleShareEntity s SET s.acceptYn = 'Y' ,s.canEdit = :canEdit WHERE s.id = :scheduleShareId")
-	void updateAcceptYnAndCanEditById(Long scheduleShareId, String canEdit);
+	void updateAcceptYnAndCanEditById(@Param("scheduleShareId") Long scheduleShareId,@Param("canEdit") String canEdit);
 }

@@ -1,4 +1,4 @@
-/*keep/src/main/resources/static/js/main/share/components/share-manage.js 에서 읽기 허용 ,수정 허용 버튼 선택시 각각 canEdit 값이 N,Y로 ScheduleShareApiController 의 acceptAndSetPermissions를 호출하고 거절은 rejectRequest를 호출한다. 수락 버튼 클릭시 acceptRequest를 호출한다.
+/*keep/src/main/resources/static/js/main/share/components/share-manage.js 에서 받은 요청및 받은 초대 버튼 클릭시 두번 클릭되는 현상이 발생하는데 안되도록 수정
 */
 (function() {
 	async function initShareManage() {
