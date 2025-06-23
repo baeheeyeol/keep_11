@@ -35,16 +35,10 @@ dependencies {
 	runtimeOnly 'com.oracle.database.jdbc:ojdbc11'
 	
 //	compileOnly 'org.projectlombok:lombok'
-	    // --- MapStruct --- 왜 안되냐
-    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
-    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
-
-    // (선택) Lombok 사용 시
+            // Lombok
     compileOnly 'org.projectlombok:lombok:1.18.26'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+        developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok:1.18.26'
-    // Lombok-MapStruct 호환 바인딩
-    annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
 	
 	
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
