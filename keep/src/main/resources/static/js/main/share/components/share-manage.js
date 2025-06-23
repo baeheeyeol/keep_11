@@ -145,12 +145,15 @@
 			render(data, type);
 		}
 
-		toggleBtns.forEach(btn => {
-			btn.addEventListener('click', () => {
-				toggleBtns.forEach(b => b.classList.toggle('active', b === btn));
-				load(btn.dataset.target);
-			});
-		});
+                toggleBtns.forEach(btn => {
+                        if (!btn.dataset.listenerAttached) {
+                                btn.addEventListener('click', () => {
+                                        toggleBtns.forEach(b => b.classList.toggle('active', b === btn));
+                                        load(btn.dataset.target);
+                                });
+                                btn.dataset.listenerAttached = 'true';
+                        }
+                });
 
 		// default view
 		load('request');
