@@ -2,17 +2,17 @@ package com.keep.share.mapper;
 
 import org.springframework.stereotype.Component;
 
-import com.keep.share.dto.ScheduleShareDTO;
+import com.keep.share.dto.RequestPermissionDTO;
 import com.keep.share.entity.ScheduleShareEntity;
 
 @Component
 public class ShareMapperImpl implements ShareMapper {
     @Override
-    public ScheduleShareDTO toDto(ScheduleShareEntity entity) {
+    public RequestPermissionDTO toDto(ScheduleShareEntity entity) {
         if (entity == null) {
             return null;
         }
-        return ScheduleShareDTO.builder()
+        return RequestPermissionDTO.builder()
                 .scheduleShareId(entity.getId())
                 .sharerId(entity.getSharerId())
                 .receiverId(entity.getReceiverId())
@@ -24,7 +24,7 @@ public class ShareMapperImpl implements ShareMapper {
     }
 
     @Override
-    public ScheduleShareEntity toEntity(ScheduleShareDTO dto) {
+    public ScheduleShareEntity toEntity(RequestPermissionDTO dto) {
         if (dto == null) {
             return null;
         }

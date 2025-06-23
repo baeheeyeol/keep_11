@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ScheduleShareDTO {
+public class RequestPermissionDTO {
     private Long scheduleShareId;
     private Long scheduleId;
     private Long sharerId;

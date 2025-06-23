@@ -22,7 +22,7 @@
         }
 
         async function acceptAndSetPermissions(id, canEdit, container, name) {
-            await fetch(`/api/share/manage/requests/${id}/permissions`, {
+            await fetch(`/api/requests/${id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ canEdit })
@@ -35,7 +35,7 @@
         }
 
         async function rejectRequest(id, container, name) {
-            await fetch(`/api/share/manage/requests/${id}`, {
+            await fetch(`/api/requests/${id}`, {
                 method: 'DELETE'
             });
             replaceWithDone(container, '삭제완료');
@@ -47,7 +47,7 @@
         async function load(target) {
             listEl.innerHTML = '';
             try {
-                const res = await fetch(`/api/share/list?type=${target}`);
+                const res = await fetch(`/api/requests/shares?type=${target}`);
                 if (!res.ok) throw new Error('network');
                 const members = await res.json();
                 if (members.length === 0) {

@@ -35,7 +35,7 @@
 			target.appendChild(done);
 		}
 		async function handleInvite(id, canEdit, container, name) {
-			fetch('/api/share/invite', {
+                        fetch('/api/invitations', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ receiverId: id, canEdit: canEdit })
@@ -46,7 +46,7 @@
 			}
 		}
 		async function handleAccept(id, canEdit, container, name) {
-			await fetch(`/api/share/manage/requests/${id}/permissions`, {
+                        await fetch(`/api/requests/${id}`, {
 				method: 'PATCH',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ canEdit: canEdit })
@@ -59,7 +59,7 @@
 		}
 
 		async function handleReject(id, container, name) {
-			await fetch(`/api/share/manage/requests/${id}`, {
+                        await fetch(`/api/requests/${id}`, {
 				method: 'DELETE'
 			});
 			replaceWithDone(container, '거절완료');
@@ -72,7 +72,7 @@
 			const name = input.value.trim();
 			if (!name) return;
 			ensureList();
-			fetch(`/api/share/invite/users?name=` + encodeURIComponent(name))
+                        fetch(`/api/invitations/users?name=` + encodeURIComponent(name))
 				.then(res => res.json())
 				.then(data => {
 					if (data.length === 0) {
