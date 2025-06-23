@@ -29,44 +29,55 @@
 			return btn;
 		}
 
-		function replaceWithDone(target, text = '요청완료') {
-			const done = createDoneButton(text);
-			target.innerHTML = '';
-			target.appendChild(done);
-		}
-		async function handleInvite(id, canEdit, container, name) {
-                        fetch('/api/invitations', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ receiverId: id, canEdit: canEdit })
-			});
-			replaceWithDone(container, '초대완료');
-			if (window.saveToast && window.saveToast.showMessage) {
-				window.saveToast.showMessage(`${name}에게 초대가 완료되었습니다.`);
-			}
-		}
-		async function handleAccept(id, canEdit, container, name) {
-                        await fetch(`/api/requests/${id}`, {
-				method: 'PATCH',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ canEdit: canEdit })
-			});
-			replaceWithDone(container);
-			const perm = canEdit === 'Y' ? '수정' : '읽기';
-			if (window.saveToast && window.saveToast.showMessage) {
-				window.saveToast.showMessage(`${name}에게 ${perm} 권한이 부여되었습니다.`);
-			}
-		}
+               function replaceWithDone(target, text = '요청완료') {
+                       const done = createDoneButton(text);
+                       target.innerHTML = '';
+                       target.appendChild(done);
+               }
 
-		async function handleReject(id, container, name) {
-                        await fetch(`/api/requests/${id}`, {
-				method: 'DELETE'
-			});
-			replaceWithDone(container, '거절완료');
-			if (window.saveToast && window.saveToast.showMessage) {
-				window.saveToast.showMessage(`${name}의 요청을 거절했습니다.`);
-			}
-		}
+                function sendNotification(recipientId, action) {
+                        fetch('/api/notifications', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ recipientId: recipientId, actionType: action, targetUrl: '/share?view=manage' })
+                        });
+                }
+                async function handleInvite(id, canEdit, container, name) {
+                       fetch('/api/invitations', {
+                               method: 'POST',
+                               headers: { 'Content-Type': 'application/json' },
+                               body: JSON.stringify({ receiverId: id, canEdit: canEdit })
+                       });
+                       replaceWithDone(container, '초대완료');
+                        sendNotification(id, 'INVITE');
+                       if (window.saveToast && window.saveToast.showMessage) {
+                               window.saveToast.showMessage(`${name}에게 초대가 완료되었습니다.`);
+                       }
+               }
+                async function handleAccept(id, canEdit, container, name, userId) {
+                       await fetch(`/api/requests/${id}`, {
+                               method: 'PATCH',
+                               headers: { 'Content-Type': 'application/json' },
+                               body: JSON.stringify({ canEdit: canEdit })
+                       });
+                       replaceWithDone(container);
+                        sendNotification(userId, 'REQUEST_ACCEPT');
+                       const perm = canEdit === 'Y' ? '수정' : '읽기';
+                       if (window.saveToast && window.saveToast.showMessage) {
+                               window.saveToast.showMessage(`${name}에게 ${perm} 권한이 부여되었습니다.`);
+                       }
+               }
+
+                async function handleReject(id, container, name, userId) {
+                       await fetch(`/api/requests/${id}`, {
+                               method: 'DELETE'
+                       });
+                       replaceWithDone(container, '거절완료');
+                        sendNotification(userId, 'REQUEST_REJECT');
+                       if (window.saveToast && window.saveToast.showMessage) {
+                               window.saveToast.showMessage(`${name}의 요청을 거절했습니다.`);
+                       }
+               }
 
 		btn?.addEventListener('click', () => {
 			const name = input.value.trim();
@@ -99,25 +110,25 @@
 							readBtn.className = 'invite-btn';
 							readBtn.type = 'button';
 							readBtn.textContent = '읽기승락';
-							readBtn.addEventListener('click', () => {
-								handleAccept(m.scheduleShareId, 'N', action, m.hname);
-							});
+                                                        readBtn.addEventListener('click', () => {
+                                                                handleAccept(m.scheduleShareId, 'N', action, m.hname, m.id);
+                                                        });
 
 							const editBtn = document.createElement('button');
 							editBtn.className = 'invite-btn';
 							editBtn.type = 'button';
 							editBtn.textContent = '수정승락';
-							editBtn.addEventListener('click', () => {
-								handleAccept(m.scheduleShareId, 'Y', action, m.hname);
-							});
+                                                        editBtn.addEventListener('click', () => {
+                                                                handleAccept(m.scheduleShareId, 'Y', action, m.hname, m.id);
+                                                        });
 
 							const rejectBtn = document.createElement('button');
 							rejectBtn.className = 'invite-btn';
 							rejectBtn.type = 'button';
 							rejectBtn.textContent = '거절';
-							rejectBtn.addEventListener('click', () => {
-								handleReject(m.scheduleShareId, action, m.hname);
-							});
+                                                        rejectBtn.addEventListener('click', () => {
+                                                                handleReject(m.scheduleShareId, action, m.hname, m.id);
+                                                        });
 
 							action.appendChild(readBtn);
 							action.appendChild(editBtn);
