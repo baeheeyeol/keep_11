@@ -67,19 +67,19 @@ public class ScheduleShareApiController {
 	}
 	
 	@PatchMapping("/manage/requests/{id}/accept")
-	public ResponseEntity<Void> acceptRequest(@PathVariable("scheduleShareId") Long scheduleShareId) {
+	public ResponseEntity<Void> acceptRequest(@PathVariable(value="id") Long scheduleShareId) {
 		shareService.acceptRequest(scheduleShareId);
 		return ResponseEntity.ok().build();
 	}
 	
 	@PatchMapping("/manage/requests/{id}/permissions")
-	public ResponseEntity<Void> acceptAndSetPermissions(@PathVariable("scheduleShareId") Long scheduleShareId,@RequestBody  ScheduleShareDTO dto) {
+	public ResponseEntity<Void> acceptAndSetPermissions(@PathVariable(value="id") Long scheduleShareId,@RequestBody  ScheduleShareDTO dto) {
 		shareService.acceptAndSetPermissions(scheduleShareId,dto.getCanEdit());
 		return ResponseEntity.ok().build();
 	}
 	
 	@DeleteMapping("/manage/requests/{id}")
-	public ResponseEntity<Void> rejectRequest(@PathVariable("scheduleShareId") Long scheduleShareId) {
+	public ResponseEntity<Void> rejectRequest(@PathVariable(value="id") Long scheduleShareId) {
 		shareService.deleteRequest(scheduleShareId);
 		return ResponseEntity.ok().build();
 	}
