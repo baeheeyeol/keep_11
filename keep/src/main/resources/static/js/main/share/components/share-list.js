@@ -1,5 +1,6 @@
 // JS for share list view
-//keep/src/main/resources/static/js/main/share/components/share-list.js
+//keep/src/main/resources/static/js/main/share/components/share-list.js 에서 조회시 해당 리스트 마우스 호버시 배경색 살짝 어둡게 표현하도록. 내가 공유한 인원 조회시 읽기/수정/삭제 버튼이 있는데 각각의 버튼 클릭시 권한이 수정되거나 삭제되도록 수정. 나에게 공유한 인원 조회시에는 삭제 버튼만 생기도록 수정. manage.js에서도 조회한 리스트 마우스 호버시 배경색 살짝 어둡게 표현
+
 (function() {
     async function initShareList() {
         const listEl = document.getElementById('share-list');

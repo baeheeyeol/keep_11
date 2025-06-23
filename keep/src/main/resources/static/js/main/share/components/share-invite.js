@@ -46,8 +46,10 @@
 			}
 		}
 		async function handleAccept(id, canEdit, container, name) {
-			await fetch(`/api/share/manage/requests/${id}`, {
-				method: 'PATCH'
+			await fetch(`/api/share/manage/requests/${id}/permissions`, {
+				method: 'PATCH',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ canEdit: canEdit })
 			});
 			replaceWithDone(container);
 			const perm = canEdit === 'Y' ? '수정' : '읽기';
@@ -57,7 +59,7 @@
 		}
 
 		async function handleReject(id, container, name) {
-			await fetch(`/api/share/manage/requests?scheduleShareId=${id}`, {
+			await fetch(`/api/share/manage/requests/${id}`, {
 				method: 'DELETE'
 			});
 			replaceWithDone(container, '거절완료');
@@ -132,7 +134,6 @@
 								action.appendChild(inviteBtn);
 
 							} else {
-								console.log(m)
 								const readBtn = document.createElement('button');
 								readBtn.className = 'invite-btn';
 								readBtn.type = 'button';

@@ -65,19 +65,25 @@ public class ScheduleShareApiController {
 		Long shareId = Long.valueOf(authentication.getName());
 		return shareService.searchReceivedRequests(shareId);
 	}
-	
+	// —————————————————————————————————————————————————————————
+	// 6) 수정: 수락하기
+	// —————————————————————————————————————————————————————————
 	@PatchMapping("/manage/requests/{id}/accept")
 	public ResponseEntity<Void> acceptRequest(@PathVariable(value="id") Long scheduleShareId) {
 		shareService.acceptRequest(scheduleShareId);
 		return ResponseEntity.ok().build();
 	}
-	
+	// —————————————————————————————————————————————————————————
+	// 6) 수정: 수락및 권한부여 하기
+	// —————————————————————————————————————————————————————————	
 	@PatchMapping("/manage/requests/{id}/permissions")
 	public ResponseEntity<Void> acceptAndSetPermissions(@PathVariable(value="id") Long scheduleShareId,@RequestBody  ScheduleShareDTO dto) {
 		shareService.acceptAndSetPermissions(scheduleShareId,dto.getCanEdit());
 		return ResponseEntity.ok().build();
 	}
-	
+	// —————————————————————————————————————————————————————————
+	// 6) 삭제: 요청 삭제하기
+	// —————————————————————————————————————————————————————————
 	@DeleteMapping("/manage/requests/{id}")
 	public ResponseEntity<Void> rejectRequest(@PathVariable(value="id") Long scheduleShareId) {
 		shareService.deleteRequest(scheduleShareId);

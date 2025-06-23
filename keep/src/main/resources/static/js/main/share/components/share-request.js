@@ -73,7 +73,7 @@
 								acceptBtn.type = 'button';
 								acceptBtn.textContent = '수락';
 								acceptBtn.addEventListener('click', () => {
-									fetch(`/api/share/manage/requests?scheduleShareId=${m.scheduleShareId}`, {
+									fetch(`/api/share/manage/requests/${m.scheduleShareId}/accept`, {
 										method: 'PATCH'
 									}).then(res => {
 										if (res.ok) {
@@ -90,7 +90,7 @@
 								rejectBtn.type = 'button';
 								rejectBtn.textContent = '거절';
 								rejectBtn.addEventListener('click', () => {
-									fetch(`/api/share/manage/requests?scheduleShareId=${m.scheduleShareId}`, {
+									fetch(`/api/share/manage/requests/${m.scheduleShareId}`, {
 										method: 'DELETE'
 									}).then(res => {
 										if (res.ok) {
