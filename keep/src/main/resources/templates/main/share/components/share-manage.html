@@ -6,30 +6,16 @@
         <button class="toggle-btn active" data-target="request">받은 요청</button>
         <button class="toggle-btn" data-target="invite">받은 초대</button>
     </div>
-    <div class="batch-actions">
-        <button class="accept-btn" id="accept-all-btn" type="button">일괄 승락</button>
-        <button class="reject-btn" id="reject-all-btn" type="button">일괄 거절</button>
-    </div>
     <div class="list-container">
         <div class="list-item">
             <span>사용자 이름</span>
             <div>
-                <button class="accept-btn" type="button">읽기만 허용</button>
-                <button class="accept-btn" type="button">수정까지 허용</button>
+                <button class="accept-btn" type="button">읽기 허용</button>
+                <button class="accept-btn" type="button">수정 허용</button>
                 <button class="reject-btn" type="button">거절</button>
             </div>
         </div>
     </div>
 </div>
 </html>
-        fetch(`/api/share/request/users?name=` + encodeURIComponent(name))
-                                .then(res => res.json())
-                                .then(data => {
-                                        if (myId) {
-                                                data = data.filter(m => String(m.id) !== String(myId));
-                                        }
-                                        if (data.length === 0) {
-                                                renderEmpty('검색 결과가 없습니다.');
-                                                return;
-                                        }
-                                        해당 방식과 애초에 쿼리문에서 나의 id를 제외하는 방식중에 어떤것이 좋은가
+  

@@ -24,7 +24,7 @@ public class ScheduleShareUserDTO {
     /** 수락 여부 ("Y"/"N") */
     String acceptYn;
 
-    /** 회원 ID (receiverId와 동일) */
+    /** 회원 ID */
     Long id;
 
     /** 회원 이름 (hname) */

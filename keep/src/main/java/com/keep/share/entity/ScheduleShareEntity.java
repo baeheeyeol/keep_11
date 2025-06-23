@@ -1,5 +1,7 @@
 package com.keep.share.entity;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,6 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@DynamicUpdate
 public class ScheduleShareEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "schedule_share_seq_gen")
@@ -28,16 +31,16 @@ public class ScheduleShareEntity {
 	@Column(name = "CAN_EDIT")
 	private String canEdit;
 
-        @Column(name = "ACCEPT_YN")
-        private String acceptYn;
+	@Column(name = "ACCEPT_YN")
+	private String acceptYn;
 
-        @Column(name = "ACTION_TYPE")
-        private String actionType;
-	
+	@Column(name = "ACTION_TYPE")
+	private String actionType;
+
 	@Lob
 	@Column(name = "MESSAGE")
 	private String message;
-	
+
 	@Column(name = "CREATED_BY")
 	private Long createdBy;
 

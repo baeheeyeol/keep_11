@@ -3,11 +3,18 @@ package com.keep.share.service;
 import com.keep.share.dto.ScheduleShareUserDTO;
 import com.keep.share.entity.ScheduleShareEntity;
 import com.keep.share.repository.ScheduleShareRepository;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+
 import com.keep.share.mapper.ShareMapper;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.module.ModuleDescriptor.Builder;
 import java.util.List;
 
 @Service
@@ -54,18 +61,17 @@ public class ScheduleShareService {
 		return repository.findAcceptedReceived(receiverId);
 	}
 
-        @Transactional
-        public void acceptRequest(Long scheduleShareId, String canEdit) {
-                repository.findById(scheduleShareId).ifPresent(entity -> {
-                        entity.setCanEdit(canEdit);
-                        entity.setAcceptYn("Y");
-                        repository.save(entity);
-                });
-        }
+	@Transactional
+	public void acceptRequest(Long scheduleShareId) {
+		repository.markAcceptedById(scheduleShareId);
+	}
 
-        @Transactional
-        public void deleteRequest(Long scheduleShareId) {
-                repository.deleteById(scheduleShareId);
-        }
-
+	@Transactional
+	public void deleteRequest(Long scheduleShareId) {
+		repository.deleteShareById(scheduleShareId);
+	}
+	@Transactional
+	public void acceptAndSetPermissions(Long scheduleShareId,String canEdit) {
+		repository.updateAcceptYnAndCanEditById(scheduleShareId,canEdit);
+	}
 }

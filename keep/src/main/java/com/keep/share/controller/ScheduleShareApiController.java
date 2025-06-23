@@ -1,6 +1,5 @@
 package com.keep.share.controller;
 
-import com.keep.member.service.MemberService;
 import com.keep.share.dto.ScheduleShareDTO;
 import com.keep.share.dto.ScheduleShareUserDTO;
 import com.keep.share.service.ScheduleShareService;
@@ -66,20 +65,25 @@ public class ScheduleShareApiController {
 		Long shareId = Long.valueOf(authentication.getName());
 		return shareService.searchReceivedRequests(shareId);
 	}
-
-	@PostMapping("/manage/requests/accept")
-	public ResponseEntity<Void> acceptRequest(Authentication authentication, @RequestBody ScheduleShareDTO dto) {
-		shareService.acceptRequest(dto.getScheduleShareId(), dto.getCanEdit());
+	
+	@PatchMapping("/manage/requests/{id}/accept")
+	public ResponseEntity<Void> acceptRequest(@PathVariable("scheduleShareId") Long scheduleShareId) {
+		shareService.acceptRequest(scheduleShareId);
 		return ResponseEntity.ok().build();
 	}
-
-	@DeleteMapping("/manage/requests")
-	public ResponseEntity<Void> rejectRequest(Authentication authentication,
-			@RequestParam("scheduleShareId") Long scheduleShareId) {
+	
+	@PatchMapping("/manage/requests/{id}/permissions")
+	public ResponseEntity<Void> acceptAndSetPermissions(@PathVariable("scheduleShareId") Long scheduleShareId,@RequestBody  ScheduleShareDTO dto) {
+		shareService.acceptAndSetPermissions(scheduleShareId,dto.getCanEdit());
+		return ResponseEntity.ok().build();
+	}
+	
+	@DeleteMapping("/manage/requests/{id}")
+	public ResponseEntity<Void> rejectRequest(@PathVariable("scheduleShareId") Long scheduleShareId) {
 		shareService.deleteRequest(scheduleShareId);
 		return ResponseEntity.ok().build();
 	}
-
+	
 	// —————————————————————————————————————————————————————————
 	// 6) 조회: 내가 받은 초대(Invitation) 목록 조회
 	// —————————————————————————————————————————————————————————

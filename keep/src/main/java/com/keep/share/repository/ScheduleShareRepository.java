@@ -3,6 +3,7 @@ package com.keep.share.repository;
 import com.keep.share.dto.ScheduleShareUserDTO;
 import com.keep.share.entity.ScheduleShareEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -40,11 +41,11 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
 
 	@Query("""
 			                     select new com.keep.share.dto.ScheduleShareUserDTO(
-			                         s.id,
+			                         r.id,
 			                         s.sharerId,
 			                         s.receiverId,
 			                         s.canEdit,
-			                         s.acceptYn,
+			                         r.acceptYn,
 			                         m.id,
 			                         m.hname,
 			                         case when s.id is null then true else false end,
@@ -56,10 +57,10 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
 			                      and s.sharerId = m.id
 			                      and s.actionType = 'R'
 			                     left join ScheduleShareEntity r
-			                       on s.sharerId = m.id
-			                      and s.receiverId = :sharerId
-			                      and s.actionType = 'I'
-			                      and r.acceptYn = 'N'
+			                       on r.sharerId = m.id
+			                      and r.receiverId = :sharerId
+			                      and r.actionType = 'I'
+
 			where lower(m.hname) like lower(concat('%', :name, '%'))
 			      and m.id <> :sharerId
 			order by m.hname
@@ -148,8 +149,20 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
 			""")
 	List<ScheduleShareUserDTO> findAcceptedReceived(@Param("receiverId") Long receiverId);
 
+	@Modifying
+	@Query("UPDATE ScheduleShareEntity s SET s.acceptYn = 'Y' WHERE s.id = :id")
+	int markAcceptedById(@Param("id") Long id);
+
+	@Modifying
+	@Query("DELETE FROM ScheduleShareEntity s WHERE s.id = :id")
+	int deleteShareById(@Param("id") Long id);
+
 	java.util.Optional<ScheduleShareEntity> findFirstBySharerIdAndReceiverIdAndActionTypeAndAcceptYn(Long sharerId,
 			Long receiverId, String actionType, String acceptYn);
 
 	void deleteBySharerIdAndReceiverIdAndActionType(Long sharerId, Long receiverId, String actionType);
+
+	@Modifying
+	@Query("UPDATE ScheduleShareEntity s SET s.acceptYn = 'Y' ,s.canEdit = :canEdit WHERE s.id = :id")
+	void updateAcceptYnAndCanEditById(Long scheduleShareId, String canEdit);
 }
