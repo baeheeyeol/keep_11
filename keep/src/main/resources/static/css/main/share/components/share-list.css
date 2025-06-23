@@ -1,0 +1,20 @@
+#share-list {
+  margin: 10px 0;
+  min-height: calc(100vh - 240px);
+}
+
+.placeholder {
+  padding: 30px;
+  text-align: center;
+  color: #888;
+  width: 100%;
+  font-size: 1.6rem;
+  min-height: calc(100vh - 240px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.list-item:hover {
+  background-color: #f5f5f5;
+}

@@ -6,6 +6,44 @@
         const listEl = document.getElementById('share-list');
         const toggleBtns = document.querySelectorAll('.list-toggle .toggle-btn');
 
+        function createDoneButton(text) {
+            const btn = document.createElement('button');
+            btn.className = 'accept-btn disabled';
+            btn.type = 'button';
+            btn.textContent = text;
+            btn.disabled = true;
+            return btn;
+        }
+
+        function replaceWithDone(container, text) {
+            const done = createDoneButton(text);
+            container.innerHTML = '';
+            container.appendChild(done);
+        }
+
+        async function acceptAndSetPermissions(id, canEdit, container, name) {
+            await fetch(`/api/share/manage/requests/${id}/permissions`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ canEdit })
+            });
+            replaceWithDone(container, '완료');
+            const perm = canEdit === 'Y' ? '수정' : '읽기';
+            if (window.saveToast && window.saveToast.showMessage) {
+                window.saveToast.showMessage(`${name}에게 ${perm} 권한이 부여되었습니다.`);
+            }
+        }
+
+        async function rejectRequest(id, container, name) {
+            await fetch(`/api/share/manage/requests/${id}`, {
+                method: 'DELETE'
+            });
+            replaceWithDone(container, '삭제완료');
+            if (window.saveToast && window.saveToast.showMessage) {
+                window.saveToast.showMessage(`${name}의 공유가 삭제되었습니다.`);
+            }
+        }
+
         async function load(target) {
             listEl.innerHTML = '';
             try {
@@ -22,30 +60,55 @@
                     div.appendChild(document.createElement('span')).textContent = m.hname;
 
                     const action = document.createElement('div');
-                    const readBtn = document.createElement('button');
-                    readBtn.className = 'accept-btn';
-                    readBtn.type = 'button';
-                    readBtn.textContent = '읽기';
-                    const editBtn = document.createElement('button');
-                    editBtn.className = 'accept-btn';
-                    editBtn.type = 'button';
-                    editBtn.textContent = '수정';
-                    const delBtn = document.createElement('button');
-                    delBtn.className = 'reject-btn';
-                    delBtn.type = 'button';
-                    delBtn.textContent = '권한 삭제';
 
-                    if (m.canEdit === 'Y') {
-                        editBtn.disabled = true;
-                        editBtn.classList.add('disabled');
+                    if (target === 'shared') {
+                        const readBtn = document.createElement('button');
+                        readBtn.className = 'accept-btn';
+                        readBtn.type = 'button';
+                        readBtn.textContent = '읽기';
+                        readBtn.addEventListener('click', () => {
+                            acceptAndSetPermissions(m.scheduleShareId, 'N', action, m.hname);
+                        });
+
+                        const editBtn = document.createElement('button');
+                        editBtn.className = 'accept-btn';
+                        editBtn.type = 'button';
+                        editBtn.textContent = '수정';
+                        editBtn.addEventListener('click', () => {
+                            acceptAndSetPermissions(m.scheduleShareId, 'Y', action, m.hname);
+                        });
+
+                        if (m.canEdit === 'Y') {
+                            editBtn.disabled = true;
+                            editBtn.classList.add('disabled');
+                        } else {
+                            readBtn.disabled = true;
+                            readBtn.classList.add('disabled');
+                        }
+
+                        const delBtn = document.createElement('button');
+                        delBtn.className = 'reject-btn';
+                        delBtn.type = 'button';
+                        delBtn.textContent = '삭제';
+                        delBtn.addEventListener('click', () => {
+                            rejectRequest(m.scheduleShareId, action, m.hname);
+                        });
+
+                        action.appendChild(readBtn);
+                        action.appendChild(editBtn);
+                        action.appendChild(delBtn);
                     } else {
-                        readBtn.disabled = true;
-                        readBtn.classList.add('disabled');
+                        const delBtn = document.createElement('button');
+                        delBtn.className = 'reject-btn';
+                        delBtn.type = 'button';
+                        delBtn.textContent = '삭제';
+                        delBtn.addEventListener('click', () => {
+                            rejectRequest(m.scheduleShareId, action, m.hname);
+                        });
+
+                        action.appendChild(delBtn);
                     }
 
-                    action.appendChild(readBtn);
-                    action.appendChild(editBtn);
-                    action.appendChild(delBtn);
                     div.appendChild(action);
                     listEl.appendChild(div);
                 });
