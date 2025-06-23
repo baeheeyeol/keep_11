@@ -1,10 +1,58 @@
 /*keep/src/main/resources/static/js/main/share/components/share-manage.js 에서 읽기 허용 ,수정 허용 버튼 선택시 각각 canEdit 값이 N,Y로 ScheduleShareApiController 의 acceptAndSetPermissions를 호출하고 거절은 rejectRequest를 호출한다. 수락 버튼 클릭시 acceptRequest를 호출한다.
 */
 (function() {
-	async function initShareManage() {
-		const toggleBtns = document.querySelectorAll('.list-toggle .toggle-btn');
-		const listContainer = document.querySelector('.list-container');
-		let currentType = 'request';
+        async function initShareManage() {
+                const toggleBtns = document.querySelectorAll('.list-toggle .toggle-btn');
+                const listContainer = document.querySelector('.list-container');
+                let currentType = 'request';
+
+                function createDoneButton(text) {
+                        const btn = document.createElement('button');
+                        btn.className = 'accept-btn disabled';
+                        btn.type = 'button';
+                        btn.textContent = text;
+                        btn.disabled = true;
+                        return btn;
+                }
+
+                function replaceWithDone(container, text) {
+                        const done = createDoneButton(text);
+                        container.innerHTML = '';
+                        container.appendChild(done);
+                }
+
+                async function acceptWithPermission(id, canEdit, container, name) {
+                        await fetch(`/api/share/manage/requests/${id}/permissions`, {
+                                method: 'PATCH',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ canEdit })
+                        });
+                        replaceWithDone(container, '완료');
+                        const perm = canEdit === 'Y' ? '수정' : '읽기';
+                        if (window.saveToast && window.saveToast.showMessage) {
+                                window.saveToast.showMessage(`${name}에게 ${perm} 권한이 부여되었습니다.`);
+                        }
+                }
+
+                async function acceptRequest(id, container, name) {
+                        await fetch(`/api/share/manage/requests/${id}/accept`, {
+                                method: 'PATCH'
+                        });
+                        replaceWithDone(container, '수락완료');
+                        if (window.saveToast && window.saveToast.showMessage) {
+                                window.saveToast.showMessage(`${name}의 초대를 수락했습니다.`);
+                        }
+                }
+
+                async function rejectRequest(id, container, name) {
+                        await fetch(`/api/share/manage/requests/${id}`, {
+                                method: 'DELETE'
+                        });
+                        replaceWithDone(container, '거절완료');
+                        if (window.saveToast && window.saveToast.showMessage) {
+                                window.saveToast.showMessage(`${name}의 요청을 거절했습니다.`);
+                        }
+                }
 
 		async function fetchList(url) {
 			try {
@@ -22,57 +70,72 @@
 				listContainer.innerHTML = '<div class="placeholder">목록이 없습니다.</div>';
 				return;
 			}
-			if (type == 'request') {
-				list.forEach(m => {
-					const div = document.createElement('div');
-					div.className = 'list-item';
-					div.appendChild(document.createElement('span')).textContent = m.hname;
-					const action = document.createElement('div');
-					const readBtn = document.createElement('button');
-					readBtn.className = 'accept-btn';
-					readBtn.type = 'button';
-					readBtn.textContent = '읽기 허용';
+                        if (type == 'request') {
+                                list.forEach(m => {
+                                        const div = document.createElement('div');
+                                        div.className = 'list-item';
+                                        div.appendChild(document.createElement('span')).textContent = m.hname;
+                                        const action = document.createElement('div');
+                                        const readBtn = document.createElement('button');
+                                        readBtn.className = 'accept-btn';
+                                        readBtn.type = 'button';
+                                        readBtn.textContent = '읽기 허용';
+                                        readBtn.addEventListener('click', () => {
+                                                acceptWithPermission(m.scheduleShareId, 'N', action, m.hname);
+                                        });
 
-					const editBtn = document.createElement('button');
-					editBtn.className = 'accept-btn';
-					editBtn.type = 'button';
-					editBtn.textContent = '수정 허용';
+                                        const editBtn = document.createElement('button');
+                                        editBtn.className = 'accept-btn';
+                                        editBtn.type = 'button';
+                                        editBtn.textContent = '수정 허용';
+                                        editBtn.addEventListener('click', () => {
+                                                acceptWithPermission(m.scheduleShareId, 'Y', action, m.hname);
+                                        });
 
-					const rejectBtn = document.createElement('button');
-					rejectBtn.className = 'reject-btn';
-					rejectBtn.type = 'button';
-					rejectBtn.textContent = '거절';
+                                        const rejectBtn = document.createElement('button');
+                                        rejectBtn.className = 'reject-btn';
+                                        rejectBtn.type = 'button';
+                                        rejectBtn.textContent = '거절';
+                                        rejectBtn.addEventListener('click', () => {
+                                                rejectRequest(m.scheduleShareId, action, m.hname);
+                                        });
 
-					action.appendChild(readBtn);
-					action.appendChild(editBtn);
-					action.appendChild(rejectBtn);
-					
-					div.appendChild(action);
-					listContainer.appendChild(div);
-				});
-			} else {
-				list.forEach(m => {
-					const div = document.createElement('div');
-					div.className = 'list-item';
-					div.appendChild(document.createElement('span')).textContent = m.hname;
-					const action = document.createElement('div');
-					const acceptBtn = document.createElement('button');
-					acceptBtn.className = 'accept-btn';
-					acceptBtn.type = 'button';
-					acceptBtn.textContent = '수락';
+                                        action.appendChild(readBtn);
+                                        action.appendChild(editBtn);
+                                        action.appendChild(rejectBtn);
 
-					const rejectBtn = document.createElement('button');
-					rejectBtn.className = 'reject-btn';
-					rejectBtn.type = 'button';
-					rejectBtn.textContent = '거절';
+                                        div.appendChild(action);
+                                        listContainer.appendChild(div);
+                                });
+                        } else {
+                                list.forEach(m => {
+                                        const div = document.createElement('div');
+                                        div.className = 'list-item';
+                                        div.appendChild(document.createElement('span')).textContent = m.hname;
+                                        const action = document.createElement('div');
+                                        const acceptBtn = document.createElement('button');
+                                        acceptBtn.className = 'accept-btn';
+                                        acceptBtn.type = 'button';
+                                        acceptBtn.textContent = '수락';
+                                        acceptBtn.addEventListener('click', () => {
+                                                acceptRequest(m.scheduleShareId, action, m.hname);
+                                        });
 
-					action.appendChild(acceptBtn);
-					action.appendChild(rejectBtn);
-					
-					div.appendChild(action);
-					listContainer.appendChild(div);
-				});
-			}
+                                        const rejectBtn = document.createElement('button');
+                                        rejectBtn.className = 'reject-btn';
+                                        rejectBtn.type = 'button';
+                                        rejectBtn.textContent = '거절';
+                                        rejectBtn.addEventListener('click', () => {
+                                                rejectRequest(m.scheduleShareId, action, m.hname);
+                                        });
+
+                                        action.appendChild(acceptBtn);
+                                        action.appendChild(rejectBtn);
+
+                                        div.appendChild(action);
+                                        listContainer.appendChild(div);
+                                });
+                        }
 
 		}
 
