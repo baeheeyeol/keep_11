@@ -15,45 +15,57 @@
 			return btn;
 		}
 
-		function replaceWithDone(container, text) {
-			const done = createDoneButton(text);
-			container.innerHTML = '';
-			container.appendChild(done);
-		}
+                function replaceWithDone(container, text) {
+                        const done = createDoneButton(text);
+                        container.innerHTML = '';
+                        container.appendChild(done);
+                }
 
-                async function acceptWithPermission(id, canEdit, container, name) {
+                function sendNotification(recipientId, action) {
+                        fetch('/api/notifications', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ recipientId: recipientId, actionType: action, targetUrl: '/share?view=manage' })
+                        });
+                }
+
+                async function acceptWithPermission(id, canEdit, container, name, userId) {
                         await fetch(`/api/requests/${id}`, {
                                 method: 'PATCH',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({ canEdit })
                         });
-			replaceWithDone(container, '완료');
-			const perm = canEdit === 'Y' ? '수정' : '읽기';
-			if (window.saveToast && window.saveToast.showMessage) {
-				window.saveToast.showMessage(`${name}에게 ${perm} 권한이 부여되었습니다.`);
-			}
-		}
+                        replaceWithDone(container, '완료');
+                        sendNotification(userId, 'REQUEST_ACCEPT');
+                        const perm = canEdit === 'Y' ? '수정' : '읽기';
+                        if (window.saveToast && window.saveToast.showMessage) {
+                                window.saveToast.showMessage(`${name}에게 ${perm} 권한이 부여되었습니다.`);
+                        }
+                }
 
-                async function acceptRequest(id, container, name) {
+                async function acceptRequest(id, container, name, userId) {
                         await fetch(`/api/invitations/${id}`, {
                                 method: 'PATCH'
                         });
-			replaceWithDone(container, '수락완료');
-			if (window.saveToast && window.saveToast.showMessage) {
-				window.saveToast.showMessage(`${name}의 초대를 수락했습니다.`);
-			}
-		}
+                        replaceWithDone(container, '수락완료');
+                        sendNotification(userId, 'INVITE_ACCEPT');
+                        if (window.saveToast && window.saveToast.showMessage) {
+                                window.saveToast.showMessage(`${name}의 초대를 수락했습니다.`);
+                        }
+                }
 
-                async function rejectRequest(id, isInvitation, container, name) {
+                async function rejectRequest(id, isInvitation, container, name, userId) {
                         const base = isInvitation ? '/api/invitations' : '/api/requests';
                         await fetch(`${base}/${id}`, {
                                 method: 'DELETE'
                         });
-			replaceWithDone(container, '거절완료');
-			if (window.saveToast && window.saveToast.showMessage) {
-				window.saveToast.showMessage(`${name}의 요청을 거절했습니다.`);
-			}
-		}
+                        replaceWithDone(container, '거절완료');
+                        const action = isInvitation ? 'INVITE_REJECT' : 'REQUEST_REJECT';
+                        sendNotification(userId, action);
+                        if (window.saveToast && window.saveToast.showMessage) {
+                                window.saveToast.showMessage(`${name}의 요청을 거절했습니다.`);
+                        }
+                }
 
 		async function fetchList(url) {
 			try {
@@ -81,24 +93,24 @@
 					readBtn.className = 'accept-btn';
 					readBtn.type = 'button';
 					readBtn.textContent = '읽기 허용';
-					readBtn.addEventListener('click', () => {
-						acceptWithPermission(m.scheduleShareId, 'N', action, m.hname);
-					});
+                                        readBtn.addEventListener('click', () => {
+                                                acceptWithPermission(m.scheduleShareId, 'N', action, m.hname, m.receiverId);
+                                        });
 
 					const editBtn = document.createElement('button');
 					editBtn.className = 'accept-btn';
 					editBtn.type = 'button';
 					editBtn.textContent = '수정 허용';
-					editBtn.addEventListener('click', () => {
-						acceptWithPermission(m.scheduleShareId, 'Y', action, m.hname);
-					});
+                                        editBtn.addEventListener('click', () => {
+                                                acceptWithPermission(m.scheduleShareId, 'Y', action, m.hname, m.receiverId);
+                                        });
 
 					const rejectBtn = document.createElement('button');
 					rejectBtn.className = 'reject-btn';
 					rejectBtn.type = 'button';
 					rejectBtn.textContent = '거절';
                                         rejectBtn.addEventListener('click', () => {
-                                                rejectRequest(m.scheduleShareId, false, action, m.hname);
+                                                rejectRequest(m.scheduleShareId, false, action, m.hname, m.receiverId);
                                         });
 
 					action.appendChild(readBtn);
@@ -118,16 +130,16 @@
 					acceptBtn.className = 'accept-btn';
 					acceptBtn.type = 'button';
 					acceptBtn.textContent = '수락';
-					acceptBtn.addEventListener('click', () => {
-						acceptRequest(m.scheduleShareId, action, m.hname);
-					});
+                                        acceptBtn.addEventListener('click', () => {
+                                                acceptRequest(m.scheduleShareId, action, m.hname, m.sharerId);
+                                        });
 
 					const rejectBtn = document.createElement('button');
 					rejectBtn.className = 'reject-btn';
 					rejectBtn.type = 'button';
 					rejectBtn.textContent = '거절';
                                         rejectBtn.addEventListener('click', () => {
-                                                rejectRequest(m.scheduleShareId, true, action, m.hname);
+                                                rejectRequest(m.scheduleShareId, true, action, m.hname, m.sharerId);
                                         });
 
 					action.appendChild(acceptBtn);

@@ -21,24 +21,34 @@
             container.appendChild(done);
         }
 
-        async function acceptAndSetPermissions(id, canEdit, container, name) {
+        function sendNotification(recipientId, action) {
+            fetch('/api/notifications', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ recipientId: recipientId, actionType: action, targetUrl: '/share?view=list' })
+            });
+        }
+
+        async function acceptAndSetPermissions(id, canEdit, container, name, userId) {
             await fetch(`/api/requests/${id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ canEdit })
             });
             replaceWithDone(container, '완료');
+            sendNotification(userId, 'SHARE_UPDATE');
             const perm = canEdit === 'Y' ? '수정' : '읽기';
             if (window.saveToast && window.saveToast.showMessage) {
                 window.saveToast.showMessage(`${name}에게 ${perm} 권한이 부여되었습니다.`);
             }
         }
 
-        async function rejectRequest(id, container, name) {
+        async function rejectRequest(id, container, name, userId) {
             await fetch(`/api/requests/${id}`, {
                 method: 'DELETE'
             });
             replaceWithDone(container, '삭제완료');
+            sendNotification(userId, 'SHARE_DELETE');
             if (window.saveToast && window.saveToast.showMessage) {
                 window.saveToast.showMessage(`${name}의 공유가 삭제되었습니다.`);
             }
@@ -67,7 +77,7 @@
                         readBtn.type = 'button';
                         readBtn.textContent = '읽기';
                         readBtn.addEventListener('click', () => {
-                            acceptAndSetPermissions(m.scheduleShareId, 'N', action, m.hname);
+                            acceptAndSetPermissions(m.scheduleShareId, 'N', action, m.hname, m.receiverId);
                         });
 
                         const editBtn = document.createElement('button');
@@ -75,7 +85,7 @@
                         editBtn.type = 'button';
                         editBtn.textContent = '수정';
                         editBtn.addEventListener('click', () => {
-                            acceptAndSetPermissions(m.scheduleShareId, 'Y', action, m.hname);
+                            acceptAndSetPermissions(m.scheduleShareId, 'Y', action, m.hname, m.receiverId);
                         });
 
                         if (m.canEdit === 'Y') {
@@ -91,7 +101,7 @@
                         delBtn.type = 'button';
                         delBtn.textContent = '삭제';
                         delBtn.addEventListener('click', () => {
-                            rejectRequest(m.scheduleShareId, action, m.hname);
+                            rejectRequest(m.scheduleShareId, action, m.hname, m.receiverId);
                         });
 
                         action.appendChild(readBtn);
@@ -103,7 +113,7 @@
                         delBtn.type = 'button';
                         delBtn.textContent = '삭제';
                         delBtn.addEventListener('click', () => {
-                            rejectRequest(m.scheduleShareId, action, m.hname);
+                            rejectRequest(m.scheduleShareId, action, m.hname, m.sharerId);
                         });
 
                         action.appendChild(delBtn);

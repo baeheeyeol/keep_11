@@ -1,7 +1,7 @@
 //keep/src/main/resources/static/js/main/share/components/share-request.js 에서 조회시 리스트에 내가 초대 받은경우에는 선택 버튼대신 수락과 거절 버튼이 생성되도록 수정. 그리고 ScheduleShareUserDTO에서 
 //Boolean pendingShare; 로 변경되었으니 invite.js에서도 관련 로직 수정
 (function() {
-	function initShareRequest() {
+        function initShareRequest() {
 		const input = document.querySelector('.search-bar input');
 		const btn = document.querySelector('.search-bar button');
 		const messageEl = document.querySelector('.request-message');
@@ -33,11 +33,19 @@
 			}
 		}
 
-		function renderEmpty(msg) {
-			ensureList();
-			list.style.minHeight = '';
-			list.innerHTML = `<div class=\"placeholder\">${msg}</div>`;
-		}
+                function renderEmpty(msg) {
+                        ensureList();
+                        list.style.minHeight = '';
+                        list.innerHTML = `<div class=\"placeholder\">${msg}</div>`;
+                }
+
+                function sendNotification(recipientId, action) {
+                        fetch('/api/notifications', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ recipientId: recipientId, actionType: action, targetUrl: '/share?view=manage' })
+                        });
+                }
 
 		btn?.addEventListener('click', () => {
 			const name = input.value.trim();
@@ -72,35 +80,37 @@
 								acceptBtn.className = 'accept-btn';
 								acceptBtn.type = 'button';
 								acceptBtn.textContent = '수락';
-								acceptBtn.addEventListener('click', () => {
+                                                                acceptBtn.addEventListener('click', () => {
                                                                         fetch(`/api/invitations/${m.scheduleShareId}`, {
-										method: 'PATCH'
-									}).then(res => {
-										if (res.ok) {
-											acceptBtn.textContent = '수락완료';
-											acceptBtn.disabled = true;
-											acceptBtn.classList.add('disabled');
-											rejectBtn.remove();
-										}
-									});
-								});
+                                                                               method: 'PATCH'
+                                                                        }).then(res => {
+                                                                               if (res.ok) {
+                                                                               acceptBtn.textContent = '수락완료';
+                                                                               acceptBtn.disabled = true;
+                                                                               acceptBtn.classList.add('disabled');
+                                                                               rejectBtn.remove();
+                                                                               sendNotification(m.id, 'INVITE_ACCEPT');
+                                                                               }
+                                                                        });
+                                                                });
 
 								const rejectBtn = document.createElement('button');
 								rejectBtn.className = 'reject-btn';
 								rejectBtn.type = 'button';
 								rejectBtn.textContent = '거절';
-								rejectBtn.addEventListener('click', () => {
+                                                                rejectBtn.addEventListener('click', () => {
                                                                         fetch(`/api/invitations/${m.scheduleShareId}`, {
-										method: 'DELETE'
-									}).then(res => {
-										if (res.ok) {
-											rejectBtn.textContent = '거절완료';
-											rejectBtn.disabled = true;
-											rejectBtn.classList.add('disabled');
-											acceptBtn.remove();
-										}
-									});
-								});
+                                                                               method: 'DELETE'
+                                                                        }).then(res => {
+                                                                               if (res.ok) {
+                                                                               rejectBtn.textContent = '거절완료';
+                                                                               rejectBtn.disabled = true;
+                                                                               rejectBtn.classList.add('disabled');
+                                                                               acceptBtn.remove();
+                                                                               sendNotification(m.id, 'INVITE_REJECT');
+                                                                               }
+                                                                        });
+                                                                });
 
 								action.appendChild(acceptBtn);
 								action.appendChild(rejectBtn);
@@ -154,16 +164,17 @@
                         fetch('/api/requests', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ sharerId: selectedId, message: messageEl.value })
-			}).then(res => {
-				if (res.ok) {
-					showToast('요청이 완료되었습니다.');
-					input.value = '';
-					selectedId = null;
-					hideControls();
-					renderEmpty('요청할 사람을 선택해 주세요.');
-				}
-			});
+                               body: JSON.stringify({ sharerId: selectedId, message: messageEl.value })
+                       }).then(res => {
+                               if (res.ok) {
+                                       showToast('요청이 완료되었습니다.');
+                                        sendNotification(selectedId, 'REQUEST');
+                                       input.value = '';
+                                       selectedId = null;
+                                       hideControls();
+                                       renderEmpty('요청할 사람을 선택해 주세요.');
+                               }
+                       });
 		});
 	}
 	window.initShareRequest = initShareRequest;
