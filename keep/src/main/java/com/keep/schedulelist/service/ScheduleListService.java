@@ -5,6 +5,8 @@ import com.keep.schedulelist.entity.ScheduleListEntity;
 import com.keep.schedulelist.mapper.ScheduleListMapper;
 import com.keep.schedulelist.repository.ScheduleListRepository;
 import lombok.RequiredArgsConstructor;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,5 +43,20 @@ public class ScheduleListService {
         return repository.findByUserId(userId).stream()
                 .map(mapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public ScheduleListDTO updateList(Long listId, Long userId, ScheduleListDTO dto) {
+        ScheduleListEntity entity = repository.findById(listId)
+                .orElseThrow(() -> new EntityNotFoundException("List not found"));
+        if (!entity.getUserId().equals(userId)) {
+            throw new AccessDeniedException("Cannot modify this list");
+        }
+        entity.setTitle(dto.getTitle());
+        entity.setIsShareable(dto.getIsShareable());
+        entity.setLastUpdatedBy(userId);
+        entity.setLastUpdateLogin(userId);
+        repository.save(entity);
+        return mapper.toDto(entity);
     }
 }
