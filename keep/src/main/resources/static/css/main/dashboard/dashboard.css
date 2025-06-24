@@ -13,7 +13,18 @@
 }
 
 .dashboard-header-left {
-  flex: 1; /* 좌측 여유 공간 */
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.schedule-list-select {
+  padding: 4px 8px;
+}
+
+.list-add-btn {
+  padding: 4px 8px;
 }
 
 .dashboard-header-center {

@@ -4,9 +4,10 @@
 		const overlay = document.getElementById('schedule-modal-overlay');
 		const modal = document.getElementById('schedule-modal');
                 const cancel = document.getElementById('modal-cancel');
-                const deleteBtn = document.getElementById('modal-delete');
-		const colors = document.querySelectorAll('.cat-color');
-		const hiddenColorInput = document.getElementById('sched-color');
+               const deleteBtn = document.getElementById('modal-delete');
+               const colors = document.querySelectorAll('.cat-color');
+               const hiddenColorInput = document.getElementById('sched-color');
+               const listIdInput = document.getElementById('sched-list-id');
 		const form = document.getElementById('schedule-form');
 		const grid = document.querySelector('.schedule-grid');
 		const startHour = document.getElementById('sched-start-hour');
@@ -177,8 +178,12 @@
                         document.getElementById('sched-id').value = data.schedulesId;
 
                         // 삭제 버튼 표시
-                        const delBtn = document.getElementById('modal-delete');
-                        delBtn?.classList.remove('hidden');
+                       const delBtn = document.getElementById('modal-delete');
+                       delBtn?.classList.remove('hidden');
+
+                        if (listIdInput) {
+                                listIdInput.value = data.scheduleListId || '';
+                        }
 
 			// 카테고리 버튼 선택 상태 동기화
 			document.querySelectorAll('.cat-color').forEach(btn => {
@@ -199,6 +204,9 @@
                 if (delBtn) {
                        delBtn.classList.toggle('hidden', !document.getElementById('sched-id').value);
                 }
+                if (listIdInput && window.currentScheduleListId) {
+                        listIdInput.value = window.currentScheduleListId;
+                }
                 document.getElementById('schedule-modal-overlay').classList.remove('hidden');
                 document.getElementById('schedule-modal').classList.remove('hidden');
                 // 기본 색상 표시
@@ -212,6 +220,7 @@
                 document.getElementById('schedule-modal').classList.add('hidden');
                 document.getElementById('schedule-form').reset();
                 document.getElementById('sched-id').value = '';
+                if (listIdInput) listIdInput.value = '';
                 document.querySelectorAll('.cat-color').forEach(b => b.classList.remove('selected'));
                 const delBtn = document.getElementById('modal-delete');
                 delBtn?.classList.add('hidden');

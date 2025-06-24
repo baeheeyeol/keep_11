@@ -21,8 +21,11 @@
 <!--/* content */-->
 <th:block layout:fragment="content">
 	<div class="dashboard-header">
-		<!-- 좌측: 비워둔 영역 (추후 아이콘 등 추가 가능) -->
-		<div class="header-left"></div>
+                <!-- 좌측: 일정 목록 선택 -->
+                <div class="header-left">
+                        <select id="schedule-list-select" class="schedule-list-select"></select>
+                        <button type="button" id="schedule-list-add" class="list-add-btn">+</button>
+                </div>
 		<!-- 중앙: 날짜 내비게이션 -->
 		<div class="dashboard-header-center">
 			<button id="prev-date" class="date-nav">&lt;</button>
@@ -43,6 +46,7 @@
 	<!-- 	daily.html 등록 모달 -->	
 
              <div th:replace="~{main/dashboard/components/modal/schedule-modal :: schedule-modal}"></div>
+             <div th:replace="~{main/dashboard/components/modal/schedule-list-modal :: schedule-list-modal}"></div>
              <div th:replace="~{common/calendar-modal :: calendar-modal}"></div>
              <div th:replace="~{common/toast :: save-toast}"></div>
              <div th:replace="~{main/dashboard/components/modal/monthly-more-modal :: monthly-more-modal}"></div>
@@ -55,6 +59,7 @@
         <script th:src="@{/js/main/dashboard/components/dashboard-daily.js}"></script>
         <script th:src="@{/js/main/dashboard/components/dashboard-weekly.js}"></script>
         <script th:src="@{/js/main/dashboard/components/dashboard-monthly.js}"></script>
+        <script th:src="@{/js/main/dashboard/components/schedule-list.js}"></script>
         <script th:src="@{/js/main/dashboard/components/modal/schedule-modal.js}"></script>
         <script th:src="@{/js/main/common/toast.js}"></script>
         <script th:src="@{/js/main/dashboard/components/modal/monthly-more-modal.js}"></script>
