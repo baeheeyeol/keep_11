@@ -16,6 +16,8 @@
             if (data.length > 0) {
                 select.value = data[0].scheduleListId;
                 window.currentScheduleListId = data[0].scheduleListId;
+                const hiddenInput = document.getElementById('current-schedule-list-id');
+                if (hiddenInput) hiddenInput.value = data[0].scheduleListId;
                 if (typeof window.refreshSchedule === 'function') window.refreshSchedule();
             }
         } catch (e) {
@@ -56,6 +58,8 @@
         const overlay = document.getElementById('schedule-list-modal-overlay');
         select && select.addEventListener('change', () => {
             window.currentScheduleListId = select.value;
+            const hiddenInput = document.getElementById('current-schedule-list-id');
+            if (hiddenInput) hiddenInput.value = select.value;
             if (typeof window.refreshSchedule === 'function') window.refreshSchedule();
         });
         addBtn && addBtn.addEventListener('click', openModal);

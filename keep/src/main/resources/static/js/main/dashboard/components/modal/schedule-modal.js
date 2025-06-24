@@ -204,8 +204,13 @@
                 if (delBtn) {
                        delBtn.classList.toggle('hidden', !document.getElementById('sched-id').value);
                 }
-                if (listIdInput && window.currentScheduleListId) {
-                        listIdInput.value = window.currentScheduleListId;
+                if (listIdInput) {
+                        const hiddenInput = document.getElementById('current-schedule-list-id');
+                        if (hiddenInput && hiddenInput.value) {
+                                listIdInput.value = hiddenInput.value;
+                        } else if (window.currentScheduleListId) {
+                                listIdInput.value = window.currentScheduleListId;
+                        }
                 }
                 document.getElementById('schedule-modal-overlay').classList.remove('hidden');
                 document.getElementById('schedule-modal').classList.remove('hidden');
