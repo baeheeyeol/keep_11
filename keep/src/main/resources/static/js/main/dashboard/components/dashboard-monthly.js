@@ -23,7 +23,8 @@
 		const end = new Date(last);
 		end.setDate(end.getDate() + (6 - end.getDay()));
 
-		const res = await fetch(`/api/schedules?start=${formatYMD(start)}&end=${formatYMD(end)}`);
+                const listId = window.currentScheduleListId || '';
+                const res = await fetch(`/api/schedules?start=${formatYMD(start)}&end=${formatYMD(end)}&scheduleListId=${listId}`);
 		const events = res.ok ? await res.json() : [];
 
 		renderCalendar(first, events);
