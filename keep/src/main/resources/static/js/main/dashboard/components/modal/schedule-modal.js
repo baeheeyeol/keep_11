@@ -1,4 +1,6 @@
 (function() {
+        // 외부 함수에서 접근 가능한 모달 내부 요소들
+        let listIdInput;
 
 	function initScheduleModal() {
 		const overlay = document.getElementById('schedule-modal-overlay');
@@ -7,7 +9,7 @@
                const deleteBtn = document.getElementById('modal-delete');
                const colors = document.querySelectorAll('.cat-color');
                const hiddenColorInput = document.getElementById('sched-color');
-               const listIdInput = document.getElementById('sched-list-id');
+               listIdInput = document.getElementById('sched-list-id');
 		const form = document.getElementById('schedule-form');
 		const grid = document.querySelector('.schedule-grid');
 		const startHour = document.getElementById('sched-start-hour');
