@@ -31,4 +31,14 @@ public class ScheduleListController {
         URI location = URI.create("/api/schedule-lists/" + saved.getScheduleListId());
         return ResponseEntity.created(location).body(Map.of("id", saved.getScheduleListId()));
     }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> update(Authentication authentication,
+                                    @PathVariable("id") Long id,
+                                    @RequestBody ScheduleListDTO dto) {
+        Long userId = Long.valueOf(authentication.getName());
+        dto.setScheduleListId(id);
+        ScheduleListDTO updated = service.updateList(id, userId, dto);
+        return ResponseEntity.ok(Map.of("id", updated.getScheduleListId()));
+    }
 }

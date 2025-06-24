@@ -27,6 +27,10 @@
   padding: 4px 8px;
 }
 
+.list-edit-btn {
+  padding: 4px 8px;
+}
+
 .dashboard-header-center {
   display: flex;
   align-items: center;
@@ -90,4 +94,12 @@
   margin-top: 20px;
   opacity: 1;
   transition: opacity 0.3s ease;
+}
+
+.schedule-list-select option.share-yes {
+  background-color: #e7fbe7;
+}
+
+.schedule-list-select option.share-no {
+  background-color: #fbe7e7;
 }
