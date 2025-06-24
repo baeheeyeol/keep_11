@@ -17,11 +17,17 @@
 	<footer class="main-footer">&copy; <span>2025</span> 포트폴리오	</footer>
 
 
+        <div th:replace="~{common/notification-sidebar :: notification-sidebar}"></div>
+
         <script type="text/javascript">
                 document.addEventListener('DOMContentLoaded', function() {
+                        if (window.notificationSidebar) {
+                                window.notificationSidebar.init();
+                        }
                 });
         </script>
         <script th:src="@{/js/notification-modal.js}"></script>
+        <script th:src="@{/js/notification-sidebar.js}"></script>
         <th:block layout:fragment="script"></th:block>
 </body>
 </html>

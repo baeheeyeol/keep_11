@@ -6,9 +6,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const close = document.getElementById('notification-close');
   const container = document.querySelector('.notification');
   const listEl = document.getElementById('notification-list');
-  if (!btn || !modal || !close || !container || !listEl) return;
+  const moreBtn = document.getElementById('notification-more');
+  if (!btn || !modal || !close || !container || !listEl || !moreBtn) return;
 
   const userId = container.dataset.userId;
+
+  let allList = [];
 
   const hide = () => modal.classList.add('hidden');
 
@@ -42,10 +45,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (n.targetUrl) item.dataset.url = n.targetUrl;
     item.addEventListener('click', async () => {
       await fetch(`/api/notifications/${n.id}/read`, { method: 'PATCH' });
-      item.remove();
-      updateBadge(listEl.querySelectorAll('.notification-item').length);
-      if (listEl.children.length === 0) {
-        listEl.innerHTML = '<p>알림이 없습니다.</p>';
+      allList = allList.filter(i => i.id !== n.id);
+      renderList(allList);
+      if (typeof window.refreshNotificationList === 'function') {
+        window.refreshNotificationList();
       }
       if (item.dataset.url) {
         window.location.href = item.dataset.url;
@@ -55,20 +58,34 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderList(list) {
+    allList = list.slice();
     listEl.innerHTML = '';
-    const unread = (list || []).filter(n => n.isRead === 'N');
-    if (unread.length === 0) {
+    const unread = allList.filter(n => n.isRead === 'N');
+    const firstTen = unread.slice(0, 10);
+    if (firstTen.length === 0) {
       listEl.innerHTML = '<p>알림이 없습니다.</p>';
       updateBadge(0);
+      moreBtn.classList.add('hidden');
       return;
     }
-    unread.forEach(n => listEl.appendChild(createItem(n)));
+    firstTen.forEach(n => listEl.appendChild(createItem(n)));
     updateBadge(unread.length);
+    if (unread.length > 10) {
+      moreBtn.classList.remove('hidden');
+    } else {
+      moreBtn.classList.add('hidden');
+    }
   }
 
-  fetch('/api/notifications')
-    .then(res => res.json())
-    .then(renderList);
+  async function loadList() {
+    const res = await fetch('/api/notifications');
+    const data = await res.json();
+    renderList(data);
+  }
+
+  window.refreshNotificationList = loadList;
+
+  loadList();
 
   if (window.SockJS && window.Stomp && userId) {
     const sock = new SockJS('/ws');
@@ -76,14 +93,16 @@ document.addEventListener('DOMContentLoaded', () => {
     stomp.connect({}, () => {
       stomp.subscribe('/topic/notifications/' + userId, msg => {
         const notif = JSON.parse(msg.body);
-        const existing = Array.from(listEl.querySelectorAll('.notification-item')).map(li => ({
-          id: Number(li.dataset.id),
-          title: li.textContent,
-          targetUrl: li.dataset.url,
-          isRead: 'N'
-        }));
-        renderList([notif, ...existing]);
+        allList = [notif, ...allList];
+        renderList(allList);
       });
     });
   }
+
+  moreBtn.addEventListener('click', () => {
+    if (window.notificationSidebar) {
+      window.notificationSidebar.open(allList.filter(n => n.isRead === 'N'));
+    }
+    hide();
+  });
 });

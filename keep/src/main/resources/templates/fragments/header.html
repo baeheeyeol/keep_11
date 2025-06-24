@@ -7,7 +7,8 @@
 
 	<th:block layout:fragment="title"></th:block>
 
-	<link rel="stylesheet" th:href="@{/css/fragments/body.css}" />
+        <link rel="stylesheet" th:href="@{/css/fragments/body.css}" />
+        <link rel="stylesheet" th:href="@{/css/notification/sidebar.css}" />
 	<th:block layout:fragment="add-css"></th:block>
 
 	<div class="head">
@@ -27,6 +28,7 @@
                                         <div id="notification-list">
                                                 <p>알림이 없습니다.</p>
                                         </div>
+                                        <button type="button" id="notification-more" class="notification-more hidden">더보기</button>
                                 </div>
                         </div>
                         <div class="logout">
