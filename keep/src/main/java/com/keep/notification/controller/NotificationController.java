@@ -30,7 +30,7 @@ public class NotificationController {
     }
 
     @PatchMapping("/{id}/read")
-    public ResponseEntity<Void> markRead(@PathVariable Long id) {
+    public ResponseEntity<Void> markRead(@PathVariable(value="id") Long id) {
         service.markRead(id);
         return ResponseEntity.ok().build();
     }
