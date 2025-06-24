@@ -19,10 +19,14 @@
                                 <a href="/dashboard" class="schedule-icon" title="일정">📅</a>
                         </div>
                         <div class="notification" data-user-id="[[${session.memberId}]]">
-                                <button type="button" id="notification-btn" class="notification-icon" title="알림">🔔</button>
+                                <button type="button" id="notification-btn" class="notification-icon" title="알림">
+                                        🔔<span id="notification-badge" class="notification-badge hidden">!</span>
+                                </button>
                                 <div id="notification-modal" class="notification-modal hidden">
                                         <button type="button" id="notification-close" class="notification-close">&times;</button>
-                                        <p>알림이 없습니다.</p>
+                                        <div id="notification-list">
+                                                <p>알림이 없습니다.</p>
+                                        </div>
                                 </div>
                         </div>
                         <div class="logout">

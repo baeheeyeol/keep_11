@@ -1,14 +1,14 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   const btn = document.getElementById('notification-btn');
+  const badge = document.getElementById('notification-badge');
   const modal = document.getElementById('notification-modal');
   const close = document.getElementById('notification-close');
   const container = document.querySelector('.notification');
-  if (!btn || !modal || !close || !container) return;
+  const listEl = document.getElementById('notification-list');
+  if (!btn || !modal || !close || !container || !listEl) return;
 
   const userId = container.dataset.userId;
-  const listEl = document.createElement('div');
-  modal.appendChild(listEl);
 
   const hide = () => modal.classList.add('hidden');
 
@@ -25,20 +25,45 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  function updateBadge(count) {
+    if (!badge) return;
+    if (count > 0) {
+      badge.classList.remove('hidden');
+    } else {
+      badge.classList.add('hidden');
+    }
+  }
+
+  function createItem(n) {
+    const item = document.createElement('div');
+    item.className = 'notification-item';
+    item.textContent = n.title;
+    item.dataset.id = n.id;
+    if (n.targetUrl) item.dataset.url = n.targetUrl;
+    item.addEventListener('click', async () => {
+      await fetch(`/api/notifications/${n.id}/read`, { method: 'PATCH' });
+      item.remove();
+      updateBadge(listEl.querySelectorAll('.notification-item').length);
+      if (listEl.children.length === 0) {
+        listEl.innerHTML = '<p>알림이 없습니다.</p>';
+      }
+      if (item.dataset.url) {
+        window.location.href = item.dataset.url;
+      }
+    });
+    return item;
+  }
+
   function renderList(list) {
     listEl.innerHTML = '';
-    if (!list || list.length === 0) {
+    const unread = (list || []).filter(n => n.isRead === 'N');
+    if (unread.length === 0) {
       listEl.innerHTML = '<p>알림이 없습니다.</p>';
+      updateBadge(0);
       return;
     }
-    list.forEach(n => {
-      const item = document.createElement('div');
-      const a = document.createElement('a');
-      a.href = n.targetUrl || '#';
-      a.textContent = n.title;
-      item.appendChild(a);
-      listEl.appendChild(item);
-    });
+    unread.forEach(n => listEl.appendChild(createItem(n)));
+    updateBadge(unread.length);
   }
 
   fetch('/api/notifications')
@@ -51,10 +76,13 @@ document.addEventListener('DOMContentLoaded', () => {
     stomp.connect({}, () => {
       stomp.subscribe('/topic/notifications/' + userId, msg => {
         const notif = JSON.parse(msg.body);
-        renderList([notif, ...Array.from(listEl.children).map(li => ({
+        const existing = Array.from(listEl.querySelectorAll('.notification-item')).map(li => ({
+          id: Number(li.dataset.id),
           title: li.textContent,
-          targetUrl: li.querySelector('a')?.href
-        }))]);
+          targetUrl: li.dataset.url,
+          isRead: 'N'
+        }));
+        renderList([notif, ...existing]);
       });
     });
   }
