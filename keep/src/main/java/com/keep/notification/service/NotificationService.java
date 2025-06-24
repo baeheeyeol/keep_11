@@ -2,6 +2,7 @@ package com.keep.notification.service;
 
 import com.keep.notification.dto.NotificationDTO;
 import com.keep.notification.entity.NotificationEntity;
+import com.keep.notification.mapper.NotificationMapper;
 import com.keep.notification.repository.NotificationRepository;
 import com.keep.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ public class NotificationService {
     private final NotificationRepository repository;
     private final MemberService memberService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final NotificationMapper mapper;
 
     @Transactional
     public void create(Long actorId, Long recipientId, String actionType, String title, String targetUrl, String args) {
@@ -45,34 +47,14 @@ public class NotificationService {
                 .lastUpdateLogin(actorId)
                 .build();
         repository.save(entity);
-        NotificationDTO dto = NotificationDTO.builder()
-                .id(entity.getId())
-                .actorId(actorId)
-                .recipientId(recipientId)
-                .actionType(actionType)
-                .title(title)
-                .targetUrl(targetUrl)
-                .isRead(entity.getIsRead())
-                .creationDate(entity.getCreationDate())
-                .build();
+        NotificationDTO dto = mapper.toDto(entity);
         messagingTemplate.convertAndSend("/topic/notifications/" + recipientId, dto);
     }
 
     public List<NotificationDTO> list(Long recipientId) {
         return repository.findByRecipientIdOrderByCreationDateDesc(recipientId)
                 .stream()
-                .map(e -> NotificationDTO.builder()
-                        .id(e.getId())
-                        .actorId(e.getActorId())
-                        .recipientId(e.getRecipientId())
-                        .actionType(e.getActionType())
-                        .title(e.getTitle())
-                        .targetUrl(e.getTargetUrl())
-                        .arguments(e.getArguments())
-                        .isRead(e.getIsRead())
-                        .readDate(e.getReadDate())
-                        .creationDate(e.getCreationDate())
-                        .build())
+                .map(mapper::toDto)
                 .collect(Collectors.toList());
     }
 
