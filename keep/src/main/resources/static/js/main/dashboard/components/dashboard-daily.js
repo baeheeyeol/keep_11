@@ -214,7 +214,6 @@
 			evt._start = new Date(evt.startTs).getTime();
 			evt._end = new Date(evt.endTs).getTime();
 		});
-
 		const clusters = [];
 		const seen = new Set();
 		events.forEach(evt => {
