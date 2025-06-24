@@ -21,6 +21,7 @@ public class ScheduleListService {
     public Long createDefaultList(Long userId) {
         ScheduleListEntity entity = ScheduleListEntity.builder()
                 .title("기본")
+                .isShareable("Y")
                 .userId(userId)
                 .createdBy(userId)
                 .lastUpdatedBy(userId)

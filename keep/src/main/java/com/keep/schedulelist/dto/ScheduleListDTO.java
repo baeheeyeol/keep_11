@@ -12,5 +12,6 @@ import lombok.NoArgsConstructor;
 public class ScheduleListDTO {
     private Long scheduleListId;
     private String title;
+    private String isShareable;
     private Long userId;
 }

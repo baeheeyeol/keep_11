@@ -18,6 +18,9 @@ public class ScheduleListEntity {
 
     @Column(name = "TITLE", nullable = false, length = 200)
     private String title;
+    
+    @Column(name = "IS_SHAREABLE", nullable = false, length = 10)
+    private String isShareable;
 
     @Column(name = "USER_ID", nullable = false)
     private Long userId;

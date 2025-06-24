@@ -15,9 +15,9 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class MemberService {
-        private final MemberRepository memberRepository;
-        private final PasswordEncoder passwordEncoder;
-        private final ScheduleListService scheduleListService;
+	private final MemberRepository memberRepository;
+	private final PasswordEncoder passwordEncoder;
+	private final ScheduleListService scheduleListService;
 
 	// 회원가입
 	@Transactional
@@ -30,11 +30,12 @@ public class MemberService {
 				.hname(memberDTO.getHname()).build();
 
 		// 2. 저장 + 즉시 flush
-                MemberEntity saved = memberRepository.saveAndFlush(entity);
+		MemberEntity saved = memberRepository.saveAndFlush(entity);
 
-                scheduleListService.createDefaultList(saved.getId());
+		// 3. 일정 기본목록 등록
+		scheduleListService.createDefaultList(saved.getId());
 
-                return saved.getId();
+		return saved.getId();
 	}
 
 	// 이메일 중복검증

@@ -12,6 +12,7 @@ public class ScheduleListMapperImpl implements ScheduleListMapper {
         return ScheduleListEntity.builder()
                 .scheduleListId(dto.getScheduleListId())
                 .title(dto.getTitle())
+                .isShareable(dto.getIsShareable())
                 .userId(dto.getUserId())
                 .createdBy(dto.getUserId())
                 .lastUpdatedBy(dto.getUserId())
@@ -25,6 +26,7 @@ public class ScheduleListMapperImpl implements ScheduleListMapper {
         return ScheduleListDTO.builder()
                 .scheduleListId(entity.getScheduleListId())
                 .title(entity.getTitle())
+                .isShareable(entity.getIsShareable())
                 .userId(entity.getUserId())
                 .build();
     }
