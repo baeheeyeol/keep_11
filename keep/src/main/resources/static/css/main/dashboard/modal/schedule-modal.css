@@ -76,6 +76,12 @@
   box-sizing: border-box;
 }
 
+/* schedule-list-modal inputs should use full width */
+#schedule-list-modal .form-group input[type="text"],
+#schedule-list-modal .form-group select {
+  width: 100%;
+}
+
 /* datetime 그룹: label 아래에 inputs 표시 */
 .datetime-group {
   display: block;
