@@ -7,7 +7,8 @@
 
 	<th:block layout:fragment="title"></th:block>
 
-	<link rel="stylesheet" th:href="@{/css/fragments/body.css}" />
+        <link rel="stylesheet" th:href="@{/css/fragments/body.css}" />
+        <link rel="stylesheet" th:href="@{/css/notification/sidebar.css}" />
 	<th:block layout:fragment="add-css"></th:block>
 
 	<div class="head">
@@ -19,10 +20,15 @@
                                 <a href="/dashboard" class="schedule-icon" title="일정">📅</a>
                         </div>
                         <div class="notification" data-user-id="[[${session.memberId}]]">
-                                <button type="button" id="notification-btn" class="notification-icon" title="알림">🔔</button>
+                                <button type="button" id="notification-btn" class="notification-icon" title="알림">
+                                        🔔<span id="notification-badge" class="notification-badge hidden">!</span>
+                                </button>
                                 <div id="notification-modal" class="notification-modal hidden">
                                         <button type="button" id="notification-close" class="notification-close">&times;</button>
-                                        <p>알림이 없습니다.</p>
+                                        <div id="notification-list">
+                                                <p>알림이 없습니다.</p>
+                                        </div>
+                                        <button type="button" id="notification-more" class="notification-more hidden">더보기</button>
                                 </div>
                         </div>
                         <div class="logout">

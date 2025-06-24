@@ -134,16 +134,29 @@ header .head h1 {
 .notification-icon:hover {
   color: #000;
 }
+.notification-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #e02424;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 0.6rem;
+  padding: 0 4px;
+}
+.notification-badge.hidden {
+  display: none;
+}
 .notification-modal {
   position: absolute;
   right: 0;
   top: 28px;
-  width: 160px;
+  width: 200px;
   padding: 10px;
   background: #fff;
   border: 1px solid #d1d5db;
   border-radius: 6px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   z-index: 150;
 }
 .notification-modal.hidden {
@@ -157,6 +170,31 @@ header .head h1 {
   border: none;
   font-size: 1rem;
   cursor: pointer;
+}
+.notification-item {
+  padding: 6px 8px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+.notification-item:last-child {
+  border-bottom: none;
+}
+.notification-item:hover {
+  background-color: #f5f5f5;
+}
+.notification-more {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 6px 0;
+  background: #f3f4f6;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+.notification-more.hidden {
+  display: none;
 }
 .logout button {
   background-color: #4f46e5;
