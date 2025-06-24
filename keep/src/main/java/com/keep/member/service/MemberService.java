@@ -3,6 +3,8 @@ package com.keep.member.service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.keep.schedulelist.service.ScheduleListService;
+
 import com.keep.member.dto.MemberDTO;
 import com.keep.member.entity.MemberEntity;
 import com.keep.member.repository.MemberRepository;
@@ -13,8 +15,9 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class MemberService {
-	private final MemberRepository memberRepository;
-	private final PasswordEncoder passwordEncoder;
+        private final MemberRepository memberRepository;
+        private final PasswordEncoder passwordEncoder;
+        private final ScheduleListService scheduleListService;
 
 	// 회원가입
 	@Transactional
@@ -27,10 +30,11 @@ public class MemberService {
 				.hname(memberDTO.getHname()).build();
 
 		// 2. 저장 + 즉시 flush
-		MemberEntity saved = memberRepository.saveAndFlush(entity);
+                MemberEntity saved = memberRepository.saveAndFlush(entity);
 
-		// 3. 저장된 ID 반환
-		return saved.getId();
+                scheduleListService.createDefaultList(saved.getId());
+
+                return saved.getId();
 	}
 
 	// 이메일 중복검증

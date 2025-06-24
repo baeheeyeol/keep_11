@@ -18,8 +18,11 @@ public class ScheduleEntity {
 	@Column(name = "SCHEDULES_ID", nullable = false)
 	private Long schedulesId;
 
-	@Column(name = "USER_ID", nullable = false)
-	private Long userId;
+        @Column(name = "USER_ID", nullable = false)
+        private Long userId;
+
+        @Column(name = "SCHEDULE_LIST_ID")
+        private Long scheduleListId;
 
 	@Column(name = "TITLE", length = 30)
 	private String title;

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="schedule-list-modal">
+  <div id="schedule-list-modal-overlay" class="modal-overlay hidden"></div>
+  <div id="schedule-list-modal" class="modal hidden">
+    <h3 class="modal-title">목록 추가</h3>
+    <div class="form-group">
+      <label for="schedule-list-title">제목</label>
+      <input type="text" id="schedule-list-title" />
+    </div>
+    <div class="modal-actions">
+      <button type="button" id="schedule-list-save" class="btn-primary">저장</button>
+      <button type="button" id="schedule-list-cancel" class="btn-secondary">취소</button>
+    </div>
+  </div>
+</div>
+</html>

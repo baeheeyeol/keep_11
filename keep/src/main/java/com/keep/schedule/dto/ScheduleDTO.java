@@ -21,9 +21,11 @@ import java.time.LocalTime;
 @Builder
 public class ScheduleDTO {
 
-	private Long userId;
+        private Long userId;
 
-	private Long schedulesId;
+        private Long schedulesId;
+
+        private Long scheduleListId;
 
 	private String fileUrl;
 

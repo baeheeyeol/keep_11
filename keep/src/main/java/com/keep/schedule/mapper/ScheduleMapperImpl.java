@@ -19,6 +19,7 @@ public class ScheduleMapperImpl implements ScheduleMapper {
         ScheduleEntity.ScheduleEntityBuilder builder = ScheduleEntity.builder();
         builder.schedulesId(dto.getSchedulesId());
         builder.userId(dto.getUserId());
+        builder.scheduleListId(dto.getScheduleListId());
         builder.title(dto.getTitle());
         builder.location(dto.getLocation());
         builder.description(dto.getDescription());
@@ -39,6 +40,7 @@ public class ScheduleMapperImpl implements ScheduleMapper {
         ScheduleDTO.ScheduleDTOBuilder builder = ScheduleDTO.builder();
         builder.userId(entity.getUserId());
         builder.schedulesId(entity.getSchedulesId());
+        builder.scheduleListId(entity.getScheduleListId());
         builder.title(entity.getTitle());
         builder.location(entity.getLocation());
         builder.description(entity.getDescription());
