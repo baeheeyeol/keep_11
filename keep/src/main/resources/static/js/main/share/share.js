@@ -1,6 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
-	const fragmentContainer = document.getElementById('fragment-container');
-	const viewBtns = document.querySelectorAll('.view-btn');
+        const fragmentContainer = document.getElementById('fragment-container');
+        const viewBtns = document.querySelectorAll('.view-btn');
+        const params = new URLSearchParams(window.location.search);
+        const allowedViews = ['list', 'request', 'invite', 'manage'];
+        let currentView = params.get('view');
+        if (!allowedViews.includes(currentView)) {
+                currentView = 'invite';
+        }
 
 	function loadView(view) {
 		fragmentContainer.style.opacity = 0;
@@ -15,23 +21,23 @@ document.addEventListener('DOMContentLoaded', () => {
 				document.getElementById('share-request-css').disabled = (view !== 'request');
 				document.getElementById('share-list-css').disabled = (view !== 'list');
 				document.getElementById('share-manage-css').disabled = (view !== 'manage');
-				if (view === 'invite') {
-					if (window.initShareInvite()) {
-						window.initShareInvite();
-					}
-				} else if (view === 'request') {
-					if (window.initShareRequest()) {
-						window.initShareRequest();
-					}
-				} else if (view === 'list') {
-					if (typeof window.initShareList === 'function') {
-						window.initShareList();
-					}
-				} else if (view === 'manage') {
-					if (window.initShareManage()) {
-						window.initShareManage();
-					}
-				}
+                                if (view === 'invite') {
+                                        if (typeof window.initShareInvite === 'function') {
+                                                window.initShareInvite();
+                                        }
+                                } else if (view === 'request') {
+                                        if (typeof window.initShareRequest === 'function') {
+                                                window.initShareRequest();
+                                        }
+                                } else if (view === 'list') {
+                                        if (typeof window.initShareList === 'function') {
+                                                window.initShareList();
+                                        }
+                                } else if (view === 'manage') {
+                                        if (typeof window.initShareManage === 'function') {
+                                                window.initShareManage();
+                                        }
+                                }
 				requestAnimationFrame(() => {
 					fragmentContainer.style.opacity = 1;
 				});
@@ -39,13 +45,21 @@ document.addEventListener('DOMContentLoaded', () => {
 			.catch(err => console.error(err));
 	}
 
-	viewBtns.forEach(btn => {
-		btn.addEventListener('click', () => {
-			const view = btn.dataset.view;
-			viewBtns.forEach(b => b.classList.toggle('active', b === btn));
-			loadView(view);
-		});
-	});
+        viewBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                        const view = btn.dataset.view;
+                        viewBtns.forEach(b => b.classList.toggle('active', b === btn));
+                        loadView(view);
+                });
+        });
 
-	loadView('invite');
+        viewBtns.forEach(btn => {
+                if (btn.dataset.view === currentView) {
+                        btn.classList.add('active');
+                } else {
+                        btn.classList.remove('active');
+                }
+        });
+
+        loadView(currentView);
 });
