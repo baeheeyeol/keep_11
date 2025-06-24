@@ -1,10 +1,11 @@
 /*keep/src/main/resources/static/js/main/share/components/share-manage.js 에서 받은 요청및 받은 초대 버튼 클릭시 두번 클릭되는 현상이 발생하는데 안되도록 수정
 */
 (function() {
-	async function initShareManage() {
-		const toggleBtns = document.querySelectorAll('.list-toggle .toggle-btn');
-		const listContainer = document.querySelector('.list-container');
-		let currentType = 'request';
+        async function initShareManage() {
+                const toggleBtns = document.querySelectorAll('.list-toggle .toggle-btn');
+                const listContainer = document.querySelector('.list-container');
+                const params = new URLSearchParams(window.location.search);
+                let currentType = params.get('type') === 'invite' ? 'invite' : 'request';
 
 		function createDoneButton(text) {
 			const btn = document.createElement('button');
@@ -22,10 +23,16 @@
                 }
 
                 function sendNotification(recipientId, action) {
+                        let targetUrl = '/share?view=list';
+                        if (action === 'INVITE_REJECT') {
+                                targetUrl = '/share?view=invite';
+                        } else if (action === 'REQUEST_REJECT') {
+                                targetUrl = '/share?view=request';
+                        }
                         fetch('/api/notifications', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ recipientId: recipientId, actionType: action, targetUrl: '/share?view=manage' })
+                                body: JSON.stringify({ recipientId: recipientId, actionType: action, targetUrl })
                         });
                 }
 
@@ -168,8 +175,15 @@
                         }
                 });
 
-		// default view
-		load('request');
+                toggleBtns.forEach(btn => {
+                        if (btn.dataset.target === currentType) {
+                                btn.classList.add('active');
+                        } else {
+                                btn.classList.remove('active');
+                        }
+                });
+
+                load(currentType);
 	}
 
 	window.initShareManage = initShareManage;
