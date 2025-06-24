@@ -2,6 +2,7 @@ package com.keep.schedule.mapper;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 
 import org.springframework.stereotype.Component;
 
@@ -16,19 +17,31 @@ public class ScheduleMapperImpl implements ScheduleMapper {
         if (dto == null) {
             return null;
         }
-        ScheduleEntity.ScheduleEntityBuilder builder = ScheduleEntity.builder();
-        builder.schedulesId(dto.getSchedulesId());
-        builder.userId(dto.getUserId());
-        builder.scheduleListId(dto.getScheduleListId());
-        builder.title(dto.getTitle());
-        builder.location(dto.getLocation());
-        builder.description(dto.getDescription());
-        builder.category(dto.getCategory());
-        builder.fileUrl(dto.getFileUrl());
-        builder.lastUpdatedBy(dto.getUserId());
-        builder.createdBy(dto.getUserId());
-        builder.startTs(LocalDateTime.of(dto.getStartDay(), LocalTime.of(dto.getStartHour(), dto.getStartMin())));
-        builder.endTs(LocalDateTime.of(dto.getEndDay(), LocalTime.of(dto.getEndHour(), dto.getEndMin())));
+        ScheduleEntity.ScheduleEntityBuilder builder = ScheduleEntity.builder()
+                .schedulesId(dto.getSchedulesId())
+                .userId(dto.getUserId())
+                .scheduleListId(dto.getScheduleListId())
+                .title(dto.getTitle())
+                .location(dto.getLocation())
+                .description(dto.getDescription())
+                .category(dto.getCategory())
+                .fileUrl(dto.getFileUrl())
+                .createdBy(dto.getUserId())
+                .lastUpdatedBy(dto.getUserId());
+
+        LocalDateTime start = dto.getStartTs();
+        if (start == null && dto.getStartDay() != null) {
+            start = LocalDateTime.of(dto.getStartDay(),
+                    LocalTime.of(dto.getStartHour(), dto.getStartMin()));
+        }
+        LocalDateTime end = dto.getEndTs();
+        if (end == null && dto.getEndDay() != null) {
+            end = LocalDateTime.of(dto.getEndDay(),
+                    LocalTime.of(dto.getEndHour(), dto.getEndMin()));
+        }
+
+        builder.startTs(start);
+        builder.endTs(end);
         return builder.build();
     }
 
@@ -37,27 +50,37 @@ public class ScheduleMapperImpl implements ScheduleMapper {
         if (entity == null) {
             return null;
         }
-        ScheduleDTO.ScheduleDTOBuilder builder = ScheduleDTO.builder();
-        builder.userId(entity.getUserId());
-        builder.schedulesId(entity.getSchedulesId());
-        builder.scheduleListId(entity.getScheduleListId());
-        builder.title(entity.getTitle());
-        builder.location(entity.getLocation());
-        builder.description(entity.getDescription());
-        builder.category(entity.getCategory());
-        builder.fileUrl(entity.getFileUrl());
+        ScheduleDTO.ScheduleDTOBuilder builder = ScheduleDTO.builder()
+                .userId(entity.getUserId())
+                .schedulesId(entity.getSchedulesId())
+                .scheduleListId(entity.getScheduleListId())
+                .title(entity.getTitle())
+                .location(entity.getLocation())
+                .description(entity.getDescription())
+                .category(entity.getCategory())
+                .fileUrl(entity.getFileUrl());
+
         LocalDateTime st = entity.getStartTs();
         LocalDateTime et = entity.getEndTs();
+
         if (st != null) {
-            builder.startDay(st.toLocalDate());
-            builder.startHour(st.getHour());
-            builder.startMin(st.getMinute());
+            builder.startTs(st)
+                   .startDay(st.toLocalDate())
+                   .startHour(st.getHour())
+                   .startMin(st.getMinute());
         }
         if (et != null) {
-            builder.endDay(et.toLocalDate());
-            builder.endHour(et.getHour());
-            builder.endMin(et.getMinute());
+            builder.endTs(et)
+                   .endDay(et.toLocalDate())
+                   .endHour(et.getHour())
+                   .endMin(et.getMinute());
         }
+
+        if (st != null && et != null) {
+            boolean fullDay = ChronoUnit.HOURS.between(st, et) >= 24;
+            builder.isFullDay(fullDay);
+        }
+
         return builder.build();
     }
 }
