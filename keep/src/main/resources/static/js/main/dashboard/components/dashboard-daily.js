@@ -198,8 +198,8 @@
 		if (!dateInput) return;
 		const [year, month, day] = dateInput.split('-').map(n => +n);
 		let events = [];
-		try {
-			const res = await fetch(`/api/schedules?date=${dateInput}`);
+                try {
+                        const res = await fetch(`/api/schedules?date=${dateInput}&scheduleListId=${window.currentScheduleListId}`);
 			if (res.ok) events = await res.json();
 		} catch (err) {
 			console.error('일정 로드 실패', err);

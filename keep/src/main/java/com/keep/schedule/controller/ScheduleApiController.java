@@ -55,10 +55,11 @@ public class ScheduleApiController {
 	 * 일간 일정 조회
 	 */
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<ScheduleDTO>> getSchedulesByDate(Authentication authentication,
-			@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
-		Long userId = Long.valueOf(authentication.getName());
-		List<ScheduleDTO> list = scheduleService.getEventsByDate(userId, date);
+        public ResponseEntity<List<ScheduleDTO>> getSchedulesByDate(Authentication authentication,
+                        @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
+                        @RequestParam("scheduleListId") Long scheduleListId) {
+                Long userId = Long.valueOf(authentication.getName());
+                List<ScheduleDTO> list = scheduleService.getEventsByDate(userId, date, scheduleListId);
 
 		return ResponseEntity.ok(list);
 	}
@@ -99,13 +100,13 @@ public class ScheduleApiController {
 	 * 주간 일정 조회 GET /api/schedules?start=2025-05-25&end=2025-05-31
 	 */
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, params = { "start", "end" })
-	public ResponseEntity<List<ScheduleDTO>> getSchedulesByRange(Authentication authentication,
-			@RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate start,
-			@RequestParam("end") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end) {
+        public ResponseEntity<List<ScheduleDTO>> getSchedulesByRange(Authentication authentication,
+                        @RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate start,
+                        @RequestParam("end") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end,
+                        @RequestParam("scheduleListId") Long scheduleListId) {
 
-		Long userId = Long.valueOf(authentication.getName());
-		// ScheduleService 에 getEventsByDateRange 메서드를 구현해야 합니다.
-		List<ScheduleDTO> list = scheduleService.getEventsByDateRange(userId, start, end);
+                Long userId = Long.valueOf(authentication.getName());
+                List<ScheduleDTO> list = scheduleService.getEventsByDateRange(userId, start, end, scheduleListId);
 		return ResponseEntity.ok(list);
 	}
 

@@ -21,9 +21,9 @@
 		const weekStart = new Date(year, sMM - 1, sDD);
 		const weekEnd = new Date(year, eMM - 1, eDD);
 		// 2) API 호출
-		const res = await fetch(
-			`/api/schedules?start=${formatYMD(weekStart)}&end=${formatYMD(weekEnd)}`
-		);
+                const res = await fetch(
+                        `/api/schedules?start=${formatYMD(weekStart)}&end=${formatYMD(weekEnd)}&scheduleListId=${window.currentScheduleListId}`
+                );
 		const schedules = await res.json(); // [{ schedulesId, title, startTs, endTs, category, ... }, ...]
 
 		const ALL_DAY_MS = 24 * 60 * 60 * 1000;
