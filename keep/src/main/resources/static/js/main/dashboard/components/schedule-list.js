@@ -16,6 +16,7 @@
             if (data.length > 0) {
                 select.value = data[0].scheduleListId;
                 window.currentScheduleListId = data[0].scheduleListId;
+                if (typeof window.refreshSchedule === 'function') window.refreshSchedule();
             }
         } catch (e) {
             console.error(e);

@@ -53,16 +53,18 @@ public class ScheduleService {
 	/**
 	 * userId 사용자의 주어진 날짜(date)에 속하는 일정 목록을 반환합니다. (daily 뷰에 사용)
 	 */
-	public List<ScheduleDTO> getEventsByDate(Long userId, LocalDate date) {
+        public List<ScheduleDTO> getEventsByDate(Long userId, LocalDate date, Long scheduleListId) {
 		// 그날 00:00부터 23:59:59까지
 		LocalDateTime startOfDay = date.atStartOfDay();
 		LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
 
-		List<ScheduleEntity> entities = repository
-				.findAllByUserIdAndStartTsLessThanEqualAndEndTsGreaterThanEqualOrderByStartTs(userId, // 사용자
-						endOfDay, // startTs ≤ 이 값
-						startOfDay // endTs ≥ 이 값
-				);
+                List<ScheduleEntity> entities = repository
+                                .findAllByUserIdAndScheduleListIdAndStartTsLessThanEqualAndEndTsGreaterThanEqualOrderByStartTs(
+                                                userId, // 사용자
+                                                scheduleListId,
+                                                endOfDay, // startTs ≤ 이 값
+                                                startOfDay // endTs ≥ 이 값
+                                );
 		List<ScheduleDTO> t = entities.stream().map(entity -> {
 			ScheduleDTO dto = mapper.toDto(entity);
 
@@ -109,14 +111,17 @@ public class ScheduleService {
 		return mapper.toDto(entity);
 	}
 
-	public List<ScheduleDTO> getEventsByDateRange(Long userId, LocalDate start, LocalDate end) {
+        public List<ScheduleDTO> getEventsByDateRange(Long userId, LocalDate start, LocalDate end, Long scheduleListId) {
 		// start 는 00:00:00, end 는 23:59:59 로 설정
 		LocalDateTime startDateTime = start.atStartOfDay();
 		LocalDateTime endDateTime = end.atTime(LocalTime.MAX);
 
-		List<ScheduleEntity> entitiy = repository
-				.findAllByUserIdAndStartTsLessThanEqualAndEndTsGreaterThanEqualOrderByStartTs(userId, endDateTime,
-						startDateTime);
+                List<ScheduleEntity> entitiy = repository
+                                .findAllByUserIdAndScheduleListIdAndStartTsLessThanEqualAndEndTsGreaterThanEqualOrderByStartTs(
+                                                userId,
+                                                scheduleListId,
+                                                endDateTime,
+                                                startDateTime);
 
 		return entitiy.stream().map(mapper::toDto).collect(Collectors.toList());
 	}

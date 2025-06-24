@@ -14,8 +14,9 @@ public interface ScheduleRepository extends JpaRepository<ScheduleEntity, Long> 
    * startTs ≤ endOfDay  AND  endTs ≥ startOfDay
    * 조건을 만족하는 일정 전체를 시작 시각 순으로 조회
    */
-  List<ScheduleEntity> findAllByUserIdAndStartTsLessThanEqualAndEndTsGreaterThanEqualOrderByStartTs(
+  List<ScheduleEntity> findAllByUserIdAndScheduleListIdAndStartTsLessThanEqualAndEndTsGreaterThanEqualOrderByStartTs(
       Long userId,
+      Long scheduleListId,
       LocalDateTime endOfDay,
       LocalDateTime startOfDay
   );
