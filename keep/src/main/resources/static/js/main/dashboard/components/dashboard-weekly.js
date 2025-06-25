@@ -365,20 +365,28 @@
 			const newLeftPct = newLeftMatch
 				? parseFloat(newLeftMatch[1])
 				: origDayIdx * percentPerDay;
-			const newDayIdx = Math.round(newLeftPct / percentPerDay);
-			const deltaDays = newDayIdx - origDayIdx;
+                        const newDayIdx = Math.round(newLeftPct / percentPerDay);
+                        const deltaDays = newDayIdx - origDayIdx;
 
 			// deltaHours 계산: (newTopPx - origTopPx) / slotHeight
-			const origTopPx = originals[0].origTopPx;
-			const newTopPx = parseFloat(eventBlocks[0].style.top.replace('px', ''));
-			const deltaHours = (newTopPx - origTopPx) / slotHeight;
+                        const origTopPx = originals[0].origTopPx;
+                        const newTopPx = parseFloat(eventBlocks[0].style.top.replace('px', ''));
+                        const deltaHours = (newTopPx - origTopPx) / slotHeight;
 
-                        if (isNaN(deltaDays) || isNaN(deltaHours)) {
-                                console.error('잘못된 delta 계산:', { deltaDays, deltaHours });
-                        } else {
-                                if (window.saveToast && window.saveToast.showSaving) {
-                                        window.saveToast.showSaving();
-                                }
+                        // move finished position into dataset so further drags work immediately
+                        originals.forEach(o => {
+                                const el = o.el;
+                                const updatedTop = parseFloat(el.style.top.replace('px', ''));
+                                el.dataset.dayIdx = o.origDayIdx + deltaDays;
+                                el.dataset.topPx = updatedTop;
+                        });
+
+                       if (isNaN(deltaDays) || isNaN(deltaHours)) {
+                               console.error('잘못된 delta 계산:', { deltaDays, deltaHours });
+                       } else {
+                               if (window.saveToast && window.saveToast.showSaving) {
+                                       window.saveToast.showSaving();
+                               }
                                 try {
                                         await fetch(`/api/schedules/${scheduleId}/moveWeekly`, {
                                                 method: 'PATCH',
