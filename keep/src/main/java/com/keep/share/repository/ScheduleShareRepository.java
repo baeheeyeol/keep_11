@@ -168,5 +168,8 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
 
 	@Modifying
 	@Query("UPDATE ScheduleShareEntity s SET s.acceptYn = 'Y' ,s.canEdit = :canEdit WHERE s.id = :scheduleShareId")
-	void updateAcceptYnAndCanEditById(@Param("scheduleShareId") Long scheduleShareId,@Param("canEdit") String canEdit);
+        void updateAcceptYnAndCanEditById(@Param("scheduleShareId") Long scheduleShareId,@Param("canEdit") String canEdit);
+
+        java.util.Optional<ScheduleShareEntity> findFirstBySharerIdAndReceiverIdAndScheduleListId(Long sharerId,
+                        Long receiverId, Long scheduleListId);
 }
