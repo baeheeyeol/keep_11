@@ -95,7 +95,7 @@
 					const div = document.createElement('div');
 					div.className = 'list-item';
                                         const nameSpan = document.createElement('span');
-                                        nameSpan.textContent = m.title ? `${m.hname} - ${m.title}` : m.hname;
+                                        nameSpan.textContent = m.title ? `${m.hname} | ${m.title}` : m.hname;
                                         div.appendChild(nameSpan);
 					const action = document.createElement('div');
 					const readBtn = document.createElement('button');
@@ -134,7 +134,7 @@
 					const div = document.createElement('div');
 					div.className = 'list-item';
                                         const nameSpan = document.createElement('span');
-                                        nameSpan.textContent = m.title ? `${m.hname} - ${m.title}` : m.hname;
+                                        nameSpan.textContent = m.title ? `${m.hname} | ${m.title}` : m.hname;
                                         div.appendChild(nameSpan);
 					const action = document.createElement('div');
 					const acceptBtn = document.createElement('button');
