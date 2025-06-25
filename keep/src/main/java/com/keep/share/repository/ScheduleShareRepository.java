@@ -157,9 +157,9 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
 	@Query("UPDATE ScheduleShareEntity s SET s.acceptYn = 'Y' WHERE s.id = :id")
 	int markAcceptedById(@Param("id") Long id);
 
-	@Modifying
-	@Query("DELETE FROM ScheduleShareEntity s WHERE s.id = :id")
-	int deleteShareById(@Param("id") Long id);
+        @Modifying
+        @Query("DELETE FROM ScheduleShareEntity s WHERE s.id = :id")
+        int deleteShareById(@Param("id") Long id);
 
 	java.util.Optional<ScheduleShareEntity> findFirstBySharerIdAndReceiverIdAndActionTypeAndAcceptYn(Long sharerId,
 			Long receiverId, String actionType, String acceptYn);
@@ -172,4 +172,7 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
 
         java.util.Optional<ScheduleShareEntity> findFirstBySharerIdAndReceiverIdAndScheduleListId(Long sharerId,
                         Long receiverId, Long scheduleListId);
+
+        List<ScheduleShareEntity> findBySharerIdInAndReceiverIdAndScheduleListIdIn(List<Long> sharerIds,
+                        Long receiverId, List<Long> scheduleListIds);
 }

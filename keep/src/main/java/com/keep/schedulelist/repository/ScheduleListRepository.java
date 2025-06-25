@@ -9,4 +9,6 @@ public interface ScheduleListRepository extends JpaRepository<ScheduleListEntity
     List<ScheduleListEntity> findByUserId(Long userId);
 
     List<ScheduleListEntity> findByUserIdAndIsShareable(Long userId, String isShareable);
+
+    List<ScheduleListEntity> findByUserIdInAndIsShareable(List<Long> userIds, String isShareable);
 }

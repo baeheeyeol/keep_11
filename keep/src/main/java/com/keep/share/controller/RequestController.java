@@ -33,10 +33,10 @@ public class RequestController {
 
         @GetMapping("/users-with-lists")
         @Operation(summary = "Search users with shareable schedules")
-        public List<RequestUserDTO> listAvailableRequestUsersWithLists(@RequestParam("name") String name,
+        public List<RequestUserDTO> listRequestableUsersWithSchedules(@RequestParam("name") String name,
                         Authentication authentication) {
                 Long receiverId = Long.valueOf(authentication.getName());
-                return shareService.searchAvailableForRequestWithSchedules(receiverId, name);
+                return shareService.searchRequestableUsersWithSchedules(receiverId, name);
         }
 
 	// —————————————————————————————————————————————————————————
