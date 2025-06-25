@@ -1,9 +1,10 @@
 (function() {
 	//keep/src/main/resources/static/js/main/share/components/share-invite.js
 	function initShareInvite() {
-                const input = document.getElementById('invite-search-input');
-                const btn = document.getElementById('invite-search-btn');
-                const listSelect = document.getElementById('schedule-list-select');
+               const input = document.getElementById('invite-search-input');
+               const btn = document.getElementById('invite-search-btn');
+               const listSelect = document.getElementById('schedule-list-select');
+               const searchBar = input.closest('.search-bar');
                 let list = document.getElementById('invite-list');
 
 		function ensureList() {
@@ -24,7 +25,7 @@
                function renderNoShareable() {
                        ensureList();
                        list.style.minHeight = '';
-                       list.innerHTML = `<div class="placeholder">공유가능한 일정이 없습니다.<br/><button id="go-mylist" class="invite-btn go-mylist">나의 일정으로 바로가기</button></div>`;
+                       list.innerHTML = `<div class="placeholder"><span>공유가능한 일정이 없습니다.</span><button id="go-mylist" class="invite-btn go-mylist">나의 일정으로 바로가기</button></div>`;
                        document.getElementById('go-mylist')?.addEventListener('click', () => {
                                window.location.href = '/share?view=mylist';
                        });
@@ -38,6 +39,7 @@
                                         btn.disabled = true;
                                         listSelect.style.display = 'none';
                                         input.style.display = 'none';
+                                        if (searchBar) searchBar.style.display = 'none';
                                         renderNoShareable();
                                 } else {
                                         listSelect.innerHTML = shareable.map(l => `<option value="${l.scheduleListId}">${l.title}</option>`).join('');
