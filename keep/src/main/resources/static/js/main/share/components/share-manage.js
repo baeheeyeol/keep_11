@@ -91,33 +91,42 @@
 				return;
 			}
 			if (type == 'request') {
-				list.forEach(m => {
-					const div = document.createElement('div');
-					div.className = 'list-item';
-                                        const nameSpan = document.createElement('span');
-                                        nameSpan.textContent = m.title ? `${m.hname} | ${m.title}` : m.hname;
-                                        div.appendChild(nameSpan);
+                                list.forEach(m => {
+                                        const div = document.createElement('div');
+                                        div.className = 'list-item';
+
+                                        const info = document.createElement('div');
+                                        info.className = 'item-info';
+                                        const titleSpan = document.createElement('span');
+                                        titleSpan.className = 'schedule-title';
+                                        titleSpan.textContent = m.title || '기본';
+                                        const userSpan = document.createElement('span');
+                                        userSpan.className = 'user-name';
+                                        userSpan.textContent = m.hname;
+                                        info.appendChild(titleSpan);
+                                        info.appendChild(userSpan);
+                                        div.appendChild(info);
 					const action = document.createElement('div');
-					const readBtn = document.createElement('button');
-					readBtn.className = 'accept-btn';
-					readBtn.type = 'button';
-					readBtn.textContent = '읽기 허용';
+                                        const readBtn = document.createElement('button');
+                                        readBtn.className = 'accept-btn';
+                                        readBtn.type = 'button';
+                                        readBtn.innerHTML = '✔️ 읽기 허용';
                                         readBtn.addEventListener('click', () => {
                                                 acceptWithPermission(m.scheduleShareId, 'N', action, m.hname, m.receiverId);
                                         });
 
-					const editBtn = document.createElement('button');
-					editBtn.className = 'accept-btn';
-					editBtn.type = 'button';
-					editBtn.textContent = '수정 허용';
+                                        const editBtn = document.createElement('button');
+                                        editBtn.className = 'accept-btn';
+                                        editBtn.type = 'button';
+                                        editBtn.innerHTML = '✔️ 수정 허용';
                                         editBtn.addEventListener('click', () => {
                                                 acceptWithPermission(m.scheduleShareId, 'Y', action, m.hname, m.receiverId);
                                         });
 
-					const rejectBtn = document.createElement('button');
-					rejectBtn.className = 'reject-btn';
-					rejectBtn.type = 'button';
-					rejectBtn.textContent = '거절';
+                                        const rejectBtn = document.createElement('button');
+                                        rejectBtn.className = 'reject-btn';
+                                        rejectBtn.type = 'button';
+                                        rejectBtn.innerHTML = '✖️ 거절';
                                         rejectBtn.addEventListener('click', () => {
                                                 rejectRequest(m.scheduleShareId, false, action, m.hname, m.receiverId);
                                         });
@@ -130,25 +139,34 @@
 					listContainer.appendChild(div);
 				});
 			} else {
-				list.forEach(m => {
-					const div = document.createElement('div');
-					div.className = 'list-item';
-                                        const nameSpan = document.createElement('span');
-                                        nameSpan.textContent = m.title ? `${m.hname} | ${m.title}` : m.hname;
-                                        div.appendChild(nameSpan);
+                                list.forEach(m => {
+                                        const div = document.createElement('div');
+                                        div.className = 'list-item';
+
+                                        const info = document.createElement('div');
+                                        info.className = 'item-info';
+                                        const titleSpan = document.createElement('span');
+                                        titleSpan.className = 'schedule-title';
+                                        titleSpan.textContent = m.title || '기본';
+                                        const userSpan = document.createElement('span');
+                                        userSpan.className = 'user-name';
+                                        userSpan.textContent = m.hname;
+                                        info.appendChild(titleSpan);
+                                        info.appendChild(userSpan);
+                                        div.appendChild(info);
 					const action = document.createElement('div');
-					const acceptBtn = document.createElement('button');
-					acceptBtn.className = 'accept-btn';
-					acceptBtn.type = 'button';
-					acceptBtn.textContent = '수락';
+                                        const acceptBtn = document.createElement('button');
+                                        acceptBtn.className = 'accept-btn';
+                                        acceptBtn.type = 'button';
+                                        acceptBtn.innerHTML = '✔️ 수락';
                                         acceptBtn.addEventListener('click', () => {
                                                 acceptRequest(m.scheduleShareId, action, m.hname, m.sharerId);
                                         });
 
-					const rejectBtn = document.createElement('button');
-					rejectBtn.className = 'reject-btn';
-					rejectBtn.type = 'button';
-					rejectBtn.textContent = '거절';
+                                        const rejectBtn = document.createElement('button');
+                                        rejectBtn.className = 'reject-btn';
+                                        rejectBtn.type = 'button';
+                                        rejectBtn.innerHTML = '✖️ 거절';
                                         rejectBtn.addEventListener('click', () => {
                                                 rejectRequest(m.scheduleShareId, true, action, m.hname, m.sharerId);
                                         });
