@@ -138,5 +138,6 @@
     window.initShareMyList = function() {
         loadLists();
         initAdd();
+		
     };
 })();

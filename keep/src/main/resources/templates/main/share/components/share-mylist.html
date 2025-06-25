@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="content">
+	<div class="mylist-header">
+		<button type="button" id="mylist-add" class="list-add-btn">추가하기</button>
+	</div>
+	<div id="mylist-container" class="list-container"></div>
+	<div
+		th:replace="~{main/dashboard/components/modal/schedule-list-modal :: schedule-list-modal}"></div>
+</div>
+</html>
