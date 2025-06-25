@@ -1,13 +1,12 @@
 //keep/src/main/resources/static/js/main/share/components/share-request.js 
 (function() {
         function initShareRequest() {
-		const input = document.querySelector('.search-bar input');
-		const btn = document.querySelector('.search-bar button');
+                const input = document.querySelector('.search-bar input');
+                const btn = document.querySelector('.search-bar button');
                 const messageEl = document.querySelector('.request-message');
                 const requestBtn = document.querySelector('.request-btn');
                 let list = document.getElementById('request-list');
                 let selectedId = null;
-                let selectedListId = null;
 
 		hideControls();
 
@@ -17,7 +16,6 @@
                         requestBtn.textContent = '요청하기';
                         requestBtn.disabled = false;
                         messageEl.value = '';
-                        selectedListId = null;
                 }
 
 		function showControls() {
@@ -63,7 +61,6 @@
 			if (!name) return;
                         hideControls();
                         selectedId = null;
-                        selectedListId = null;
 			ensureList();
                         fetch(`/api/requests/users?name=` + encodeURIComponent(name))
                                 .then(res => res.json())
@@ -75,23 +72,11 @@
                                         list.innerHTML = '';
                                         list.style.minHeight = 'auto';
                                         data.forEach(m => {
-                                                const shareableLists = (m.scheduleLists || []).filter(l => l.isShareable === 'Y');
-                                                if (shareableLists.length === 0) {
-                                                        return;
-                                                }
-                                                const div = document.createElement('div');
-                                                div.className = 'list-item';
-                                                const span = document.createElement('span');
+                                                const div = document.createElement("div");
+                                                div.className = "list-item";
+                                                const span = document.createElement("span");
                                                 span.textContent = m.hname;
-                                                const action = document.createElement('div');
-                                                const dropdown = document.createElement('select');
-                                                dropdown.className = 'target-list-select';
-                                                shareableLists.forEach(l => {
-                                                        const opt = document.createElement('option');
-                                                        opt.value = l.scheduleListId;
-                                                        opt.textContent = l.title;
-                                                        dropdown.appendChild(opt);
-                                                });
+                                                const action = document.createElement("div");
                                                 if (m.pendingShare) {
                                                         if (m.acceptYn == 'Y') {
                                                                 const acceptBtn = document.createElement('button');
@@ -158,13 +143,10 @@
                                                                         button.textContent = '선택완료';
                                                                         button.disabled = true;
                                                                         button.classList.add('disabled');
-                                                                        dropdown.disabled = true;
                                                                         selectedId = m.id;
-                                                                        selectedListId = dropdown.value;
                                                                         showControls();
                                                                 });
                                                         }
-                                                        action.appendChild(dropdown);
                                                         action.appendChild(button);
                                                 }
                                                 div.appendChild(span);
@@ -187,18 +169,17 @@
 		}
 
                 requestBtn?.addEventListener('click', () => {
-                        if (!selectedId || !selectedListId) return;
+                        if (!selectedId) return;
                         fetch('/api/requests', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
-                               body: JSON.stringify({ sharerId: selectedId, message: messageEl.value, scheduleListId: selectedListId })
+                               body: JSON.stringify({ sharerId: selectedId, message: messageEl.value })
                        }).then(res => {
                                if (res.ok) {
                                        showToast('요청이 완료되었습니다.');
                                         sendNotification(selectedId, 'REQUEST');
                                        input.value = '';
                                        selectedId = null;
-                                       selectedListId = null;
                                        hideControls();
                                        renderEmpty('요청할 사람을 선택해 주세요.');
                                }
