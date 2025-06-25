@@ -4,20 +4,22 @@
         function initShareRequest() {
 		const input = document.querySelector('.search-bar input');
 		const btn = document.querySelector('.search-bar button');
-		const messageEl = document.querySelector('.request-message');
-		const requestBtn = document.querySelector('.request-btn');
-		let list = document.getElementById('request-list');
-		let selectedId = null;
+                const messageEl = document.querySelector('.request-message');
+                const requestBtn = document.querySelector('.request-btn');
+                let list = document.getElementById('request-list');
+                let selectedId = null;
+                let selectedListId = null;
 
 		hideControls();
 
-		function hideControls() {
-			messageEl.style.display = 'none';
-			requestBtn.style.display = 'none';
-			requestBtn.textContent = '요청하기';
-			requestBtn.disabled = false;
-			messageEl.value = '';
-		}
+                function hideControls() {
+                        messageEl.style.display = 'none';
+                        requestBtn.style.display = 'none';
+                        requestBtn.textContent = '요청하기';
+                        requestBtn.disabled = false;
+                        messageEl.value = '';
+                        selectedListId = null;
+                }
 
 		function showControls() {
 			messageEl.style.display = '';
@@ -60,27 +62,39 @@
 		btn?.addEventListener('click', () => {
 			const name = input.value.trim();
 			if (!name) return;
-			hideControls();
-			selectedId = null;
+                        hideControls();
+                        selectedId = null;
+                        selectedListId = null;
 			ensureList();
                         fetch(`/api/requests/users?name=` + encodeURIComponent(name))
-				.then(res => res.json())
-				.then(data => {
-					if (data.length === 0) {
-						renderEmpty('검색 결과가 없습니다.');
-						return;
-					}
-					list.innerHTML = '';
-					list.style.minHeight = 'auto';
-					data.forEach(m => {
-						const div = document.createElement('div');
-						div.className = 'list-item';
-						const span = document.createElement('span');
-						span.textContent = m.hname;
-						const action = document.createElement('div');
-						if (m.pendingShare) {
-							if (m.acceptYn == 'Y') {
-								const acceptBtn = document.createElement('button');
+                                .then(res => res.json())
+                                .then(data => {
+                                        if (data.length === 0) {
+                                                renderEmpty('검색 결과가 없습니다.');
+                                                return;
+                                        }
+                                        list.innerHTML = '';
+                                        list.style.minHeight = 'auto';
+                                        data.forEach(m => {
+                                                if (!m.scheduleLists || m.scheduleLists.length === 0) {
+                                                        return;
+                                                }
+                                                const div = document.createElement('div');
+                                                div.className = 'list-item';
+                                                const span = document.createElement('span');
+                                                span.textContent = m.hname;
+                                                const action = document.createElement('div');
+                                                const dropdown = document.createElement('select');
+                                                dropdown.className = 'target-list-select';
+                                                m.scheduleLists.forEach(l => {
+                                                        const opt = document.createElement('option');
+                                                        opt.value = l.scheduleListId;
+                                                        opt.textContent = l.title;
+                                                        dropdown.appendChild(opt);
+                                                });
+                                                if (m.pendingShare) {
+                                                        if (m.acceptYn == 'Y') {
+                                                                const acceptBtn = document.createElement('button');
 								acceptBtn.textContent = '완료';
 								acceptBtn.disabled = true;
 								acceptBtn.classList.add('disabled');
@@ -134,26 +148,29 @@
 								button.textContent = '요청완료';
 								button.disabled = true;
 								button.classList.add('disabled');
-							} else {
-								button.textContent = '선택';
-								button.addEventListener('click', () => {
-									Array.from(list.children).forEach(item => {
-										if (item !== div) item.remove();
-									});
-									list.style.minHeight = 'auto';
-									button.textContent = '선택완료';
-									button.disabled = true;
-									button.classList.add('disabled');
-									selectedId = m.id;
-									showControls();
-								});
-							}
-							action.appendChild(button);
-						}
-						div.appendChild(span);
-						div.appendChild(action);
-						list.appendChild(div);
-					});
+                                                        } else {
+                                                                button.textContent = '선택';
+                                                                button.addEventListener('click', () => {
+                                                                        Array.from(list.children).forEach(item => {
+                                                                                if (item !== div) item.remove();
+                                                                        });
+                                                                        list.style.minHeight = 'auto';
+                                                                        button.textContent = '선택완료';
+                                                                        button.disabled = true;
+                                                                        button.classList.add('disabled');
+                                                                        dropdown.disabled = true;
+                                                                        selectedId = m.id;
+                                                                        selectedListId = dropdown.value;
+                                                                        showControls();
+                                                                });
+                                                        }
+                                                        action.appendChild(dropdown);
+                                                        action.appendChild(button);
+                                                }
+                                                div.appendChild(span);
+                                                div.appendChild(action);
+                                                list.appendChild(div);
+                                        });
 				});
 		});
 
@@ -169,18 +186,19 @@
 			}, duration);
 		}
 
-		requestBtn?.addEventListener('click', () => {
-			if (!selectedId) return;
+                requestBtn?.addEventListener('click', () => {
+                        if (!selectedId || !selectedListId) return;
                         fetch('/api/requests', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-                               body: JSON.stringify({ sharerId: selectedId, message: messageEl.value })
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                               body: JSON.stringify({ sharerId: selectedId, message: messageEl.value, scheduleListId: selectedListId })
                        }).then(res => {
                                if (res.ok) {
                                        showToast('요청이 완료되었습니다.');
                                         sendNotification(selectedId, 'REQUEST');
                                        input.value = '';
                                        selectedId = null;
+                                       selectedListId = null;
                                        hideControls();
                                        renderEmpty('요청할 사람을 선택해 주세요.');
                                }
