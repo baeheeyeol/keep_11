@@ -30,6 +30,9 @@ public class ScheduleShareUserDTO {
     /** 회원 이름 (hname) */
     String hname;
 
+    /** 스케줄 목록 제목 */
+    String title;
+
     /** 초대 가능 여부 */
     Boolean invitable;
 
