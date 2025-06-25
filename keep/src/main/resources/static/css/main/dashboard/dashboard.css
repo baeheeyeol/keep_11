@@ -21,19 +21,31 @@
 
 .schedule-list-select {
   padding: 4px 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
 }
 
-.list-add-btn {
-  padding: 4px 8px;
-}
-
+.list-add-btn,
 .list-edit-btn {
-  padding: 4px 8px;
+  padding: 6px 10px;
+  border: none;
+  background-color: #fde2e1;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.list-add-btn:hover,
+.list-edit-btn:hover {
+  background-color: #fac7c5;
 }
 
 .dashboard-header-center {
+  flex: 1;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   font-weight: bold;
 }
@@ -46,8 +58,10 @@
 }
 
 .dashboard-header-right {
+  flex: 1;
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 8px;
 }
 /* current-date input 스타일—테두리·배경 제거, 가운데 정렬 */
