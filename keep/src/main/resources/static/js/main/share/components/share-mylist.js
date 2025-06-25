@@ -21,21 +21,17 @@
                 const div = document.createElement('div');
                 div.className = 'mylist-item';
 
-                const left = document.createElement('div');
-                const editBtn = document.createElement('button');
-                editBtn.className = 'edit-btn';
-                editBtn.textContent = '편집';
+                const titleText = document.createElement('span');
+                titleText.className = 'title-text';
+                titleText.textContent = l.title;
+
                 const input = document.createElement('input');
                 input.type = 'text';
-                input.value = l.title;
                 input.className = 'title-input';
-                input.disabled = true;
-                left.appendChild(editBtn);
-                left.appendChild(input);
+                input.value = l.title;
 
                 const share = document.createElement('div');
                 share.className = 'mylist-share';
-                share.textContent = '공유여부 : ';
                 const yBtn = document.createElement('button');
                 yBtn.className = 'share-btn';
                 yBtn.textContent = 'Y';
@@ -45,6 +41,29 @@
                 share.appendChild(yBtn);
                 share.appendChild(nBtn);
 
+                const actions = document.createElement('div');
+                const editBtn = document.createElement('button');
+                editBtn.className = 'edit-btn';
+                editBtn.textContent = '✎';
+                editBtn.title = '편집';
+                editBtn.setAttribute('aria-label', '편집');
+
+                const saveBtn = document.createElement('button');
+                saveBtn.className = 'save-btn';
+                saveBtn.textContent = '✔︎';
+                saveBtn.title = '저장';
+                saveBtn.setAttribute('aria-label', '저장');
+
+                const cancelBtn = document.createElement('button');
+                cancelBtn.className = 'cancel-btn';
+                cancelBtn.textContent = '✖';
+                cancelBtn.title = '취소';
+                cancelBtn.setAttribute('aria-label', '취소');
+
+                actions.appendChild(editBtn);
+                actions.appendChild(saveBtn);
+                actions.appendChild(cancelBtn);
+
                 function refreshShare() {
                     yBtn.classList.toggle('active', l.isShareable === 'Y');
                     nBtn.classList.toggle('active', l.isShareable === 'N');
@@ -53,42 +72,68 @@
 
                 yBtn.addEventListener('click', async () => {
                     if (l.isShareable === 'Y') return;
-                    await updateList(l.scheduleListId, { title: input.value, isShareable: 'Y' });
+                    await updateList(l.scheduleListId, { title: l.title, isShareable: 'Y' });
                     l.isShareable = 'Y';
                     refreshShare();
                     window.saveToast?.showMessage('해당 일정을 공유할수 있습니다.');
                 });
                 nBtn.addEventListener('click', async () => {
                     if (l.isShareable === 'N') return;
-                    await updateList(l.scheduleListId, { title: input.value, isShareable: 'N' });
+                    await updateList(l.scheduleListId, { title: l.title, isShareable: 'N' });
                     l.isShareable = 'N';
                     refreshShare();
                     window.saveToast?.showMessage('공유가 취소 되었습니다.');
                 });
 
-                editBtn.addEventListener('click', async () => {
-                    if (editBtn.textContent === '편집') {
-                        input.disabled = false;
-                        input.classList.add('editable');
-                        input.focus();
-                        editBtn.textContent = '저장';
-                    } else {
-                        const newTitle = input.value.trim();
-                        if (!newTitle) {
-                            input.value = l.title;
-                        } else if (newTitle !== l.title) {
-                            await updateList(l.scheduleListId, { title: newTitle, isShareable: l.isShareable });
-                            l.title = newTitle;
-                            window.saveToast?.showMessage('저장되었습니다');
-                        }
-                        input.disabled = true;
-                        input.classList.remove('editable');
-                        editBtn.textContent = '편집';
+                function startEdit() {
+                    div.classList.add('editing');
+                    input.value = l.title;
+                    input.focus();
+                }
+
+                async function saveEdit() {
+                    const newTitle = input.value.trim();
+                    div.classList.remove('editing');
+                    if (!newTitle) {
+                        input.value = l.title;
+                        return;
                     }
+                    if (newTitle !== l.title) {
+                        await updateList(l.scheduleListId, { title: newTitle, isShareable: l.isShareable });
+                        l.title = newTitle;
+                        titleText.textContent = newTitle;
+                        window.saveToast?.showMessage('저장되었습니다');
+                    }
+                }
+
+                function cancelEdit() {
+                    div.classList.remove('editing');
+                    input.value = l.title;
+                }
+
+                editBtn.addEventListener('click', startEdit);
+                cancelBtn.addEventListener('click', cancelEdit);
+                saveBtn.addEventListener('click', () => {
+                    saveEdit().then(() => input.blur());
                 });
 
-                div.appendChild(left);
+                input.addEventListener('keydown', e => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        saveEdit().then(() => input.blur());
+                    } else if (e.key === 'Escape') {
+                        cancelEdit();
+                        input.blur();
+                    }
+                });
+                input.addEventListener('blur', () => {
+                    if (div.classList.contains('editing')) cancelEdit();
+                });
+
+                div.appendChild(titleText);
+                div.appendChild(input);
                 div.appendChild(share);
+                div.appendChild(actions);
                 container.appendChild(div);
             });
         } catch (e) {

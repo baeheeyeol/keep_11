@@ -1,5 +1,15 @@
 .mylist-header {
   margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mylist-columns {
+  flex: 1;
+  display: flex;
+  gap: 20px;
+  font-weight: bold;
 }
 
 #mylist-container .mylist-item {
@@ -15,7 +25,27 @@
 }
 
 .mylist-item .edit-btn {
-  margin-right: 8px;
+  margin-left: 8px;
+  visibility: hidden;
+}
+
+.mylist-item:hover .edit-btn {
+  visibility: visible;
+}
+
+.mylist-item .save-btn,
+.mylist-item .cancel-btn {
+  margin-left: 8px;
+  display: none;
+}
+
+.mylist-item.editing .edit-btn {
+  display: none;
+}
+
+.mylist-item.editing .save-btn,
+.mylist-item.editing .cancel-btn {
+  display: inline;
 }
 
 .mylist-item .title-input {
@@ -23,11 +53,21 @@
   border: none;
   background: transparent;
   padding: 6px 4px;
+  display: none;
 }
 
-.mylist-item .title-input.editable {
+.mylist-item .title-text {
+  flex: 1;
+}
+
+.mylist-item.editing .title-input {
+  display: block;
   border: 1px solid #ccc;
   background: #fff;
+}
+
+.mylist-item.editing .title-text {
+  display: none;
 }
 
 .mylist-share {
