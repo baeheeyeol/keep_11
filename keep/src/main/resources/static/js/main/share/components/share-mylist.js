@@ -21,6 +21,7 @@
     function createItem(l, container, before = null, startEditing = false) {
         const div = document.createElement('div');
         div.className = 'mylist-item';
+        if (l.isNew) div.classList.add('new-item');
 
         const titleText = document.createElement('span');
         titleText.className = 'title-text';
@@ -111,6 +112,7 @@
                 const id = await createList({ title: newTitle, isShareable: l.isShareable });
                 l.scheduleListId = id;
                 l.isNew = false;
+                div.classList.remove('new-item');
                 l.title = newTitle;
                 titleText.textContent = newTitle;
                 window.saveToast?.showMessage('저장되었습니다');
@@ -133,7 +135,8 @@
 
         editBtn.addEventListener('click', startEdit);
         cancelBtn.addEventListener('click', cancelEdit);
-        saveBtn.addEventListener('click', () => {
+        saveBtn.addEventListener('mousedown', e => {
+            e.preventDefault();
             saveEdit().then(() => input.blur());
         });
 
