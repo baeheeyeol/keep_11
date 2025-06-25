@@ -1,6 +1,7 @@
 package com.keep.share.controller;
 
 import com.keep.share.dto.RequestPermissionDTO;
+import com.keep.share.dto.RequestUserDTO;
 import com.keep.share.dto.ScheduleShareUserDTO;
 import com.keep.share.service.ScheduleShareService;
 import io.swagger.v3.oas.annotations.Operation;

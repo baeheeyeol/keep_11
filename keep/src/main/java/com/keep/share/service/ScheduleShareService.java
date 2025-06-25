@@ -56,7 +56,7 @@ public class ScheduleShareService {
         public List<ScheduleShareUserDTO> searchAvailableForRequest(Long sharerId, String name) {
                 return repository.searchAvailableForRequest(sharerId, name);
         }
-
+        @Transactional(readOnly = true)
         public List<RequestUserDTO> searchRequestableUsersWithSchedules(Long receiverId, String name) {
                 List<MemberEntity> members = memberRepository.searchByHname(name);
                 List<Long> userIds = members.stream()
