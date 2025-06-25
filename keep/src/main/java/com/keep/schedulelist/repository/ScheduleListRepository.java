@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface ScheduleListRepository extends JpaRepository<ScheduleListEntity, Long> {
     List<ScheduleListEntity> findByUserId(Long userId);
+
+    List<ScheduleListEntity> findByUserIdAndIsShareable(Long userId, String isShareable);
 }

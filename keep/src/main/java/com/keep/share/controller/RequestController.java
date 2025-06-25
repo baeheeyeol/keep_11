@@ -31,6 +31,14 @@ public class RequestController {
                 return shareService.searchAvailableForRequest(receiverId, name);
         }
 
+        @GetMapping("/users-with-lists")
+        @Operation(summary = "Search users with shareable schedules")
+        public List<RequestUserDTO> listAvailableRequestUsersWithLists(@RequestParam("name") String name,
+                        Authentication authentication) {
+                Long receiverId = Long.valueOf(authentication.getName());
+                return shareService.searchAvailableForRequestWithSchedules(receiverId, name);
+        }
+
 	// —————————————————————————————————————————————————————————
 	// 4) 실행: 다른 사용자에게 요청 보내기
 	// —————————————————————————————————————————————————————————
@@ -39,7 +47,7 @@ public class RequestController {
         @PostMapping
         public ResponseEntity<Void> sendRequest(Authentication authentication, @RequestBody RequestPermissionDTO dto) {
                 Long receiverId = Long.valueOf(authentication.getName());
-                shareService.request(dto.getSharerId(), receiverId, dto.getMessage());
+                shareService.request(dto.getSharerId(), receiverId, dto.getMessage(), dto.getScheduleListId());
                 return ResponseEntity.status(HttpStatus.CREATED).build();
         }
 
