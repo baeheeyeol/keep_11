@@ -102,7 +102,15 @@
   transition: background-color 0.2s;
 }
 
+.list-add-btn {
+  background-color: #d0d7ff;
+}
+
 .list-add-btn:hover,
 .mylist-item button:hover {
-  background-color: #d0d7ff;
+  background-color: #b4baff;
+}
+
+.mylist-item.new-item {
+  margin-bottom: 10px;
 }
