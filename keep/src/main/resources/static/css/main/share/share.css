@@ -106,6 +106,9 @@
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 .accept-btn {
   background-color: #4f46e5;
@@ -117,7 +120,8 @@
   cursor: not-allowed;
 }
 .reject-btn {
-  background-color: #e5e7eb;
+  background-color: #ef4444;
+  color: #fff;
   margin-right: 4px;
 }
 .invite-btn {
