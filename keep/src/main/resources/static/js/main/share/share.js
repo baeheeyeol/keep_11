@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const fragmentContainer = document.getElementById('fragment-container');
         const viewBtns = document.querySelectorAll('.view-btn');
         const params = new URLSearchParams(window.location.search);
-        const allowedViews = ['list', 'request', 'invite', 'manage'];
+        const allowedViews = ['list', 'request', 'invite', 'manage', 'mylist'];
         let currentView = params.get('view');
         if (!allowedViews.includes(currentView)) {
                 currentView = 'invite';
@@ -20,7 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
 				document.getElementById('share-invite-css').disabled = (view !== 'invite');
 				document.getElementById('share-request-css').disabled = (view !== 'request');
 				document.getElementById('share-list-css').disabled = (view !== 'list');
-				document.getElementById('share-manage-css').disabled = (view !== 'manage');
+                                document.getElementById('share-manage-css').disabled = (view !== 'manage');
+                                document.getElementById('share-mylist-css').disabled = (view !== 'mylist');
                                 if (view === 'invite') {
                                         if (typeof window.initShareInvite === 'function') {
                                                 window.initShareInvite();
@@ -36,6 +37,10 @@ document.addEventListener('DOMContentLoaded', () => {
                                 } else if (view === 'manage') {
                                         if (typeof window.initShareManage === 'function') {
                                                 window.initShareManage();
+                                        }
+                                } else if (view === 'mylist') {
+                                        if (typeof window.initShareMyList === 'function') {
+                                                window.initShareMyList();
                                         }
                                 }
 				requestAnimationFrame(() => {
