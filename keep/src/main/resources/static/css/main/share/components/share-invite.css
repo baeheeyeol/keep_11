@@ -62,3 +62,7 @@
 #invite-list .list-item:last-child {
   border-bottom: 1px solid #ddd;
 }
+
+#go-mylist {
+  margin-top: 6px;
+}
