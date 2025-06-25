@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const allowedViews = ['list', 'request', 'invite', 'manage', 'mylist'];
         let currentView = params.get('view');
         if (!allowedViews.includes(currentView)) {
-                currentView = 'invite';
+                currentView = 'request';
         }
 
 	function loadView(view) {
