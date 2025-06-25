@@ -13,6 +13,7 @@
   /* Match container height to occupy remaining space */
   min-height: calc(100vh - 240px);
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
