@@ -1,4 +1,8 @@
-/* static/js/main/dashboard/components/dashboard-weekly.js 에서 빈공간에 드래그 할때 현재는 맨처음에 시작한 요일에서 드래그 하다가 커서가 요일을 벗어나면 드래그가 멈춰버리는데 맨처음을 기준으로 위아래로 영향만 되도록 만약 커서가 요일을 벗어나도 아무런 영향을 안주도록 수정*/
+/* 주간 보드의 빈 영역을 드래그하여 시간을 선택할 때
+ * 드래그가 시작된 요일을 벗어나면 선택이 취소되던 문제를 수정한다.
+ * 이제는 시작한 요일을 기준으로 세로 방향으로만 선택을 확장하며
+ * 커서가 다른 요일로 이동해도 선택이 유지된다.
+ */
 
 (function() {
 	/**
@@ -644,9 +648,6 @@
                         if (!selecting) return;
                         const rect = grid.getBoundingClientRect();
                         const curY = eMove.clientY - rect.top;
-                        const curX = eMove.clientX - rect.left;
-                        const colIdx = Math.floor(curX / (rect.width / 7));
-                        if (colIdx !== startColIdx) return;
                         const top = Math.min(startY, curY);
                         const bottom = Math.max(startY, curY);
                         selectDiv.style.top = `${top}px`;
@@ -663,28 +664,21 @@
                         selecting = false;
                 }
 
-		function pointerUp(eUp) {
-			if (!selecting) return;
+                function pointerUp(eUp) {
+                        if (!selecting) return;
                         document.removeEventListener('pointermove', pointerMove);
                         document.removeEventListener('pointerup', pointerUp);
                         document.removeEventListener('pointercancel', cancelSelection);
                         const rect = grid.getBoundingClientRect();
-			const curY = eUp.clientY - rect.top;
-			const curX = eUp.clientX - rect.left;
-			const colIdx = Math.floor(curX / (rect.width / 7));
-			if (colIdx !== startColIdx) {
-				selectDiv.remove();
-				selecting = false;
-				return;
-			}
-			let top = Math.min(startY, curY);
-			let bottom = Math.max(startY, curY);
-			top = Math.max(0, Math.round(top / STEP) * STEP);
-			bottom = Math.min(24 * slotHeight, Math.round(bottom / STEP) * STEP);
-			selectDiv.remove();
-			selecting = false;
-			openModalWithRange(startDateStr, top, bottom);
-		}
+                        const curY = eUp.clientY - rect.top;
+                        let top = Math.min(startY, curY);
+                        let bottom = Math.max(startY, curY);
+                        top = Math.max(0, Math.round(top / STEP) * STEP);
+                        bottom = Math.min(24 * slotHeight, Math.round(bottom / STEP) * STEP);
+                        selectDiv.remove();
+                        selecting = false;
+                        openModalWithRange(startDateStr, top, bottom);
+                }
 
                 grid.addEventListener('pointerdown', e => {
                         if (e.target.closest('.event')) return;
