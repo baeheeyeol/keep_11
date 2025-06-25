@@ -13,6 +13,7 @@ public class ShareMapperImpl implements ShareMapper {
             return null;
         }
         return RequestPermissionDTO.builder()
+                .scheduleListId(entity.getScheduleListId())
                 .scheduleShareId(entity.getId())
                 .sharerId(entity.getSharerId())
                 .receiverId(entity.getReceiverId())
@@ -32,6 +33,7 @@ public class ShareMapperImpl implements ShareMapper {
                 .id(dto.getScheduleShareId())
                 .sharerId(dto.getSharerId())
                 .receiverId(dto.getReceiverId())
+                .scheduleListId(dto.getScheduleListId())
                 .canEdit(dto.getCanEdit())
                 .acceptYn(dto.getAcceptYn())
                 .message(dto.getMessage())

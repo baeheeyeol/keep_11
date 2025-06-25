@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class RequestPermissionDTO {
+    private Long scheduleListId;
     private Long scheduleShareId;
     private Long scheduleId;
     private Long sharerId;

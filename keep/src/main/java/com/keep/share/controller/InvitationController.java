@@ -23,9 +23,10 @@ public class InvitationController {
     @Operation(summary = "Search users to invite")
     @GetMapping("/users")
     public List<ScheduleShareUserDTO> listAvailableInviteUsers(@RequestParam("name") String name,
+                                                               @RequestParam("scheduleListId") Long scheduleListId,
                                                                Authentication authentication) {
         Long sharerId = Long.valueOf(authentication.getName());
-        return shareService.searchAvailableForInvite(sharerId, name);
+        return shareService.searchAvailableForInvite(sharerId, name, scheduleListId);
     }
 
     @Operation(summary = "Send invitation")
@@ -35,7 +36,7 @@ public class InvitationController {
                                                @RequestBody RequestPermissionDTO dto) {
         Long sharerId = Long.valueOf(authentication.getName());
         String canEdit = dto.getCanEdit() == null ? "N" : dto.getCanEdit();
-        shareService.invite(sharerId, dto.getReceiverId(), canEdit);
+        shareService.invite(sharerId, dto.getReceiverId(), canEdit, dto.getScheduleListId());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

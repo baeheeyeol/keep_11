@@ -1,9 +1,10 @@
 (function() {
 	//keep/src/main/resources/static/js/main/share/components/share-invite.js
 	function initShareInvite() {
-		const input = document.getElementById('invite-search-input');
-		const btn = document.getElementById('invite-search-btn');
-		let list = document.getElementById('invite-list');
+                const input = document.getElementById('invite-search-input');
+                const btn = document.getElementById('invite-search-btn');
+                const listSelect = document.getElementById('schedule-list-select');
+                let list = document.getElementById('invite-list');
 
 		function ensureList() {
 			if (!list) {
@@ -14,11 +15,32 @@
 			}
 		}
 
-		function renderEmpty(msg) {
-			ensureList();
-			list.style.minHeight = '';
-			list.innerHTML = `<div class="placeholder">${msg}</div>`;
-		}
+                function renderEmpty(msg) {
+                        ensureList();
+                        list.style.minHeight = '';
+                        list.innerHTML = `<div class="placeholder">${msg}</div>`;
+                }
+
+               function renderNoShareable() {
+                       ensureList();
+                       list.style.minHeight = '';
+                       list.innerHTML = `<div class="placeholder">공유가능한 일정이 없습니다.<br/><button id="go-mylist" class="invite-btn">나의 일정으로 바로가기</button></div>`;
+                       document.getElementById('go-mylist')?.addEventListener('click', () => {
+                               window.location.href = '/share?view=mylist';
+                       });
+               }
+
+                fetch('/api/schedule-lists')
+                        .then(res => res.json())
+                        .then(data => {
+                                const shareable = data.filter(l => l.isShareable === 'Y');
+                                if (shareable.length === 0) {
+                                        btn.disabled = true;
+                                        renderNoShareable();
+                                } else {
+                                        listSelect.innerHTML = shareable.map(l => `<option value="${l.scheduleListId}">${l.title}</option>`).join('');
+                                }
+                        });
 
 		function createDoneButton(text) {
 			const btn = document.createElement('button');
@@ -56,7 +78,7 @@
                        fetch('/api/invitations', {
                                method: 'POST',
                                headers: { 'Content-Type': 'application/json' },
-                               body: JSON.stringify({ receiverId: id, canEdit: canEdit })
+                               body: JSON.stringify({ receiverId: id, canEdit: canEdit, scheduleListId: listSelect.value })
                        });
                        replaceWithDone(container, '초대완료');
                         sendNotification(id, 'INVITE');
@@ -93,7 +115,7 @@
 			const name = input.value.trim();
 			if (!name) return;
 			ensureList();
-                        fetch(`/api/invitations/users?name=` + encodeURIComponent(name))
+                        fetch(`/api/invitations/users?name=` + encodeURIComponent(name) + `&scheduleListId=` + listSelect.value)
 				.then(res => res.json())
 				.then(data => {
 					if (data.length === 0) {
@@ -159,17 +181,17 @@
 								readBtn.className = 'invite-btn';
 								readBtn.type = 'button';
 								readBtn.textContent = '읽기초대';
-								readBtn.addEventListener('click', () => {
-									handleInvite(m.id, 'N', action, m.hname);
-								});
+                                                                readBtn.addEventListener('click', () => {
+                                                                        handleInvite(m.id, 'N', action, m.hname);
+                                                                });
 
 								const editBtn = document.createElement('button');
 								editBtn.className = 'invite-btn';
 								editBtn.type = 'button';
 								editBtn.textContent = '수정초대';
-								editBtn.addEventListener('click', () => {
-									handleInvite(m.id, 'Y', action, m.hname);
-								});
+                                                                editBtn.addEventListener('click', () => {
+                                                                        handleInvite(m.id, 'Y', action, m.hname);
+                                                                });
 								action.appendChild(readBtn);
 								action.appendChild(editBtn);
 

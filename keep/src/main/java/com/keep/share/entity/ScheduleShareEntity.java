@@ -34,8 +34,11 @@ public class ScheduleShareEntity {
 	@Column(name = "ACCEPT_YN")
 	private String acceptYn;
 
-	@Column(name = "ACTION_TYPE")
-	private String actionType;
+        @Column(name = "ACTION_TYPE")
+        private String actionType;
+
+        @Column(name = "SCHEDULE_LIST_ID")
+        private Long scheduleListId;
 
 	@Lob
 	@Column(name = "MESSAGE")
