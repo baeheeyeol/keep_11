@@ -76,7 +76,8 @@
                                         list.innerHTML = '';
                                         list.style.minHeight = 'auto';
                                         data.forEach(m => {
-                                                if (!m.scheduleLists || m.scheduleLists.length === 0) {
+                                                const shareableLists = (m.scheduleLists || []).filter(l => l.isShareable === 'Y');
+                                                if (shareableLists.length === 0) {
                                                         return;
                                                 }
                                                 const div = document.createElement('div');
@@ -86,7 +87,7 @@
                                                 const action = document.createElement('div');
                                                 const dropdown = document.createElement('select');
                                                 dropdown.className = 'target-list-select';
-                                                m.scheduleLists.forEach(l => {
+                                                shareableLists.forEach(l => {
                                                         const opt = document.createElement('option');
                                                         opt.value = l.scheduleListId;
                                                         opt.textContent = l.title;
