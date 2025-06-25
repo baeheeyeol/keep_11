@@ -1,4 +1,4 @@
-/* static/js/main/dashboard/components/dashboard-weekly.js */
+/* static/js/main/dashboard/components/dashboard-weekly.js 에서 빈공간에 드래그 할때 현재는 맨처음에 시작한 요일에서 드래그 하다가 커서가 요일을 벗어나면 드래그가 멈춰버리는데 맨처음을 기준으로 위아래로 영향만 되도록 만약 커서가 요일을 벗어나도 아무런 영향을 안주도록 수정*/
 
 (function() {
 	/**
@@ -327,20 +327,24 @@
                         // 드래그 중임을 표시
                         eventBlocks.forEach(el => (el.__isDragging = true));
 
-                        originals.forEach(o => {
-                                // 1) 세로 이동: 원본 top + deltaY → 15분 단위로 스냅
-                                let rawTop = o.origTopPx + deltaY;
-                                const minTop = 0;
-                                const maxTop = totalGridHeight - o.el.clientHeight;
-                                if (rawTop < minTop) rawTop = minTop;
-                                if (rawTop > maxTop) rawTop = maxTop;
-                                const snappedTop = Math.round(rawTop / quarterSlot) * quarterSlot;
-                                o.el.style.top = `${snappedTop}px`;
+                        const dayWidthPx = gridRect.width / 7;
 
-                                // 2) 가로 이동은 무시하고 처음 위치 유지
-                                const origLeft = parseFloat(o.el.dataset.leftPct);
-                                o.el.style.left = `calc(${origLeft}% )`;
-                        });
+			originals.forEach(o => {
+				// 1) 세로 이동: 원본 top + deltaY → 15분 단위로 스냅
+				let rawTop = o.origTopPx + deltaY;
+				const minTop = 0;
+				const maxTop = totalGridHeight - o.el.clientHeight;
+				if (rawTop < minTop) rawTop = minTop;
+				if (rawTop > maxTop) rawTop = maxTop;
+				const snappedTop = Math.round(rawTop / quarterSlot) * quarterSlot;
+				o.el.style.top = `${snappedTop}px`;
+
+				// 2) 가로 이동: 요일 경계를 넘어 이동 가능
+				let newDay = Math.round((o.origDayIdx * dayWidthPx + deltaX) / dayWidthPx);
+				if (newDay < 0) newDay = 0;
+				if (newDay > 6) newDay = 6;
+				o.el.style.left = `calc(${newDay * percentPerDay}% )`;
+			});
 		}
 
 		async function pointerUpHandler(eUp) {
