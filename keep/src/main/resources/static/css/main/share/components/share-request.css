@@ -32,6 +32,17 @@
   cursor: not-allowed;
 }
 
+.target-list-select {
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-right: 6px;
+}
+
+.target-list-select:disabled {
+  background-color: #e5e7eb;
+}
+
 .request-toast {
   position: fixed;
   left: 50%;
