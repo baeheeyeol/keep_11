@@ -10,8 +10,6 @@ import com.keep.member.repository.MemberRepository;
 import com.keep.schedulelist.entity.ScheduleListEntity;
 import com.keep.schedulelist.repository.ScheduleListRepository;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 
 import com.keep.share.mapper.ShareMapper;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +18,12 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.module.ModuleDescriptor.Builder;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -55,23 +57,49 @@ public class ScheduleShareService {
                 return repository.searchAvailableForRequest(sharerId, name);
         }
 
-        public List<RequestUserDTO> searchAvailableForRequestWithSchedules(Long receiverId, String name) {
+        public List<RequestUserDTO> searchRequestableUsersWithSchedules(Long receiverId, String name) {
                 List<MemberEntity> members = memberRepository.searchByHname(name);
-                java.util.List<RequestUserDTO> result = new java.util.ArrayList<>();
+                List<Long> userIds = members.stream()
+                                .map(MemberEntity::getId)
+                                .filter(id -> !Objects.equals(id, receiverId))
+                                .toList();
+
+                if (userIds.isEmpty()) {
+                        return List.of();
+                }
+
+                List<ScheduleListEntity> lists = scheduleListRepository.findByUserIdInAndIsShareable(userIds, "Y");
+                Map<Long, List<ScheduleListEntity>> listsByUser = lists.stream()
+                                .collect(Collectors.groupingBy(ScheduleListEntity::getUserId));
+
+                List<Long> scheduleIds = lists.stream()
+                                .map(ScheduleListEntity::getScheduleListId)
+                                .toList();
+
+                List<ScheduleShareEntity> shares = repository.findBySharerIdInAndReceiverIdAndScheduleListIdIn(userIds,
+                                receiverId, scheduleIds);
+
+                Set<String> requestedKeys = shares.stream()
+                                .map(s -> s.getSharerId() + "/" + s.getScheduleListId())
+                                .collect(Collectors.toSet());
+
+                List<RequestUserDTO> result = new ArrayList<>();
                 for (MemberEntity m : members) {
-                        if (m.getId().equals(receiverId)) continue;
-                        List<ScheduleListEntity> lists = scheduleListRepository.findByUserIdAndIsShareable(m.getId(), "Y");
-                        java.util.List<RequestUserScheduleDTO> schedules = new java.util.ArrayList<>();
-                        for (ScheduleListEntity l : lists) {
-                                boolean requested = repository
-                                                .findFirstBySharerIdAndReceiverIdAndScheduleListId(m.getId(), receiverId, l.getScheduleListId())
-                                                .isPresent();
+                        if (Objects.equals(m.getId(), receiverId)) {
+                                continue;
+                        }
+
+                        List<ScheduleListEntity> userLists = listsByUser.getOrDefault(m.getId(), List.of());
+                        List<RequestUserScheduleDTO> schedules = new ArrayList<>();
+                        for (ScheduleListEntity l : userLists) {
+                                boolean requested = requestedKeys.contains(m.getId() + "/" + l.getScheduleListId());
                                 schedules.add(RequestUserScheduleDTO.builder()
                                                 .scheduleListId(l.getScheduleListId())
                                                 .title(l.getTitle())
                                                 .requested(requested)
                                                 .build());
                         }
+
                         if (!schedules.isEmpty()) {
                                 result.add(RequestUserDTO.builder()
                                                 .id(m.getId())
@@ -80,6 +108,7 @@ public class ScheduleShareService {
                                                 .build());
                         }
                 }
+
                 return result;
         }
 
