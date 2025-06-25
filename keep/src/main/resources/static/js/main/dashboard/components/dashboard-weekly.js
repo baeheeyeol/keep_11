@@ -327,24 +327,20 @@
                         // 드래그 중임을 표시
                         eventBlocks.forEach(el => (el.__isDragging = true));
 
-                        const dayWidthPx = gridRect.width / 7;
+                        originals.forEach(o => {
+                                // 1) 세로 이동: 원본 top + deltaY → 15분 단위로 스냅
+                                let rawTop = o.origTopPx + deltaY;
+                                const minTop = 0;
+                                const maxTop = totalGridHeight - o.el.clientHeight;
+                                if (rawTop < minTop) rawTop = minTop;
+                                if (rawTop > maxTop) rawTop = maxTop;
+                                const snappedTop = Math.round(rawTop / quarterSlot) * quarterSlot;
+                                o.el.style.top = `${snappedTop}px`;
 
-			originals.forEach(o => {
-				// 1) 세로 이동: 원본 top + deltaY → 15분 단위로 스냅
-				let rawTop = o.origTopPx + deltaY;
-				const minTop = 0;
-				const maxTop = totalGridHeight - o.el.clientHeight;
-				if (rawTop < minTop) rawTop = minTop;
-				if (rawTop > maxTop) rawTop = maxTop;
-				const snappedTop = Math.round(rawTop / quarterSlot) * quarterSlot;
-				o.el.style.top = `${snappedTop}px`;
-
-				// 2) 가로 이동: 요일 경계를 넘어 이동 가능
-				let newDay = Math.round((o.origDayIdx * dayWidthPx + deltaX) / dayWidthPx);
-				if (newDay < 0) newDay = 0;
-				if (newDay > 6) newDay = 6;
-				o.el.style.left = `calc(${newDay * percentPerDay}% )`;
-			});
+                                // 2) 가로 이동은 무시하고 처음 위치 유지
+                                const origLeft = parseFloat(o.el.dataset.leftPct);
+                                o.el.style.left = `calc(${origLeft}% )`;
+                        });
 		}
 
 		async function pointerUpHandler(eUp) {
