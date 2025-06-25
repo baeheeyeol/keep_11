@@ -94,7 +94,9 @@
 				list.forEach(m => {
 					const div = document.createElement('div');
 					div.className = 'list-item';
-					div.appendChild(document.createElement('span')).textContent = m.hname;
+                                        const nameSpan = document.createElement('span');
+                                        nameSpan.textContent = m.title ? `${m.hname} - ${m.title}` : m.hname;
+                                        div.appendChild(nameSpan);
 					const action = document.createElement('div');
 					const readBtn = document.createElement('button');
 					readBtn.className = 'accept-btn';
@@ -131,7 +133,9 @@
 				list.forEach(m => {
 					const div = document.createElement('div');
 					div.className = 'list-item';
-					div.appendChild(document.createElement('span')).textContent = m.hname;
+                                        const nameSpan = document.createElement('span');
+                                        nameSpan.textContent = m.title ? `${m.hname} - ${m.title}` : m.hname;
+                                        div.appendChild(nameSpan);
 					const action = document.createElement('div');
 					const acceptBtn = document.createElement('button');
 					acceptBtn.className = 'accept-btn';
