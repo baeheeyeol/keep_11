@@ -24,7 +24,7 @@
                function renderNoShareable() {
                        ensureList();
                        list.style.minHeight = '';
-                       list.innerHTML = `<div class="placeholder">공유가능한 일정이 없습니다.<br/><button id="go-mylist" class="invite-btn">나의 일정으로 바로가기</button></div>`;
+                       list.innerHTML = `<div class="placeholder">공유가능한 일정이 없습니다.<br/><button id="go-mylist" class="invite-btn go-mylist">나의 일정으로 바로가기</button></div>`;
                        document.getElementById('go-mylist')?.addEventListener('click', () => {
                                window.location.href = '/share?view=mylist';
                        });
@@ -36,6 +36,8 @@
                                 const shareable = data.filter(l => l.isShareable === 'Y');
                                 if (shareable.length === 0) {
                                         btn.disabled = true;
+                                        listSelect.style.display = 'none';
+                                        input.style.display = 'none';
                                         renderNoShareable();
                                 } else {
                                         listSelect.innerHTML = shareable.map(l => `<option value="${l.scheduleListId}">${l.title}</option>`).join('');
