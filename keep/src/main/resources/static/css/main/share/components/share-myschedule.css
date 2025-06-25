@@ -1,0 +1,48 @@
+.mylist-header {
+  margin-bottom: 10px;
+}
+
+#mylist-container .mylist-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+#mylist-container .mylist-item:last-child {
+  border-bottom: none;
+}
+
+.mylist-item .edit-btn {
+  margin-right: 8px;
+}
+
+.mylist-item .title-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 6px 4px;
+}
+
+.mylist-item .title-input.editable {
+  border: 1px solid #ccc;
+  background: #fff;
+}
+
+.mylist-share {
+  white-space: nowrap;
+}
+
+.mylist-share .share-btn {
+  margin-left: 4px;
+  padding: 4px 8px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.mylist-share .share-btn.active {
+  background-color: #4f46e5;
+  color: #fff;
+}
