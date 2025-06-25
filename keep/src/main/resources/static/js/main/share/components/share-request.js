@@ -72,6 +72,7 @@
                         span.textContent = u.hname;
 
                         const select = document.createElement('select');
+                        select.className = 'target-list-select';
                         u.schedules.forEach(sc => {
                             const opt = document.createElement('option');
                             opt.value = sc.scheduleListId;
@@ -87,14 +88,30 @@
 
                         function updateButton() {
                             const opt = select.selectedOptions[0];
-                            if (opt && opt.dataset.requested === 'Y') {
-                                button.textContent = '요청완료';
-                                button.disabled = true;
-                                button.classList.add('disabled');
-                            } else {
-                                button.textContent = '선택';
-                                button.disabled = false;
-                                button.classList.remove('disabled');
+                            if (!opt) return;
+                            const requested = opt.dataset.requested === 'Y';
+                            if (button.textContent !== '선택완료') {
+                                if (requested) {
+                                    button.textContent = '요청완료';
+                                    button.disabled = true;
+                                    button.classList.add('disabled');
+                                } else {
+                                    button.textContent = '선택';
+                                    button.disabled = false;
+                                    button.classList.remove('disabled');
+                                }
+                            }
+                            if (selected && selected.sharerId === u.id) {
+                                selected.scheduleListId = select.value;
+                                if (requested) {
+                                    requestBtn.textContent = '요청완료';
+                                    requestBtn.disabled = true;
+                                    requestBtn.classList.add('disabled');
+                                } else {
+                                    requestBtn.textContent = '요청하기';
+                                    requestBtn.disabled = false;
+                                    requestBtn.classList.remove('disabled');
+                                }
                             }
                         }
                         select.addEventListener('change', updateButton);
@@ -110,6 +127,7 @@
                             button.classList.add('disabled');
                             selected = { sharerId: u.id, scheduleListId: select.value };
                             showControls();
+                            updateButton();
                         });
 
                         action.appendChild(select);
