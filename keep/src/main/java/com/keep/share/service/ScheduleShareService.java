@@ -23,12 +23,13 @@ public class ScheduleShareService {
 	private final ScheduleShareRepository repository;
 	private final ShareMapper mapper;
 
-	public void invite(Long sharerId, Long receiverId, String canEdit) {
-		ScheduleShareEntity entity = ScheduleShareEntity.builder().sharerId(sharerId).receiverId(receiverId)
-				.canEdit(canEdit).acceptYn("N").actionType("I").createdBy(sharerId).lastUpdatedBy(sharerId)
-				.lastUpdateLogin(sharerId).build();
-		repository.save(entity);
-	}
+        public void invite(Long sharerId, Long receiverId, String canEdit, Long scheduleListId) {
+                ScheduleShareEntity entity = ScheduleShareEntity.builder().sharerId(sharerId).receiverId(receiverId)
+                                .scheduleListId(scheduleListId)
+                                .canEdit(canEdit).acceptYn("N").actionType("I").createdBy(sharerId).lastUpdatedBy(sharerId)
+                                .lastUpdateLogin(sharerId).build();
+                repository.save(entity);
+        }
 
 	public void request(Long sharerId, Long receiverId, String message) {
 		ScheduleShareEntity entity = ScheduleShareEntity.builder().sharerId(sharerId).receiverId(receiverId).canEdit("N")
@@ -37,9 +38,9 @@ public class ScheduleShareService {
 		repository.save(entity);
 	}
 
-	public List<ScheduleShareUserDTO> searchAvailableForInvite(Long sharerId, String name) {
-		return repository.searchAvailableForInvite(sharerId, name);
-	}
+        public List<ScheduleShareUserDTO> searchAvailableForInvite(Long sharerId, String name, Long scheduleListId) {
+                return repository.searchAvailableForInvite(sharerId, name, scheduleListId);
+        }
 
 	public List<ScheduleShareUserDTO> searchAvailableForRequest(Long sharerId, String name) {
 		return repository.searchAvailableForRequest(sharerId, name);
