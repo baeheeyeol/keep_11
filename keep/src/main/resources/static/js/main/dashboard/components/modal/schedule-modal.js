@@ -202,10 +202,23 @@
 	// ────────────────────────────────────────────────────────────────────────
 
         function openModal() {
+                const form = document.getElementById('schedule-form');
                 const delBtn = document.getElementById('modal-delete');
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const readonly = window.currentScheduleOwnerId !== window.currentUserId || window.currentCanEdit !== 'Y';
+                form.querySelectorAll('input, select, textarea').forEach(el => {
+                        if (readonly) {
+                                el.setAttribute('readonly', 'readonly');
+                                el.disabled = true;
+                        } else {
+                                el.removeAttribute('readonly');
+                                el.disabled = false;
+                        }
+                });
                 if (delBtn) {
-                       delBtn.classList.toggle('hidden', !document.getElementById('sched-id').value);
+                        delBtn.classList.toggle('hidden', readonly || !document.getElementById('sched-id').value);
                 }
+                if (submitBtn) submitBtn.classList.toggle('hidden', readonly);
                 if (listIdInput) {
                         const hiddenInput = document.getElementById('current-schedule-list-id');
                         if (hiddenInput && hiddenInput.value) {
@@ -221,7 +234,7 @@
                 document.querySelector('.cat-color[data-color="' + hiddenColorInput.value + '"]')
                         ?.classList.add('selected');
         }
-		
+
         function closeModal() {
                 document.getElementById('schedule-modal-overlay').classList.add('hidden');
                 document.getElementById('schedule-modal').classList.add('hidden');
@@ -230,7 +243,14 @@
                 if (listIdInput) listIdInput.value = '';
                 document.querySelectorAll('.cat-color').forEach(b => b.classList.remove('selected'));
                 const delBtn = document.getElementById('modal-delete');
+                const form = document.getElementById('schedule-form');
+                const submitBtn = form.querySelector('button[type="submit"]');
                 delBtn?.classList.add('hidden');
+                submitBtn?.classList.remove('hidden');
+                form.querySelectorAll('input, select, textarea').forEach(el => {
+                        el.removeAttribute('readonly');
+                        el.disabled = false;
+                });
                 document.dispatchEvent(new Event('scheduleModalClosed'));
         }
 

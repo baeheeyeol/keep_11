@@ -384,8 +384,9 @@
 
 	let dragState = null;
 
-	function monthlyPointerDown(e) {
-		const bar = e.currentTarget;
+        function monthlyPointerDown(e) {
+                if (window.currentCanEdit !== 'Y') return;
+                const bar = e.currentTarget;
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -588,8 +589,9 @@
 			document.removeEventListener('pointercancel', cancel);
 		}
 
-		calendar.addEventListener('pointerdown', e => {
-			if (e.target.closest('.event-bar') || e.target.classList.contains('more-link')) return;
+                calendar.addEventListener('pointerdown', e => {
+                        if (window.currentCanEdit !== 'Y') return;
+                        if (e.target.closest('.event-bar') || e.target.classList.contains('more-link')) return;
 			const cell = e.target.closest('.day-cell');
 			if (!cell || cell.classList.contains('other-month')) return;
 			e.preventDefault();
