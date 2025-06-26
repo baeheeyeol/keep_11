@@ -1,4 +1,6 @@
 (function() {
+  const DEFAULT_LAT = 37.5665; // Seoul
+  const DEFAULT_LON = 126.9780;
   let map;
   let marker;
   let sidebar;
@@ -20,6 +22,58 @@
     registerBtn?.addEventListener('click', registerLocation);
     sidebar.dataset.initialized = 'true';
   }
+
+  async function ensureMapInitialized() {
+    if (map) {
+      setTimeout(() => map.invalidateSize(), 200);
+      return;
+    }
+    let lat;
+    let lon;
+    const latInput = document.getElementById('sched-latitude');
+    const lonInput = document.getElementById('sched-longitude');
+    const locInput = document.getElementById('sched-location');
+    if (latInput && lonInput && latInput.value && lonInput.value) {
+      lat = parseFloat(latInput.value);
+      lon = parseFloat(lonInput.value);
+    } else if (locInput && locInput.value.trim()) {
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(locInput.value.trim())}`);
+        if (res.ok) {
+          const r = await res.json();
+          if (r && r.length) {
+            lat = parseFloat(r[0].lat);
+            lon = parseFloat(r[0].lon);
+          }
+        }
+      } catch (_) { /* ignore */ }
+    }
+    if (lat === undefined || lon === undefined) {
+      try {
+        const pos = await new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject);
+        });
+        lat = pos.coords.latitude;
+        lon = pos.coords.longitude;
+      } catch (_) {
+        lat = DEFAULT_LAT;
+        lon = DEFAULT_LON;
+      }
+    }
+
+    map = L.map('location-map').setView([lat, lon], 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+    marker = L.marker([lat, lon], { draggable: true }).addTo(map);
+    marker.on('dragend', () => {
+      const pos = marker.getLatLng();
+      sidebar.dataset.lat = pos.lat;
+      sidebar.dataset.lon = pos.lng;
+    });
+    sidebar.dataset.lat = lat;
+    sidebar.dataset.lon = lon;
+  }
   async function search() {
     const keyword = searchInput.value.trim();
     if (!keyword) return;
@@ -34,16 +88,17 @@
       const loc = result[0];
       const lat = parseFloat(loc.lat);
       const lon = parseFloat(loc.lon);
-      if (!map) {
-        map = L.map('location-map').setView([lat, lon], 15);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
-      } else {
-        map.setView([lat, lon], 15);
+      await ensureMapInitialized();
+      map.setView([lat, lon], 15);
+      if (marker) marker.setLatLng([lat, lon]);
+      else {
+        marker = L.marker([lat, lon], { draggable: true }).addTo(map);
+        marker.on('dragend', () => {
+          const pos = marker.getLatLng();
+          sidebar.dataset.lat = pos.lat;
+          sidebar.dataset.lon = pos.lng;
+        });
       }
-      if (marker) marker.remove();
-      marker = L.marker([lat, lon]).addTo(map).bindPopup(keyword).openPopup();
       sidebar.dataset.lat = lat;
       sidebar.dataset.lon = lon;
       sidebar.dataset.address = loc.display_name;
@@ -65,9 +120,10 @@
     document.getElementById('sched-longitude').value = sidebar.dataset.lon;
     close();
   }
-  function open() {
+  async function open() {
     overlay.classList.remove('hidden');
     sidebar.classList.remove('hidden');
+    await ensureMapInitialized();
     requestAnimationFrame(() => sidebar.classList.add('show'));
   }
   function close() {
