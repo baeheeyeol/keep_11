@@ -127,7 +127,16 @@
                             rejectRequest(m.scheduleShareId, action, m.hname, m.sharerId);
                         });
 
+                        const goBtn = document.createElement('button');
+                        goBtn.className = 'goto-btn';
+                        goBtn.type = 'button';
+                        goBtn.textContent = '바로가기';
+                        goBtn.addEventListener('click', () => {
+                            window.location.href = `/dashboard?view=daily&shareId=${m.scheduleShareId}`;
+                        });
+
                         action.appendChild(delBtn);
+                        action.appendChild(goBtn);
                     }
 
                     div.appendChild(action);

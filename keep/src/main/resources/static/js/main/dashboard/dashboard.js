@@ -1,9 +1,15 @@
 // static/js/main/dashboard.js
 document.addEventListener('DOMContentLoaded', () => {
-	const headerEl = document.querySelector('.dashboard-header');
-	if (headerEl) {
-		document.documentElement.style.setProperty('--dashboard-header-height', `${headerEl.offsetHeight}px`);
-	}
+        const headerEl = document.querySelector('.dashboard-header');
+        if (headerEl) {
+                document.documentElement.style.setProperty('--dashboard-header-height', `${headerEl.offsetHeight}px`);
+        }
+        const params = new URLSearchParams(window.location.search);
+        const initialView = params.get('view');
+        const shareId = params.get('shareId');
+        if (shareId) {
+                window.currentShareId = shareId;
+        }
 	let dateInput = document.getElementById('current-date');
 	if (!dateInput) {
 		return;
@@ -21,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	const mm = String(today.getMonth() + 1).padStart(2, '0');
 	const dd = String(today.getDate()).padStart(2, '0');
 
-	dateInput.dataset.view = 'weekly';
+        dateInput.dataset.view = initialView || 'weekly';
 	dateInput.dataset.selectDate = `${yyyy}-${mm}-${dd}`;
 
 
@@ -129,8 +135,8 @@ document.addEventListener('DOMContentLoaded', () => {
 			.catch(err => console.error(err));
 	}
 
-	// 초기 로드: daily
-	loadView('weekly');
+        // 초기 로드
+        loadView(initialView || 'weekly');
 
 	// 뷰 버튼 이벤트
 	viewBtns.forEach(btn => {
