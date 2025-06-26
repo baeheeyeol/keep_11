@@ -18,6 +18,16 @@
         });
     }
 
+    function updateEditButton() {
+        const editBtn = document.getElementById('schedule-list-edit');
+        const select = document.getElementById('schedule-list-select');
+        if (!editBtn || !select) return;
+        const opt = select.options[select.selectedIndex];
+        const ownerId = Number(opt.dataset.owner);
+        const myId = window.currentUserId;
+        editBtn.style.display = (myId && ownerId === myId) ? '' : 'none';
+    }
+
     async function loadLists() {
         const select = document.getElementById('schedule-list-select');
         if (!select) return;
@@ -30,6 +40,7 @@
                 const opt = document.createElement('option');
                 opt.value = l.scheduleListId;
                 opt.textContent = l.hname ? `${l.hname} : ${l.title}` : l.title;
+                opt.dataset.title = l.title;
                 opt.dataset.share = l.isShareable;
                 opt.dataset.owner = l.userId;
                 opt.dataset.canEdit = l.canEdit || 'N';
@@ -46,6 +57,7 @@
                 if (hiddenInput) hiddenInput.value = first.scheduleListId;
                 if (typeof window.refreshSchedule === 'function') window.refreshSchedule();
                 connectScheduleSocket(first.scheduleListId);
+                updateEditButton();
             }
         } catch (e) {
             console.error(e);
@@ -65,7 +77,7 @@
             const select = document.getElementById('schedule-list-select');
             const opt = select.options[select.selectedIndex];
             editingId = opt.value;
-            titleInput.value = opt.textContent;
+            titleInput.value = opt.dataset.title || opt.textContent;
             shareSelect.value = opt.dataset.share || 'Y';
         } else {
             editingId = null;
@@ -115,6 +127,7 @@
             if (hiddenInput) hiddenInput.value = opt.value;
             if (typeof window.refreshSchedule === 'function') window.refreshSchedule();
             connectScheduleSocket(opt.value);
+            updateEditButton();
         });
         addBtn && addBtn.addEventListener('click', () => openModal(false));
         editBtn && editBtn.addEventListener('click', () => openModal(true));
