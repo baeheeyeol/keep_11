@@ -18,3 +18,19 @@
 .list-item:hover {
   background-color: #f5f5f5;
 }
+
+/* emphasize schedule title over user name */
+.item-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.item-info .schedule-title {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.item-info .user-name {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
