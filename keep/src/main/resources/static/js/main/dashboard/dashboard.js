@@ -94,46 +94,58 @@ document.addEventListener('DOMContentLoaded', () => {
 		refreshSchedule();
 	}
 
-	// 6) 컴포넌트 로드 함수
-	function loadView(view) {
-		fragmentContainer.style.opacity = 0;
-		fetch(`/dashboard/fragment/${view}`)
-			.then(response => {
-				if (!response.ok) throw new Error('네트워크 에러');
-				return response.text();
-			})
-			.then(html => {
-				fragmentContainer.innerHTML = html;
+        // CSS 로드 대기 함수
+        function waitForCss(id) {
+                const link = document.getElementById(id);
+                return new Promise(resolve => {
+                        if (!link || link.sheet) return resolve();
+                        link.addEventListener('load', () => resolve(), { once: true });
+                });
+        }
 
-				document.getElementById('daily-css').disabled = (view !== 'daily');
-				document.getElementById('weekly-css').disabled = (view !== 'weekly');
-				document.getElementById('monthly-css').disabled = (view !== 'monthly');
-				dateInput.dataset.view = view;
-				updateDisplay(view);
-				if (view === 'daily') {
-					// daily 전용 초기화
-					if (window.initDailySchedule) {
-						window.initDailySchedule();
-					};
-				} else if (view == 'weekly') {
-					if (window.initWeeklySchedule) {
-						window.initWeeklySchedule();
-					}
-				} else if (view == 'monthly') {
-					if (window.initMonthlySchedule) {
-						window.initMonthlySchedule();
-					}
-				}
-				window.initScheduleModal();
-				if (window.initMonthlyMoreModal) {
-					window.initMonthlyMoreModal();
-				}
-				requestAnimationFrame(() => {
-					fragmentContainer.style.opacity = 1;
-				});
-			})
-			.catch(err => console.error(err));
-	}
+        // 6) 컴포넌트 로드 함수
+        async function loadView(view) {
+                fragmentContainer.style.opacity = 0;
+                try {
+                        const response = await fetch(`/dashboard/fragment/${view}`);
+                        if (!response.ok) throw new Error('네트워크 에러');
+                        const html = await response.text();
+
+                        fragmentContainer.innerHTML = html;
+
+                        document.getElementById('daily-css').disabled = (view !== 'daily');
+                        document.getElementById('weekly-css').disabled = (view !== 'weekly');
+                        document.getElementById('monthly-css').disabled = (view !== 'monthly');
+
+                        await waitForCss(`${view}-css`);
+
+                        dateInput.dataset.view = view;
+                        updateDisplay(view);
+                        if (view === 'daily') {
+                                // daily 전용 초기화
+                                if (window.initDailySchedule) {
+                                        window.initDailySchedule();
+                                }
+                        } else if (view === 'weekly') {
+                                if (window.initWeeklySchedule) {
+                                        window.initWeeklySchedule();
+                                }
+                        } else if (view === 'monthly') {
+                                if (window.initMonthlySchedule) {
+                                        window.initMonthlySchedule();
+                                }
+                        }
+                        window.initScheduleModal();
+                        if (window.initMonthlyMoreModal) {
+                                window.initMonthlyMoreModal();
+                        }
+                        requestAnimationFrame(() => {
+                                fragmentContainer.style.opacity = 1;
+                        });
+                } catch (err) {
+                        console.error(err);
+                }
+        }
 
         // 초기 로드
         loadView(initialView || 'weekly');
