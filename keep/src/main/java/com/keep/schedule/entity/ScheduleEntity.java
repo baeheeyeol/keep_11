@@ -42,10 +42,10 @@ public class ScheduleEntity {
         @Column(name = "PLACE_NAME", length = 100)
         private String placeName;
 
-        @Column(name = "LATITUDE", precision = 9, scale = 6)
+        @Column(name = "LATITUDE")
         private Double latitude;
 
-        @Column(name = "LONGITUDE", precision = 9, scale = 6)
+        @Column(name = "LONGITUDE")
         private Double longitude;
 
 	@Lob
