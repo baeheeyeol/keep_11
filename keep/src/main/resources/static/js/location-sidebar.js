@@ -21,6 +21,12 @@
     overlay.addEventListener('click', close);
     searchBtn?.addEventListener('click', search);
     registerBtn?.addEventListener('click', registerLocation);
+    searchInput?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        searchBtn?.click();
+      }
+    });
     sidebar.dataset.initialized = 'true';
   }
 
