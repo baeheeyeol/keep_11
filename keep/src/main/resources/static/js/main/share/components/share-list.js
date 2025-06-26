@@ -67,7 +67,18 @@
                 members.forEach(m => {
                     const div = document.createElement('div');
                     div.className = 'list-item';
-                    div.appendChild(document.createElement('span')).textContent = m.hname;
+
+                    const info = document.createElement('div');
+                    info.className = 'item-info';
+                    const nameSpan = document.createElement('span');
+                    nameSpan.className = 'user-name';
+                    nameSpan.textContent = m.hname;
+                    const titleSpan = document.createElement('span');
+                    titleSpan.className = 'schedule-title';
+                    titleSpan.textContent = m.title || '기본';
+                    info.appendChild(nameSpan);
+                    info.appendChild(titleSpan);
+                    div.appendChild(info);
 
                     const action = document.createElement('div');
 
