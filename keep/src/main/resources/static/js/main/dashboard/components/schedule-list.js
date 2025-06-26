@@ -1,4 +1,23 @@
 (function() {
+    let scheduleStomp = null;
+    let scheduleSub = null;
+
+    function connectScheduleSocket(listId) {
+        if (!window.SockJS || !window.Stomp || !listId) return;
+        if (scheduleStomp) {
+            try { scheduleStomp.disconnect(); } catch (e) {}
+            scheduleStomp = null;
+            scheduleSub = null;
+        }
+        const sock = new SockJS('/ws');
+        scheduleStomp = Stomp.over(sock);
+        scheduleStomp.connect({}, () => {
+            scheduleSub = scheduleStomp.subscribe('/topic/schedules/' + listId, () => {
+                if (typeof window.refreshSchedule === 'function') window.refreshSchedule();
+            });
+        });
+    }
+
     async function loadLists() {
         const select = document.getElementById('schedule-list-select');
         if (!select) return;
@@ -26,6 +45,7 @@
                 const hiddenInput = document.getElementById('current-schedule-list-id');
                 if (hiddenInput) hiddenInput.value = first.scheduleListId;
                 if (typeof window.refreshSchedule === 'function') window.refreshSchedule();
+                connectScheduleSocket(first.scheduleListId);
             }
         } catch (e) {
             console.error(e);
@@ -94,6 +114,7 @@
             const hiddenInput = document.getElementById('current-schedule-list-id');
             if (hiddenInput) hiddenInput.value = opt.value;
             if (typeof window.refreshSchedule === 'function') window.refreshSchedule();
+            connectScheduleSocket(opt.value);
         });
         addBtn && addBtn.addEventListener('click', () => openModal(false));
         editBtn && editBtn.addEventListener('click', () => openModal(true));
