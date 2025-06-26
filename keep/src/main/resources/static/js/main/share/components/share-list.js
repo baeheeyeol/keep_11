@@ -132,7 +132,7 @@
                         goBtn.type = 'button';
                         goBtn.textContent = '바로가기';
                         goBtn.addEventListener('click', () => {
-                            window.location.href = `/dashboard?view=daily&shareId=${m.scheduleShareId}`;
+                            window.location.href = `/dashboard?view=daily&shareId=${m.sharerId}`;
                         });
 
                         action.appendChild(delBtn);
