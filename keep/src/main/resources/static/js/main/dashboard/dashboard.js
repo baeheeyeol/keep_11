@@ -139,11 +139,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (window.initMonthlyMoreModal) {
                                 window.initMonthlyMoreModal();
                         }
+                } catch (err) {
+                        console.error(err);
+                } finally {
                         requestAnimationFrame(() => {
                                 fragmentContainer.style.opacity = 1;
                         });
-                } catch (err) {
-                        console.error(err);
                 }
         }
 
