@@ -185,4 +185,7 @@ public interface ScheduleShareRepository extends JpaRepository<ScheduleShareEnti
 
         List<ScheduleShareEntity> findBySharerIdInAndReceiverIdAndScheduleListIdIn(List<Long> sharerIds,
                         Long receiverId, List<Long> scheduleListIds);
+
+        @Query("select s.scheduleListId from ScheduleShareEntity s where s.receiverId = :receiverId and s.acceptYn = 'Y'")
+        List<Long> findAcceptedScheduleListIdsByReceiverId(@Param("receiverId") Long receiverId);
 }
