@@ -42,7 +42,14 @@
       <!-- 장소 -->
       <div class="form-group">
         <label for="sched-location">장소</label>
-        <input type="text" id="sched-location" name="location" />
+        <div class="location-input-wrapper">
+          <input type="text" id="sched-location" name="location" />
+          <button type="button" id="open-location-sidebar" class="location-map-btn">지도</button>
+        </div>
+        <input type="hidden" id="sched-address" name="address" />
+        <input type="hidden" id="sched-place-name" name="placeName" />
+        <input type="hidden" id="sched-latitude" name="latitude" />
+        <input type="hidden" id="sched-longitude" name="longitude" />
       </div>
 
       <!-- 설명 -->

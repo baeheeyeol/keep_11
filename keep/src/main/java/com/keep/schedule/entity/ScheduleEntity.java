@@ -33,8 +33,20 @@ public class ScheduleEntity {
 	@Column(name = "END_TS", nullable = false)
 	private LocalDateTime endTs;
 
-	@Column(name = "LOCATION", length = 200)
-	private String location;
+        @Column(name = "LOCATION", length = 200)
+        private String location;
+
+        @Column(name = "ADDRESS", length = 200)
+        private String address;
+
+        @Column(name = "PLACE_NAME", length = 100)
+        private String placeName;
+
+        @Column(name = "LATITUDE", precision = 9, scale = 6)
+        private Double latitude;
+
+        @Column(name = "LONGITUDE", precision = 9, scale = 6)
+        private Double longitude;
 
 	@Lob
 	@Column(name = "DESCRIPTION")

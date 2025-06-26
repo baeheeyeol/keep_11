@@ -62,7 +62,15 @@ public class ScheduleDTO {
 	@Max(value = 59, message = "분(minute)는 0~59 사이여야 합니다.")
 	private int endMin;
 
-	private String location;
+        private String location;
+
+        private String address;
+
+        private String placeName;
+
+        private Double latitude;
+
+        private Double longitude;
 
 	private String description;
 
