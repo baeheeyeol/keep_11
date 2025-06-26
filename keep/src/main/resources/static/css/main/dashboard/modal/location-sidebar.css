@@ -76,4 +76,10 @@
   border-radius: 0.5rem;
   cursor: pointer;
   margin-bottom: 0.5rem;
+  transition: background-color 0.2s ease;
+}
+
+#location-register-btn:hover,
+#location-sidebar-close:hover {
+  background: #e5e7eb;
 }
