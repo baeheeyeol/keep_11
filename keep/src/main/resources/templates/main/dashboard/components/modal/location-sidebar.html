@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="location-sidebar">
+  <div id="location-sidebar-overlay" class="hidden"></div>
+  <div id="location-sidebar" class="location-sidebar hidden">
+    <div class="location-search">
+      <input type="text" id="location-search-input" placeholder="장소 검색"/>
+      <button type="button" id="location-search-btn">검색</button>
+    </div>
+    <div id="location-map"></div>
+    <button type="button" id="location-register-btn">등록</button>
+    <button type="button" id="location-sidebar-close">닫기</button>
+  </div>
+</div>
+</html>

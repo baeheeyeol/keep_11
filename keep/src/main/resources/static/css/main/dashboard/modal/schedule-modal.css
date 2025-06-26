@@ -228,3 +228,19 @@
   font-size: 0.875rem;
 }
 
+/* 위치 입력 */
+.location-input-wrapper {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.location-map-btn {
+  padding: 0.25rem 0.75rem;
+  background: #4f46e5;
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+

@@ -16,7 +16,11 @@
 		const startMin = document.getElementById('sched-start-min');
 		const endHour = document.getElementById('sched-end-hour');
 		const endMin = document.getElementById('sched-end-min');
-		const currentDateInput = document.getElementById('current-date');
+               const currentDateInput = document.getElementById('current-date');
+
+                if (window.locationSidebar && window.locationSidebar.init) {
+                        window.locationSidebar.init();
+                }
 
 		// 필수 요소 체크
 		if (!overlay || !modal || !cancel || !form) return;
@@ -54,6 +58,13 @@
 		// 취소 버튼 및 오버레이 클릭 시 모달 닫기
                 cancel.addEventListener('click', closeModal);
                 overlay.addEventListener('click', closeModal);
+
+                const openLoc = document.getElementById('open-location-sidebar');
+                openLoc?.addEventListener('click', () => {
+                        if (window.locationSidebar && window.locationSidebar.open) {
+                                window.locationSidebar.open();
+                        }
+                });
                 deleteBtn?.addEventListener('click', async () => {
                         const id = document.getElementById('sched-id').value;
                         if (!id) return;
@@ -174,7 +185,11 @@
 			document.getElementById('sched-end-day').value = `${end.getFullYear()}-${pad(end.getMonth() + 1)}-${pad(end.getDate())}`;
 			document.getElementById('sched-end-hour').value = pad(end.getHours());
 			document.getElementById('sched-end-min').value = pad(end.getMinutes());
-			document.getElementById('sched-location').value = data.location || '';
+                        document.getElementById('sched-location').value = data.location || '';
+                        document.getElementById('sched-address').value = data.address || '';
+                        document.getElementById('sched-place-name').value = data.placeName || '';
+                        document.getElementById('sched-latitude').value = data.latitude || '';
+                        document.getElementById('sched-longitude').value = data.longitude || '';
 			document.getElementById('sched-desc').value = data.description || '';
                         document.getElementById('sched-color').value = data.category;
                         document.getElementById('sched-id').value = data.schedulesId;
@@ -240,6 +255,10 @@
                 document.getElementById('schedule-modal').classList.add('hidden');
                 document.getElementById('schedule-form').reset();
                 document.getElementById('sched-id').value = '';
+                document.getElementById('sched-address').value = '';
+                document.getElementById('sched-place-name').value = '';
+                document.getElementById('sched-latitude').value = '';
+                document.getElementById('sched-longitude').value = '';
                 if (listIdInput) listIdInput.value = '';
                 document.querySelectorAll('.cat-color').forEach(b => b.classList.remove('selected'));
                 const delBtn = document.getElementById('modal-delete');
