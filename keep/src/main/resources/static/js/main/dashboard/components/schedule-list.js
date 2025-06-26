@@ -10,7 +10,7 @@
             data.forEach(l => {
                 const opt = document.createElement('option');
                 opt.value = l.scheduleListId;
-                opt.textContent = l.title;
+                opt.textContent = l.hname ? `${l.hname} : ${l.title}` : l.title;
                 opt.dataset.share = l.isShareable;
                 opt.classList.add(l.isShareable === 'Y' ? 'share-yes' : 'share-no');
                 select.appendChild(opt);
