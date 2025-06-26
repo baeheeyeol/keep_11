@@ -28,6 +28,7 @@ public class ScheduleListMapperImpl implements ScheduleListMapper {
                 .title(entity.getTitle())
                 .isShareable(entity.getIsShareable())
                 .userId(entity.getUserId())
+                .hname(null)
                 .build();
     }
 }

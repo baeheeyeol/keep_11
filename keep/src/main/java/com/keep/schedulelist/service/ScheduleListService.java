@@ -5,6 +5,7 @@ import com.keep.schedulelist.entity.ScheduleListEntity;
 import com.keep.schedulelist.mapper.ScheduleListMapper;
 import com.keep.schedulelist.repository.ScheduleListRepository;
 import com.keep.share.repository.ScheduleShareRepository;
+import com.keep.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.access.AccessDeniedException;
@@ -20,6 +21,7 @@ public class ScheduleListService {
     private final ScheduleListRepository repository;
     private final ScheduleListMapper mapper;
     private final ScheduleShareRepository shareRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public Long createDefaultList(Long userId) {
@@ -46,11 +48,21 @@ public class ScheduleListService {
                 .map(mapper::toDto)
                 .collect(Collectors.toList());
 
+        String myName = memberRepository.findById(userId)
+                .map(m -> m.getHname())
+                .orElse(null);
+        result.forEach(dto -> dto.setHname(myName));
+
         List<Long> sharedIds = shareRepository.findAcceptedScheduleListIdsByReceiverId(userId);
         if (!sharedIds.isEmpty()) {
             repository.findAllById(sharedIds).stream()
                     .map(mapper::toDto)
-                    .forEach(result::add);
+                    .forEach(dto -> {
+                        memberRepository.findById(dto.getUserId())
+                                .map(m -> m.getHname())
+                                .ifPresent(dto::setHname);
+                        result.add(dto);
+                    });
         }
         return result;
     }

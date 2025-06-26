@@ -14,4 +14,5 @@ public class ScheduleListDTO {
     private String title;
     private String isShareable;
     private Long userId;
+    private String hname;
 }
