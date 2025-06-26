@@ -5,6 +5,7 @@ import com.keep.schedulelist.entity.ScheduleListEntity;
 import com.keep.schedulelist.mapper.ScheduleListMapper;
 import com.keep.schedulelist.repository.ScheduleListRepository;
 import com.keep.share.repository.ScheduleShareRepository;
+import com.keep.share.entity.ScheduleShareEntity;
 import com.keep.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import jakarta.persistence.EntityNotFoundException;
@@ -51,7 +52,10 @@ public class ScheduleListService {
         String myName = memberRepository.findById(userId)
                 .map(m -> m.getHname())
                 .orElse(null);
-        result.forEach(dto -> dto.setHname(myName));
+        result.forEach(dto -> {
+            dto.setHname(myName);
+            dto.setCanEdit("Y");
+        });
 
         List<Long> sharedIds = shareRepository.findAcceptedScheduleListIdsByReceiverId(userId);
         if (!sharedIds.isEmpty()) {
@@ -61,6 +65,10 @@ public class ScheduleListService {
                         memberRepository.findById(dto.getUserId())
                                 .map(m -> m.getHname())
                                 .ifPresent(dto::setHname);
+                        shareRepository
+                                .findFirstBySharerIdAndReceiverIdAndScheduleListId(dto.getUserId(), userId, dto.getScheduleListId())
+                                .map(ScheduleShareEntity::getCanEdit)
+                                .ifPresent(dto::setCanEdit);
                         result.add(dto);
                     });
         }

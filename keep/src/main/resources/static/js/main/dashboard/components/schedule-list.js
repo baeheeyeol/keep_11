@@ -12,14 +12,19 @@
                 opt.value = l.scheduleListId;
                 opt.textContent = l.hname ? `${l.hname} : ${l.title}` : l.title;
                 opt.dataset.share = l.isShareable;
+                opt.dataset.owner = l.userId;
+                opt.dataset.canEdit = l.canEdit || 'N';
                 opt.classList.add(l.isShareable === 'Y' ? 'share-yes' : 'share-no');
                 select.appendChild(opt);
             });
             if (data.length > 0) {
-                select.value = data[0].scheduleListId;
-                window.currentScheduleListId = data[0].scheduleListId;
+                const first = data[0];
+                select.value = first.scheduleListId;
+                window.currentScheduleListId = first.scheduleListId;
+                window.currentScheduleOwnerId = first.userId;
+                window.currentCanEdit = first.canEdit || 'N';
                 const hiddenInput = document.getElementById('current-schedule-list-id');
-                if (hiddenInput) hiddenInput.value = data[0].scheduleListId;
+                if (hiddenInput) hiddenInput.value = first.scheduleListId;
                 if (typeof window.refreshSchedule === 'function') window.refreshSchedule();
             }
         } catch (e) {
@@ -73,6 +78,8 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+        const userEl = document.querySelector('.notification[data-user-id]');
+        if (userEl) window.currentUserId = Number(userEl.dataset.userId);
         const select = document.getElementById('schedule-list-select');
         const addBtn = document.getElementById('schedule-list-add');
         const editBtn = document.getElementById('schedule-list-edit');
@@ -80,9 +87,12 @@
         const cancelBtn = document.getElementById('schedule-list-cancel');
         const overlay = document.getElementById('schedule-list-modal-overlay');
         select && select.addEventListener('change', () => {
-            window.currentScheduleListId = select.value;
+            const opt = select.options[select.selectedIndex];
+            window.currentScheduleListId = opt.value;
+            window.currentScheduleOwnerId = Number(opt.dataset.owner);
+            window.currentCanEdit = opt.dataset.canEdit || 'N';
             const hiddenInput = document.getElementById('current-schedule-list-id');
-            if (hiddenInput) hiddenInput.value = select.value;
+            if (hiddenInput) hiddenInput.value = opt.value;
             if (typeof window.refreshSchedule === 'function') window.refreshSchedule();
         });
         addBtn && addBtn.addEventListener('click', () => openModal(false));

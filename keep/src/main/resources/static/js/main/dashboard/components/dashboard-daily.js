@@ -110,10 +110,11 @@
 			.getPropertyValue('--hour-height'));
 		STEP = H / 4;
 
-		grid.addEventListener('pointerdown', e => {
-			const evEl = e.target.closest('.event');
-			if (!evEl) return;
-			e.preventDefault();
+                grid.addEventListener('pointerdown', e => {
+                        if (window.currentCanEdit !== 'Y') return;
+                        const evEl = e.target.closest('.event');
+                        if (!evEl) return;
+                        e.preventDefault();
 
 			draggingEvt = evEl;
 			isDragging = false;                    // 아직 드래그 안 함
@@ -380,8 +381,9 @@
 			openModalWithRange(top, bottom);
 		}
 
-		grid.addEventListener('pointerdown', e => {
-			if (e.target.closest('.event')) return;
+                grid.addEventListener('pointerdown', e => {
+                        if (window.currentCanEdit !== 'Y') return;
+                        if (e.target.closest('.event')) return;
 			const slot = e.target.closest('.hour-slot');
 			if (!slot) return;
 			const hourSlots = Array.from(grid.querySelectorAll('.hour-slot'));
@@ -406,8 +408,9 @@
 
 		document.addEventListener('scheduleModalClosed', cancelSelection);
 
-		grid.addEventListener('click', e => {
-			if (selecting) return; // drag selection handled separately
+                grid.addEventListener('click', e => {
+                        if (window.currentCanEdit !== 'Y') return;
+                        if (selecting) return; // drag selection handled separately
 			const slot = e.target.closest('.hour-slot');
 			if (!slot) return;
 			const hourSlots = Array.from(grid.querySelectorAll('.hour-slot'));

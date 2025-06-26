@@ -276,6 +276,7 @@
 		});
 
                 function pointerDownHandler(e) {
+                        if (window.currentCanEdit !== 'Y') return;
                         e.preventDefault();
                         e.stopPropagation();
 
@@ -681,6 +682,7 @@
                 }
 
                 grid.addEventListener('pointerdown', e => {
+                        if (window.currentCanEdit !== 'Y') return;
                         if (e.target.closest('.event')) return;
                         const slot = e.target.closest('.hour-slot');
                         if (!slot) return;
@@ -715,6 +717,7 @@
                 document.addEventListener('scheduleModalClosed', cancelSelection);
 
                 grid.addEventListener('click', e => {
+                        if (window.currentCanEdit !== 'Y') return;
                         if (selecting) return; // drag selection handled separately
                         const slot = e.target.closest('.hour-slot');
                         if (!slot) return;
