@@ -1,6 +1,7 @@
 (function() {
   const DEFAULT_LAT = 37.5665; // Seoul
   const DEFAULT_LON = 126.9780;
+  const DEFAULT_PLACE = '서울';
   let map;
   let marker;
   let sidebar;
@@ -21,6 +22,66 @@
     searchBtn?.addEventListener('click', search);
     registerBtn?.addEventListener('click', registerLocation);
     sidebar.dataset.initialized = 'true';
+  }
+
+  async function updateInputFromCoords(lat, lon) {
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`
+      );
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.display_name) {
+          searchInput.value = data.display_name;
+          sidebar.dataset.address = data.display_name;
+          sidebar.dataset.place = data.display_name;
+          return;
+        }
+      }
+    } catch (_) { /* ignore */ }
+    searchInput.value = `${lat}, ${lon}`;
+    sidebar.dataset.address = searchInput.value;
+    sidebar.dataset.place = searchInput.value;
+  }
+
+  async function searchKeyword(keyword) {
+    if (!keyword) return false;
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+          keyword
+        )}`
+      );
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const result = await res.json();
+      if (!result || result.length === 0) {
+        return false;
+      }
+      const loc = result[0];
+      const lat = parseFloat(loc.lat);
+      const lon = parseFloat(loc.lon);
+      await ensureMapInitialized();
+      map.setView([lat, lon], 15);
+      if (marker) marker.setLatLng([lat, lon]);
+      else {
+        marker = L.marker([lat, lon], { draggable: true }).addTo(map);
+        marker.on('dragend', async () => {
+          const pos = marker.getLatLng();
+          sidebar.dataset.lat = pos.lat;
+          sidebar.dataset.lon = pos.lng;
+          await updateInputFromCoords(pos.lat, pos.lng);
+        });
+      }
+      sidebar.dataset.lat = lat;
+      sidebar.dataset.lon = lon;
+      sidebar.dataset.address = loc.display_name;
+      sidebar.dataset.place = keyword;
+      searchInput.value = keyword;
+      return true;
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
   }
 
   async function ensureMapInitialized() {
@@ -66,46 +127,20 @@
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
     marker = L.marker([lat, lon], { draggable: true }).addTo(map);
-    marker.on('dragend', () => {
+    marker.on('dragend', async () => {
       const pos = marker.getLatLng();
       sidebar.dataset.lat = pos.lat;
       sidebar.dataset.lon = pos.lng;
+      await updateInputFromCoords(pos.lat, pos.lng);
     });
     sidebar.dataset.lat = lat;
     sidebar.dataset.lon = lon;
   }
   async function search() {
     const keyword = searchInput.value.trim();
-    if (!keyword) return;
-    try {
-      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(keyword)}`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const result = await res.json();
-      if (!result || result.length === 0) {
-        alert('검색 결과가 없습니다.');
-        return;
-      }
-      const loc = result[0];
-      const lat = parseFloat(loc.lat);
-      const lon = parseFloat(loc.lon);
-      await ensureMapInitialized();
-      map.setView([lat, lon], 15);
-      if (marker) marker.setLatLng([lat, lon]);
-      else {
-        marker = L.marker([lat, lon], { draggable: true }).addTo(map);
-        marker.on('dragend', () => {
-          const pos = marker.getLatLng();
-          sidebar.dataset.lat = pos.lat;
-          sidebar.dataset.lon = pos.lng;
-        });
-      }
-      sidebar.dataset.lat = lat;
-      sidebar.dataset.lon = lon;
-      sidebar.dataset.address = loc.display_name;
-      sidebar.dataset.place = keyword;
-    } catch(err) {
-      console.error(err);
-      alert('위치를 찾을 수 없습니다.');
+    const ok = await searchKeyword(keyword);
+    if (!ok) {
+      alert('검색 결과가 없습니다.');
     }
   }
   function registerLocation() {
@@ -113,9 +148,10 @@
       alert('위치를 검색해주세요.');
       return;
     }
-    document.getElementById('sched-location').value = sidebar.dataset.place || '';
+    const value = searchInput.value.trim();
+    document.getElementById('sched-location').value = value;
     document.getElementById('sched-address').value = sidebar.dataset.address || '';
-    document.getElementById('sched-place-name').value = sidebar.dataset.place || '';
+    document.getElementById('sched-place-name').value = value;
     document.getElementById('sched-latitude').value = sidebar.dataset.lat;
     document.getElementById('sched-longitude').value = sidebar.dataset.lon;
     close();
@@ -123,7 +159,16 @@
   async function open() {
     overlay.classList.remove('hidden');
     sidebar.classList.remove('hidden');
+    const schedLoc = document.getElementById('sched-location');
+    searchInput.value = schedLoc ? schedLoc.value.trim() : '';
     await ensureMapInitialized();
+    let keyword = searchInput.value;
+    if (!keyword) keyword = DEFAULT_PLACE;
+    let ok = await searchKeyword(keyword);
+    if (!ok) {
+      searchInput.value = DEFAULT_PLACE;
+      await searchKeyword(DEFAULT_PLACE);
+    }
     requestAnimationFrame(() => sidebar.classList.add('show'));
   }
   function close() {
