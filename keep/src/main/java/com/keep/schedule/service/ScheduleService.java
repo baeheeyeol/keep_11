@@ -7,6 +7,7 @@ import com.keep.schedule.repository.ScheduleRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import org.hibernate.internal.build.AllowSysOut;
 import org.springframework.security.access.AccessDeniedException;
@@ -25,8 +26,9 @@ import java.util.stream.Collectors;
 @Transactional
 public class ScheduleService {
 
-	private final ScheduleRepository repository;
-	private final ScheduleMapper mapper;
+        private final ScheduleRepository repository;
+        private final ScheduleMapper mapper;
+        private final SimpMessagingTemplate messagingTemplate;
 
 	/**
 	 * 새로운 일정을 저장합니다.
@@ -35,6 +37,7 @@ public class ScheduleService {
         public Long createAndReturnId(ScheduleDTO dto) {
                 ScheduleEntity se = mapper.toEntity(dto);
                 ScheduleEntity scheduleEntity = repository.save(se);
+                notifyScheduleList(scheduleEntity.getScheduleListId());
                 return scheduleEntity.getSchedulesId();
         }
 
@@ -48,6 +51,7 @@ public class ScheduleService {
                 }
 
                 repository.delete(entity);
+                notifyScheduleList(entity.getScheduleListId());
         }
 
 	/**
@@ -99,9 +103,10 @@ public class ScheduleService {
 		event.setStartTs(newStart);
 		event.setEndTs(newEnd);
 
-		// 5) 저장
-		repository.save(event);
-	}
+                // 5) 저장
+                repository.save(event);
+                notifyScheduleList(event.getScheduleListId());
+        }
 
 	public ScheduleDTO getScheduleById(Long userId, Long scheduleId) {
 		// 1) 엔티티 조회
@@ -158,8 +163,15 @@ public class ScheduleService {
 		event.setStartTs(newStart);
 		event.setEndTs(newEnd);
 
-		// 6) 저장
-		repository.save(event);
-	}
+                // 6) 저장
+                repository.save(event);
+                notifyScheduleList(event.getScheduleListId());
+        }
+
+        private void notifyScheduleList(Long scheduleListId) {
+                if (messagingTemplate != null && scheduleListId != null) {
+                        messagingTemplate.convertAndSend("/topic/schedules/" + scheduleListId, "refresh");
+                }
+        }
 
 }
