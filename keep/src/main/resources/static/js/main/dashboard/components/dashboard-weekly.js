@@ -47,8 +47,12 @@
 		renderAllDayEvents(allDayEvents, weekStart, weekEnd);
 
 		// 3) 기존 이벤트 제거 & 현재시간선 업데이트
-		const container = document.querySelector('.events-container');
-		container.innerHTML = '';
+                const container = document.querySelector('.events-container');
+                if (!container) {
+                        console.warn('events-container element not found');
+                        return;
+                }
+                container.innerHTML = '';
 		updateCurrentTimeLine();
 		// CSS 변수 읽기
 		const slotHeight = parseFloat(
