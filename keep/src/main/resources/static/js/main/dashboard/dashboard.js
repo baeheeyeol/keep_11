@@ -107,8 +107,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		// 0) 숨김 클래스 붙여서 fade‐out 시작
 		fragmentContainer.classList.add('hidden');
 		// 6) 날짜표시 업데이트
-				dateInput.dataset.view = view;
-				updateDisplay(view);
+		dateInput.dataset.view = view;
+		updateDisplay(view);
 
 		try {
 			// 1) HTML 가져오기
@@ -119,13 +119,13 @@ document.addEventListener('DOMContentLoaded', () => {
 			// 2) 내용 교체
 			fragmentContainer.innerHTML = html;
 
-                        // 3) CSS 링크 토글
-                        ['daily', 'weekly', 'monthly'].forEach(v => {
-                                const link = document.getElementById(`${v}-css`);
-                                if (link) link.disabled = (v !== view);
-                        });
-                        // CSS 적용 완료까지 대기
-                        await waitForCssApply(`${view}-css`);
+			// 3) CSS 링크 토글
+			['daily', 'weekly', 'monthly'].forEach(v => {
+				const link = document.getElementById(`${v}-css`);
+				if (link) link.disabled = (v !== view);
+			});
+			// CSS 적용 완료까지 대기
+			await waitForCssApply(`${view}-css`);
 
 			// 4) 뷰별 초기화 (반드시 Promise 반환)
 			if (view === 'daily' && window.initDailySchedule) await window.initDailySchedule();
@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			// 5) 공통 모달 초기화
 			if (window.initScheduleModal) await window.initScheduleModal();
 
-		
+
 		} catch (err) {
 			console.error(err);
 		} finally {
@@ -149,10 +149,10 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 
-        // 일정 목록이 준비되면 초기 뷰 로드
-        document.addEventListener('scheduleListsLoaded', () => {
-                loadView(initialView || 'daily');
-        }, { once: true });
+	// 일정 목록이 준비되면 초기 뷰 로드
+	document.addEventListener('scheduleListsLoaded', () => {
+		loadView(initialView || 'daily');
+	}, { once: true });
 
 	// 뷰 버튼 이벤트
 	viewBtns.forEach(btn => {
