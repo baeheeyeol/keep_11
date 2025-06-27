@@ -64,11 +64,11 @@ document.addEventListener('DOMContentLoaded', () => {
 	function refreshSchedule() {
 		const view = dateInput.dataset.view;
 		if (view === 'daily') {
-			window.initDailySchedule && window.initDailySchedule();
+			window.initDailySchedule && await window.initDailySchedule();
 		} else if (view === 'weekly') {
-			window.initWeeklySchedule && window.initWeeklySchedule();
+			window.initWeeklySchedule && await window.initWeeklySchedule();
 		} else if (view === 'monthly') {
-			window.initMonthlySchedule && window.initMonthlySchedule();
+			window.initMonthlySchedule && await window.initMonthlySchedule();
 		}
 	}
 
@@ -128,20 +128,20 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (view === 'daily') {
                                 // daily 전용 초기화
                                 if (window.initDailySchedule) {
-                                        window.initDailySchedule();
+                                        await window.initDailySchedule();
                                 }
                         } else if (view === 'weekly') {
                                 if (window.initWeeklySchedule) {
-                                        window.initWeeklySchedule();
+                                        await window.initWeeklySchedule();
                                 }
                         } else if (view === 'monthly') {
                                 if (window.initMonthlySchedule) {
-                                        window.initMonthlySchedule();
+                                        await window.initMonthlySchedule();
                                 }
                         }
-                        window.initScheduleModal();
+                        await window.initScheduleModal();
                         if (window.initMonthlyMoreModal) {
-                                window.initMonthlyMoreModal();
+                                await window.initMonthlyMoreModal();
                         }
                 } catch (err) {
                         console.error(err);
