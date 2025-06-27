@@ -112,6 +112,7 @@
 /* 보이지 않도록 할 때 붙일 클래스 */
 #fragment-container.hidden {
   opacity: 0;
+  visibility: hidden;
 }
 .schedule-list-select option.share-yes {
   background-color: #e7fbe7;

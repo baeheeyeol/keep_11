@@ -119,11 +119,13 @@ document.addEventListener('DOMContentLoaded', () => {
 			// 2) 내용 교체
 			fragmentContainer.innerHTML = html;
 
-			// 3) CSS 링크 토글
-			['daily', 'weekly', 'monthly'].forEach(v => {
-				const link = document.getElementById(`${v}-css`);
-				if (link) link.disabled = (v !== view);
-			});
+                        // 3) CSS 링크 토글
+                        ['daily', 'weekly', 'monthly'].forEach(v => {
+                                const link = document.getElementById(`${v}-css`);
+                                if (link) link.disabled = (v !== view);
+                        });
+                        // CSS 적용 완료까지 대기
+                        await waitForCssApply(`${view}-css`);
 
 			// 4) 뷰별 초기화 (반드시 Promise 반환)
 			if (view === 'daily' && window.initDailySchedule) await window.initDailySchedule();
