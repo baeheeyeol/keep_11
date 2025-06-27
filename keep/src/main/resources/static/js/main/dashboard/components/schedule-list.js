@@ -55,10 +55,10 @@
                 window.currentCanEdit = first.canEdit || 'N';
                 const hiddenInput = document.getElementById('current-schedule-list-id');
                 if (hiddenInput) hiddenInput.value = first.scheduleListId;
-                if (typeof window.refreshSchedule === 'function') window.refreshSchedule();
                 connectScheduleSocket(first.scheduleListId);
                 updateEditButton();
             }
+            document.dispatchEvent(new Event('scheduleListsLoaded'));
         } catch (e) {
             console.error(e);
         }
