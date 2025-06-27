@@ -192,7 +192,6 @@
 
 
 	async function initDailySchedule() {
-		console.log("!@#")
 		const grid = document.querySelector('.schedule-grid');
 		if (!grid) return;
 		const dateInput = document.getElementById('current-date').dataset.selectDate;
