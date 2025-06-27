@@ -99,7 +99,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const link = document.getElementById(id);
                 return new Promise(resolve => {
                         if (!link || link.sheet) return resolve();
-                        link.addEventListener('load', () => resolve(), { once: true });
+                        const timer = setTimeout(resolve, 3000);
+                        link.addEventListener('load', () => {
+                                clearTimeout(timer);
+                                resolve();
+                        }, { once: true });
                 });
         }
 
