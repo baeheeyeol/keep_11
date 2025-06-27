@@ -8,7 +8,9 @@ import org.springframework.stereotype.Component;
 public class ScheduleListMapperImpl implements ScheduleListMapper {
     @Override
     public ScheduleListEntity toEntity(ScheduleListDTO dto) {
-        if (dto == null) return null;
+        if (dto == null) {
+            return null;
+        }
         return ScheduleListEntity.builder()
                 .scheduleListId(dto.getScheduleListId())
                 .title(dto.getTitle())
@@ -22,7 +24,9 @@ public class ScheduleListMapperImpl implements ScheduleListMapper {
 
     @Override
     public ScheduleListDTO toDto(ScheduleListEntity entity) {
-        if (entity == null) return null;
+        if (entity == null) {
+            return null;
+        }
         return ScheduleListDTO.builder()
                 .scheduleListId(entity.getScheduleListId())
                 .title(entity.getTitle())

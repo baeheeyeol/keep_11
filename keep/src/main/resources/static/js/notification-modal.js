@@ -7,7 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const container = document.querySelector('.notification');
   const listEl = document.getElementById('notification-list');
   const moreBtn = document.getElementById('notification-more');
-  if (!btn || !modal || !close || !container || !listEl || !moreBtn) return;
+  if (!btn || !modal || !close || !container || !listEl || !moreBtn) {
+    return;
+  }
 
   const userId = container.dataset.userId;
 
@@ -29,7 +31,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function updateBadge(count) {
-    if (!badge) return;
+    if (!badge) {
+      return;
+    }
     if (count > 0) {
       badge.classList.remove('hidden');
     } else {
@@ -42,7 +46,9 @@ document.addEventListener('DOMContentLoaded', () => {
     item.className = 'notification-item';
     item.textContent = n.title;
     item.dataset.id = n.id;
-    if (n.targetUrl) item.dataset.url = n.targetUrl;
+      if (n.targetUrl) {
+        item.dataset.url = n.targetUrl;
+      }
     item.addEventListener('click', async () => {
       await fetch(`/api/notifications/${n.id}/read`, { method: 'PATCH' });
       allList = allList.filter(i => i.id !== n.id);

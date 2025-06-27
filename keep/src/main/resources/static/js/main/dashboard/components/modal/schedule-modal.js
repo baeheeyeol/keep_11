@@ -23,7 +23,9 @@
                 }
 
 		// 필수 요소 체크
-		if (!overlay || !modal || !cancel || !form) return;
+                if (!overlay || !modal || !cancel || !form) {
+                        return;
+                }
 		// 시 옵션 채우기 (00~23)
 		for (let h = 0; h < 24; h++) {
 			const hh = String(h).padStart(2, '0');
@@ -67,8 +69,12 @@
                 });
                 deleteBtn?.addEventListener('click', async () => {
                         const id = document.getElementById('sched-id').value;
-                        if (!id) return;
-                        if (!confirm('일정을 삭제하시겠습니까?')) return;
+                        if (!id) {
+                                return;
+                        }
+                        if (!confirm('일정을 삭제하시겠습니까?')) {
+                                return;
+                        }
                         try {
                                 const res = await fetch(`/api/schedules/${id}`, { method: 'DELETE' });
                                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -87,7 +93,9 @@
                         }
                 });
 
-		if (form.dataset.listenerAttached) return;
+                if (form.dataset.listenerAttached) {
+                        return;
+                }
 		// ❶ 폼 submit 이벤트 가로채기 (REST API용)
                 form.addEventListener('submit', async e => {
                         e.preventDefault();
@@ -233,7 +241,9 @@
                 if (delBtn) {
                         delBtn.classList.toggle('hidden', readonly || !document.getElementById('sched-id').value);
                 }
-                if (submitBtn) submitBtn.classList.toggle('hidden', readonly);
+                if (submitBtn) {
+                        submitBtn.classList.toggle('hidden', readonly);
+                }
                 if (listIdInput) {
                         const hiddenInput = document.getElementById('current-schedule-list-id');
                         if (hiddenInput && hiddenInput.value) {
@@ -259,7 +269,9 @@
                 document.getElementById('sched-place-name').value = '';
                 document.getElementById('sched-latitude').value = '';
                 document.getElementById('sched-longitude').value = '';
-                if (listIdInput) listIdInput.value = '';
+                if (listIdInput) {
+                        listIdInput.value = '';
+                }
                 document.querySelectorAll('.cat-color').forEach(b => b.classList.remove('selected'));
                 const delBtn = document.getElementById('modal-delete');
                 const form = document.getElementById('schedule-form');

@@ -15,8 +15,12 @@
     registerBtn = document.getElementById('location-register-btn');
     const closeBtn = document.getElementById('location-sidebar-close');
     const searchBtn = document.getElementById('location-search-btn');
-    if (!sidebar || !overlay) return;
-    if (sidebar.dataset.initialized) return;
+    if (!sidebar || !overlay) {
+      return;
+    }
+    if (sidebar.dataset.initialized) {
+      return;
+    }
     closeBtn?.addEventListener('click', close);
     overlay.addEventListener('click', close);
     searchBtn?.addEventListener('click', search);
@@ -51,14 +55,18 @@
   }
 
   async function searchKeyword(keyword) {
-    if (!keyword) return false;
+    if (!keyword) {
+      return false;
+    }
     try {
       const res = await fetch(
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
           keyword
         )}`
       );
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
       const result = await res.json();
       if (!result || result.length === 0) {
         return false;
@@ -68,7 +76,9 @@
       const lon = parseFloat(loc.lon);
       await ensureMapInitialized();
       map.setView([lat, lon], 15);
-      if (marker) marker.setLatLng([lat, lon]);
+      if (marker) {
+        marker.setLatLng([lat, lon]);
+      }
       else {
         marker = L.marker([lat, lon], { draggable: true }).addTo(map);
         marker.on('dragend', async () => {
@@ -169,7 +179,9 @@
     searchInput.value = schedLoc ? schedLoc.value.trim() : '';
     await ensureMapInitialized();
     let keyword = searchInput.value;
-    if (!keyword) keyword = DEFAULT_PLACE;
+    if (!keyword) {
+      keyword = DEFAULT_PLACE;
+    }
     let ok = await searchKeyword(keyword);
     if (!ok) {
       searchInput.value = DEFAULT_PLACE;

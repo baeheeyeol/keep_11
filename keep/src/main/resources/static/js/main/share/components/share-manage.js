@@ -77,7 +77,9 @@
 		async function fetchList(url) {
 			try {
 				const res = await fetch(url);
-				if (!res.ok) throw new Error('network');
+                                if (!res.ok) {
+                                        throw new Error('network');
+                                }
 				return await res.json();
 			} catch (e) {
 				console.error(e);

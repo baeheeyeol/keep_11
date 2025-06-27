@@ -5,7 +5,9 @@
 	let hideTimer = null;
 	let lastId = null;
 	function err(message = '오류가 발생했습니다') {
-		if (!toast) return;
+                if (!toast) {
+                        return;
+                }
 		clearTimeout(hideTimer);
 		msgEl.textContent = message;
 		undoBtn.style.display = 'none';
@@ -21,13 +23,17 @@
 	}
 
 	function hide() {
-		if (!toast) return;
+                if (!toast) {
+                        return;
+                }
 		toast.classList.remove('show');
 		toast.addEventListener('transitionend', () => toast.classList.add('hidden'), { once: true });
 	}
 
 	function showSaving() {
-		if (!toast) return;
+                if (!toast) {
+                        return;
+                }
 		clearTimeout(hideTimer);
 		msgEl.textContent = '저장중...';
 		undoBtn.style.display = 'none';
@@ -36,7 +42,9 @@
 	}
 
 	function showSaved(id, undoFn) {
-		if (!toast) return;
+                if (!toast) {
+                        return;
+                }
 		lastId = id;
 		msgEl.textContent = '저장되었습니다';
 		undoBtn.style.display = 'inline';

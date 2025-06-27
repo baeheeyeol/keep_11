@@ -39,7 +39,9 @@
                                         btn.disabled = true;
                                         listSelect.style.display = 'none';
                                         input.style.display = 'none';
-                                        if (searchBar) searchBar.style.display = 'none';
+                                        if (searchBar) {
+                                            searchBar.style.display = 'none';
+                                        }
                                         renderNoShareable();
                                 } else {
                                         listSelect.innerHTML = shareable.map(l => `<option value="${l.scheduleListId}">${l.title}</option>`).join('');
@@ -117,7 +119,9 @@
 
 		btn?.addEventListener('click', () => {
 			const name = input.value.trim();
-			if (!name) return;
+                        if (!name) {
+                            return;
+                        }
 			ensureList();
                         fetch(`/api/invitations/users?name=` + encodeURIComponent(name) + `&scheduleListId=` + listSelect.value)
 				.then(res => res.json())

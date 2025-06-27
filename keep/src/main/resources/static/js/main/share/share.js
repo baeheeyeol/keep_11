@@ -11,10 +11,12 @@ document.addEventListener('DOMContentLoaded', () => {
 	function loadView(view) {
 		fragmentContainer.style.opacity = 0;
 		fetch(`/share/fragment/${view}`)
-			.then(res => {
-				if (!res.ok) throw new Error('network');
-				return res.text();
-			})
+                        .then(res => {
+                                if (!res.ok) {
+                                    throw new Error('network');
+                                }
+                                return res.text();
+                        })
 			.then(html => {
 				fragmentContainer.innerHTML = html;
 				document.getElementById('share-invite-css').disabled = (view !== 'invite');

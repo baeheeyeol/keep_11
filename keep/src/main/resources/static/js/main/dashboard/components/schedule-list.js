@@ -3,7 +3,9 @@
     let scheduleSub = null;
 
     function connectScheduleSocket(listId) {
-        if (!window.SockJS || !window.Stomp || !listId) return;
+        if (!window.SockJS || !window.Stomp || !listId) {
+            return;
+        }
         if (scheduleStomp) {
             try { scheduleStomp.disconnect(); } catch (e) {}
             scheduleStomp = null;
@@ -13,7 +15,9 @@
         scheduleStomp = Stomp.over(sock);
         scheduleStomp.connect({}, () => {
             scheduleSub = scheduleStomp.subscribe('/topic/schedules/' + listId, () => {
-                if (typeof window.refreshSchedule === 'function') window.refreshSchedule();
+                if (typeof window.refreshSchedule === 'function') {
+                    window.refreshSchedule();
+                }
             });
         });
     }
@@ -21,7 +25,9 @@
     function updateEditButton() {
         const editBtn = document.getElementById('schedule-list-edit');
         const select = document.getElementById('schedule-list-select');
-        if (!editBtn || !select) return;
+        if (!editBtn || !select) {
+            return;
+        }
         const opt = select.options[select.selectedIndex];
         const ownerId = Number(opt.dataset.owner);
         const myId = window.currentUserId;
@@ -30,10 +36,14 @@
 
     async function loadLists() {
         const select = document.getElementById('schedule-list-select');
-        if (!select) return;
+        if (!select) {
+            return;
+        }
         try {
             const res = await fetch('/api/schedule-lists');
-            if (!res.ok) throw new Error('network');
+            if (!res.ok) {
+                throw new Error('network');
+            }
             const data = await res.json();
             select.innerHTML = '';
             data.forEach(l => {
@@ -54,7 +64,9 @@
                 window.currentScheduleOwnerId = first.userId;
                 window.currentCanEdit = first.canEdit || 'N';
                 const hiddenInput = document.getElementById('current-schedule-list-id');
-                if (hiddenInput) hiddenInput.value = first.scheduleListId;
+            if (hiddenInput) {
+                hiddenInput.value = first.scheduleListId;
+            }
                 connectScheduleSocket(first.scheduleListId);
                 updateEditButton();
             }
@@ -94,7 +106,9 @@
     async function saveList() {
         const title = document.getElementById('schedule-list-title').value.trim();
         const share = document.getElementById('schedule-list-share').value;
-        if (!title) return;
+        if (!title) {
+            return;
+        }
         const body = JSON.stringify({ title, isShareable: share });
         const url = editMode && editingId ? `/api/schedule-lists/${editingId}` : '/api/schedule-lists';
         const method = editMode && editingId ? 'PATCH' : 'POST';
@@ -111,7 +125,9 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         const userEl = document.querySelector('.notification[data-user-id]');
-        if (userEl) window.currentUserId = Number(userEl.dataset.userId);
+    if (userEl) {
+        window.currentUserId = Number(userEl.dataset.userId);
+    }
         const select = document.getElementById('schedule-list-select');
         const addBtn = document.getElementById('schedule-list-add');
         const editBtn = document.getElementById('schedule-list-edit');
@@ -124,8 +140,12 @@
             window.currentScheduleOwnerId = Number(opt.dataset.owner);
             window.currentCanEdit = opt.dataset.canEdit || 'N';
             const hiddenInput = document.getElementById('current-schedule-list-id');
-            if (hiddenInput) hiddenInput.value = opt.value;
-            if (typeof window.refreshSchedule === 'function') window.refreshSchedule();
+        if (hiddenInput) {
+            hiddenInput.value = opt.value;
+        }
+        if (typeof window.refreshSchedule === 'function') {
+            window.refreshSchedule();
+        }
             connectScheduleSocket(opt.value);
             updateEditButton();
         });

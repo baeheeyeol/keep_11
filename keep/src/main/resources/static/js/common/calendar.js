@@ -69,7 +69,9 @@
             }
 			
             cell.addEventListener('click', () => {
-                if (!activeInput) return;
+                if (!activeInput) {
+                    return;
+                }
                 const selectedDate = new Date(year, month, d);
                 const view = activeInput.dataset.view;
                 const zeroPad = num => String(num).padStart(2, '0');
@@ -155,11 +157,15 @@
         } else if (dateSource instanceof HTMLElement) {
             input = dateSource;
         }
-        if (!input) return;
+        if (!input) {
+            return;
+        }
 
         input.addEventListener('click', () => openCalendar(input));
 
-        if (initialized) return;
+        if (initialized) {
+            return;
+        }
 
         overlay = document.getElementById('calendar-overlay');
         modal = document.getElementById('calendar-modal');
@@ -202,7 +208,9 @@
         });
 
         overlay.addEventListener('click', e => {
-            if (e.target === overlay) closeCalendar();
+            if (e.target === overlay) {
+                closeCalendar();
+            }
         });
 
         populateYearDropdown();

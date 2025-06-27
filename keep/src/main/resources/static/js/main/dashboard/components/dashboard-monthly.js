@@ -12,7 +12,9 @@
 
 	async function initMonthlySchedule() {
 		const input = document.getElementById('current-date');
-		if (!input) return;
+            if (!input) {
+                    return;
+            }
 
 		const [yearStr, monthStr] = input.dataset.selectDate.split('-');
 		const year = parseInt(yearStr, 10);
@@ -32,7 +34,9 @@
 
 	function adjustLayout(rowCount) {
 		const container = document.querySelector('.monthly-calendar-container');
-		if (!container) return;
+            if (!container) {
+                    return;
+            }
 		const rect = container.getBoundingClientRect();
 		const avail = window.innerHeight - rect.top;
 		container.style.height = `${avail}px`;
@@ -44,7 +48,9 @@
 
 	function attachWheelNavigation() {
 		const container = document.querySelector('.monthly-calendar-container');
-		if (!container) return;
+            if (!container) {
+                    return;
+            }
 		if (container._wheelHandler) {
 			container.removeEventListener('wheel', container._wheelHandler);
 		}
@@ -65,14 +71,18 @@
 		}
 		window._monthlyResize = () => {
 			adjustLayout(rowCount);
-			if (callback) callback();
+                    if (callback) {
+                            callback();
+                    }
 		};
 		window.addEventListener('resize', window._monthlyResize);
 	}
 
 	function renderCalendar(firstDate, events) {
 		const calendar = document.querySelector('.monthly-calendar');
-		if (!calendar) return;
+            if (!calendar) {
+                    return;
+            }
 		calendar.innerHTML = '';
 
 		const year = firstDate.getFullYear();
@@ -125,9 +135,15 @@
 		const dayIdx = new Date(year, month, date).getDay();
 		const cell = document.createElement('div');
 		cell.className = 'day-cell';
-		if (dayIdx === 0) cell.classList.add('sun');
-		if (dayIdx === 6) cell.classList.add('sat');
-		if (otherMonth) cell.classList.add('other-month');
+            if (dayIdx === 0) {
+                    cell.classList.add('sun');
+            }
+            if (dayIdx === 6) {
+                    cell.classList.add('sat');
+            }
+            if (otherMonth) {
+                    cell.classList.add('other-month');
+            }
 		cell.dataset.date = `${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
 
 		const num = document.createElement('span');
@@ -144,13 +160,17 @@
 				suppressCellClick = false;
 				return;
 			}
-			if (e.target.closest('.event-bar')) return;
+                        if (e.target.closest('.event-bar')) {
+                                return;
+                        }
 			const startDay = document.getElementById('sched-start-day');
 			const endDay = document.getElementById('sched-end-day');
 			if (startDay && endDay && window.openScheduleModal) {
 				const currentInput = document.getElementById('current-date');
 				currentInput.dataset.selectDate = cell.dataset.date;
-				if (window.updateDisplay) window.updateDisplay(currentInput.dataset.view);
+                                if (window.updateDisplay) {
+                                        window.updateDisplay(currentInput.dataset.view);
+                                }
 				startDay.value = cell.dataset.date;
 				endDay.value = cell.dataset.date;
 				document.getElementById('sched-start-hour').value = '00';
@@ -166,12 +186,16 @@
 			e.preventDefault();
 			suppressCellClick = true;
 			const data = e.dataTransfer.getData('text/plain');
-			if (!data) return;
+            if (!data) {
+                    return;
+            }
 			const info = JSON.parse(data);
 			const from = new Date(info.date);
 			const to = new Date(cell.dataset.date);
 			const deltaDays = (to - from) / (86400000);
-			if (isNaN(deltaDays)) return;
+            if (isNaN(deltaDays)) {
+                    return;
+            }
 			if (window.saveToast && window.saveToast.showSaving) {
 				window.saveToast.showSaving();
 			}
@@ -204,7 +228,9 @@
 	}
 
 	function renderEventOverlay(events, displayStart, displayEnd, calendar, cellMap, rowCount) {
-		if (!calendar) return;
+                if (!calendar) {
+                        return;
+                }
 		monthlyState.displayStart = new Date(displayStart);
 		monthlyState.calendar = calendar;
 		monthlyState.cellMap = cellMap;
@@ -245,9 +271,15 @@
 		sorted.forEach(evt => {
 			let s = evt.start;
 			let e = evt.end;
-			if (e < displayStart || s > displayEnd) return;
-			if (s < displayStart) s = new Date(displayStart);
-			if (e > displayEnd) e = new Date(displayEnd);
+                        if (e < displayStart || s > displayEnd) {
+                                return;
+                        }
+                        if (s < displayStart) {
+                                s = new Date(displayStart);
+                        }
+                        if (e > displayEnd) {
+                                e = new Date(displayEnd);
+                        }
 
 			let sIdx = Math.floor((s - displayStart) / 86400000);
 			const eIdx = Math.floor((e - displayStart) / 86400000);
@@ -285,11 +317,13 @@
 				const d = new Date(displayStart);
 				d.setDate(displayStart.getDate() + idx);
 				const key = formatYMD(d);
-				if (!eventsByDate[key]) eventsByDate[key] = [];
+                                if (!eventsByDate[key]) {
+                                        eventsByDate[key] = [];
+                                }
 				eventsByDate[key].push(p.evt);
-				if (p.row >= MAX_VISIBLE_ROWS) {
-					hiddenCount[key] = (hiddenCount[key] || 0) + 1;
-				}
+                                if (p.row >= MAX_VISIBLE_ROWS) {
+                                        hiddenCount[key] = (hiddenCount[key] || 0) + 1;
+                                }
 			}
 		});
 
@@ -316,7 +350,9 @@
 		visibleParts.forEach(p => { p.row = rowMap[p.row]; });
 
 		parts.forEach(p => {
-			if (p.row >= MAX_VISIBLE_ROWS) return;
+                        if (p.row >= MAX_VISIBLE_ROWS) {
+                                return;
+                        }
 			const sDate = new Date(displayStart);
 			sDate.setDate(displayStart.getDate() + p.startIdx);
 			const eDate = new Date(displayStart);
@@ -325,7 +361,9 @@
 			const endKey = formatYMD(eDate);
 			const startCell = cellMap[startKey];
 			const endCell = cellMap[endKey];
-			if (!startCell || !endCell) return;
+                        if (!startCell || !endCell) {
+                                return;
+                        }
 			const sc = startCell.querySelector('.events-container').getBoundingClientRect();
 			const ec = endCell.querySelector('.events-container').getBoundingClientRect();
 			const left = sc.left - calRect.left;
@@ -385,7 +423,9 @@
 	let dragState = null;
 
         function monthlyPointerDown(e) {
-                if (window.currentCanEdit !== 'Y') return;
+                if (window.currentCanEdit !== 'Y') {
+                        return;
+                }
                 const bar = e.currentTarget;
 		e.preventDefault();
 		e.stopPropagation();
@@ -440,14 +480,18 @@
 		document.addEventListener('pointerup', monthlyPointerUp);
 	}
 
-	function monthlyPointerMove(e) {
-		if (!dragState) return;
+        function monthlyPointerMove(e) {
+                if (!dragState) {
+                        return;
+                }
 		const cellWidth = monthlyState.calendar.querySelector('.day-cell').offsetWidth;
 		const cellHeight = monthlyState.calendar.querySelector('.day-cell').offsetHeight;
 		const deltaX = Math.round((e.clientX - dragState.startX) / cellWidth);
 		const deltaY = Math.round((e.clientY - dragState.startY) / cellHeight) * 7;
 		const delta = deltaX + deltaY;
-		if (delta === dragState.deltaDays) return;
+                if (delta === dragState.deltaDays) {
+                        return;
+                }
 		dragState.deltaDays = delta;
 
 		const newStart = new Date(dragState.eventStart);
@@ -507,8 +551,10 @@
 		}
 	}
 
-	async function monthlyPointerUp() {
-		if (!dragState) return;
+        async function monthlyPointerUp() {
+                if (!dragState) {
+                        return;
+                }
 		document.removeEventListener('pointermove', monthlyPointerMove);
 		document.removeEventListener('pointerup', monthlyPointerUp);
 
@@ -520,7 +566,9 @@
 		const deltaDays = dragState.deltaDays;
 		const id = dragState.id;
 		dragState = null;
-		if (!deltaDays) return;
+                if (!deltaDays) {
+                        return;
+                }
 
 		if (window.saveToast && window.saveToast.showSaving) {
 			window.saveToast.showSaving();
@@ -552,17 +600,23 @@
 
 
 	function attachRangeSelection(calendar) {
-		if (!calendar) return;
+                if (!calendar) {
+                        return;
+                }
 		let selecting = false;
 		let startCell = null;
 
 		function pointerUp(e) {
 			document.removeEventListener('pointerup', pointerUp);
 			document.removeEventListener('pointercancel', cancel);
-			if (!selecting) return;
+                        if (!selecting) {
+                                return;
+                        }
 			selecting = false;
 			const endCell = e.target.closest('.day-cell') || startCell;
-			if (!endCell || !startCell) return;
+                        if (!endCell || !startCell) {
+                                return;
+                        }
 			let start = new Date(startCell.dataset.date);
 			let end = new Date(endCell.dataset.date);
 			if (start > end) {
@@ -590,10 +644,16 @@
 		}
 
                 calendar.addEventListener('pointerdown', e => {
-                        if (window.currentCanEdit !== 'Y') return;
-                        if (e.target.closest('.event-bar') || e.target.classList.contains('more-link')) return;
-			const cell = e.target.closest('.day-cell');
-			if (!cell || cell.classList.contains('other-month')) return;
+                        if (window.currentCanEdit !== 'Y') {
+                                return;
+                        }
+                        if (e.target.closest('.event-bar') || e.target.classList.contains('more-link')) {
+                                return;
+                        }
+                        const cell = e.target.closest('.day-cell');
+                        if (!cell || cell.classList.contains('other-month')) {
+                                return;
+                        }
 			e.preventDefault();
 			selecting = true;
 			startCell = cell;
