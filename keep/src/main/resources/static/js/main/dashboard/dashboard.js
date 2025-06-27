@@ -147,8 +147,10 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 
-	// 초기 로드
-	loadView(initialView || 'daily');
+        // 일정 목록이 준비되면 초기 뷰 로드
+        document.addEventListener('scheduleListsLoaded', () => {
+                loadView(initialView || 'daily');
+        }, { once: true });
 
 	// 뷰 버튼 이벤트
 	viewBtns.forEach(btn => {
