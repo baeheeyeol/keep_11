@@ -135,6 +135,7 @@
                                 const curView = currentDateInput.dataset.view;
                                 const refresh = () => {
                                         if (curView === 'weekly') {
+											alert(1)
                                                 window.initWeeklySchedule();
                                         } else if (curView === 'daily') {
                                                 window.initDailySchedule();

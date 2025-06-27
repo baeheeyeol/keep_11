@@ -1,15 +1,15 @@
 // static/js/main/dashboard.js
 document.addEventListener('DOMContentLoaded', () => {
-        const headerEl = document.querySelector('.dashboard-header');
-        if (headerEl) {
-                document.documentElement.style.setProperty('--dashboard-header-height', `${headerEl.offsetHeight}px`);
-        }
-        const params = new URLSearchParams(window.location.search);
-        const initialView = params.get('view');
-        const shareId = params.get('shareId');
-        if (shareId) {
-                window.currentShareId = shareId;
-        }
+	const headerEl = document.querySelector('.dashboard-header');
+	if (headerEl) {
+		document.documentElement.style.setProperty('--dashboard-header-height', `${headerEl.offsetHeight}px`);
+	}
+	const params = new URLSearchParams(window.location.search);
+	const initialView = params.get('view');
+	const shareId = params.get('shareId');
+	if (shareId) {
+		window.currentShareId = shareId;
+	}
 	let dateInput = document.getElementById('current-date');
 	if (!dateInput) {
 		return;
@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	const mm = String(today.getMonth() + 1).padStart(2, '0');
 	const dd = String(today.getDate()).padStart(2, '0');
 
-        dateInput.dataset.view = initialView || 'weekly';
+	dateInput.dataset.view = initialView || 'weekly';
 	dateInput.dataset.selectDate = `${yyyy}-${mm}-${dd}`;
 
 
@@ -40,7 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		const [y, m, d] = dateInput.dataset.selectDate.split('-').map(Number);
 		const pad = n => String(n).padStart(2, '0');
 		const dateObj = new Date(y, m - 1, d);
-
 		if (view === 'daily') {
 			dateInput.value = `${y}.${pad(m)}.${pad(d)}`;
 		} else if (view === 'weekly') {
@@ -61,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	updateDisplay(dateInput.dataset.view);
 
-	function refreshSchedule() {
+	async function refreshSchedule() {
 		const view = dateInput.dataset.view;
 		if (view === 'daily') {
 			window.initDailySchedule && await window.initDailySchedule();
@@ -93,67 +92,63 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 		refreshSchedule();
 	}
+	// CSS가 실제로 적용될 때까지 다음 페인트를 기다리는 함수
+	function waitForCssApply(id) {
+		const link = document.getElementById(id);
+		if (!link) return Promise.resolve();
+		return new Promise(resolve => {
+			// 한 프레임(약 16ms) 뒤에 resolve
+			requestAnimationFrame(() => {
+				requestAnimationFrame(resolve);
+			});
+		});
+	}
+	async function loadView(view) {
+		// 0) 숨김 클래스 붙여서 fade‐out 시작
+		fragmentContainer.classList.add('hidden');
+		// 6) 날짜표시 업데이트
+				dateInput.dataset.view = view;
+				updateDisplay(view);
 
-        // CSS 로드 대기 함수
-        function waitForCss(id) {
-                const link = document.getElementById(id);
-                return new Promise(resolve => {
-                        if (!link || link.sheet) return resolve();
-                        const timer = setTimeout(resolve, 3000);
-                        link.addEventListener('load', () => {
-                                clearTimeout(timer);
-                                resolve();
-                        }, { once: true });
-                });
-        }
+		try {
+			// 1) HTML 가져오기
+			const res = await fetch(`/dashboard/fragment/${view}`);
+			if (!res.ok) throw new Error('네트워크 에러');
+			const html = await res.text();
 
-        // 6) 컴포넌트 로드 함수
-        async function loadView(view) {
-                fragmentContainer.style.opacity = 0;
-                try {
-                        const response = await fetch(`/dashboard/fragment/${view}`);
-                        if (!response.ok) throw new Error('네트워크 에러');
-                        const html = await response.text();
+			// 2) 내용 교체
+			fragmentContainer.innerHTML = html;
 
-                        fragmentContainer.innerHTML = html;
+			// 3) CSS 링크 토글
+			['daily', 'weekly', 'monthly'].forEach(v => {
+				const link = document.getElementById(`${v}-css`);
+				if (link) link.disabled = (v !== view);
+			});
 
-                        document.getElementById('daily-css').disabled = (view !== 'daily');
-                        document.getElementById('weekly-css').disabled = (view !== 'weekly');
-                        document.getElementById('monthly-css').disabled = (view !== 'monthly');
+			// 4) 뷰별 초기화 (반드시 Promise 반환)
+			if (view === 'daily' && window.initDailySchedule) await window.initDailySchedule();
+			if (view === 'weekly' && window.initWeeklySchedule) await window.initWeeklySchedule();
+			if (view === 'monthly') {
+				if (window.initMonthlySchedule) await window.initMonthlySchedule();
+				if (window.initMonthlyMoreModal) await window.initMonthlyMoreModal();
+			}
 
-                        await waitForCss(`${view}-css`);
+			// 5) 공통 모달 초기화
+			if (window.initScheduleModal) await window.initScheduleModal();
 
-                        dateInput.dataset.view = view;
-                        updateDisplay(view);
-                        if (view === 'daily') {
-                                // daily 전용 초기화
-                                if (window.initDailySchedule) {
-                                        await window.initDailySchedule();
-                                }
-                        } else if (view === 'weekly') {
-                                if (window.initWeeklySchedule) {
-                                        await window.initWeeklySchedule();
-                                }
-                        } else if (view === 'monthly') {
-                                if (window.initMonthlySchedule) {
-                                        await window.initMonthlySchedule();
-                                }
-                        }
-                        await window.initScheduleModal();
-                        if (window.initMonthlyMoreModal) {
-                                await window.initMonthlyMoreModal();
-                        }
-                } catch (err) {
-                        console.error(err);
-                } finally {
-                        requestAnimationFrame(() => {
-                                fragmentContainer.style.opacity = 1;
-                        });
-                }
-        }
+		
+		} catch (err) {
+			console.error(err);
+		} finally {
+			// 7) 다음 리페인트 때 숨김 클래스 제거 → fade‐in
+			requestAnimationFrame(() => {
+				fragmentContainer.classList.remove('hidden');
+			});
+		}
+	}
 
-        // 초기 로드
-        loadView(initialView || 'weekly');
+	// 초기 로드
+	loadView(initialView || 'daily');
 
 	// 뷰 버튼 이벤트
 	viewBtns.forEach(btn => {
