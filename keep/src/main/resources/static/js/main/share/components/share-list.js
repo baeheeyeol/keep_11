@@ -58,7 +58,9 @@
             listEl.innerHTML = '';
             try {
                 const res = await fetch(`/api/requests/shares?type=${target}`);
-                if (!res.ok) throw new Error('network');
+                if (!res.ok) {
+                    throw new Error('network');
+                }
                 const members = await res.json();
                 if (members.length === 0) {
                     listEl.innerHTML = '<div class="placeholder">목록이 없습니다.</div>';

@@ -3,7 +3,9 @@
     const overlay = document.getElementById('monthly-more-overlay');
     const modal = document.getElementById('monthly-more-modal');
     const closeBtn = document.getElementById('monthly-more-close');
-    if (!overlay || !modal || !closeBtn) return;
+    if (!overlay || !modal || !closeBtn) {
+      return;
+    }
 
     closeBtn.addEventListener('click', closeModal);
     overlay.addEventListener('click', closeModal);
@@ -13,7 +15,9 @@
     const overlay = document.getElementById('monthly-more-overlay');
     const modal = document.getElementById('monthly-more-modal');
     const list = document.getElementById('monthly-more-list');
-    if (!overlay || !modal || !list) return;
+    if (!overlay || !modal || !list) {
+      return;
+    }
     list.innerHTML = '';
     events.forEach(e => {
       const li = document.createElement('li');
@@ -35,7 +39,9 @@
   function closeModal() {
     const overlay = document.getElementById('monthly-more-overlay');
     const modal = document.getElementById('monthly-more-modal');
-    if (!overlay || !modal) return;
+    if (!overlay || !modal) {
+      return;
+    }
     modal.classList.remove('show');
     modal.addEventListener('transitionend', () => modal.classList.add('hidden'), { once: true });
     overlay.classList.add('hidden');

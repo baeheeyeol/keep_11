@@ -13,7 +13,9 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body)
         });
-        if (!res.ok) throw new Error('network');
+        if (!res.ok) {
+            throw new Error('network');
+        }
         const data = await res.json();
         return data.id;
     }
@@ -21,7 +23,9 @@
     function createItem(l, container, before = null, startEditing = false) {
         const div = document.createElement('div');
         div.className = 'mylist-item';
-        if (l.isNew) div.classList.add('new-item');
+        if (l.isNew) {
+            div.classList.add('new-item');
+        }
 
         const titleText = document.createElement('span');
         titleText.className = 'title-text';
@@ -73,7 +77,9 @@
         refreshShare();
 
         yBtn.addEventListener('click', async () => {
-            if (l.isShareable === 'Y') return;
+            if (l.isShareable === 'Y') {
+                return;
+            }
             if (l.scheduleListId) {
                 await updateList(l.scheduleListId, { title: l.title, isShareable: 'Y' });
                 window.saveToast?.showMessage('해당 일정을 공유할수 있습니다.');
@@ -82,7 +88,9 @@
             refreshShare();
         });
         nBtn.addEventListener('click', async () => {
-            if (l.isShareable === 'N') return;
+            if (l.isShareable === 'N') {
+                return;
+            }
             if (l.scheduleListId) {
                 await updateList(l.scheduleListId, { title: l.title, isShareable: 'N' });
                 window.saveToast?.showMessage('공유가 취소 되었습니다.');
@@ -150,7 +158,9 @@
             }
         });
         input.addEventListener('blur', () => {
-            if (div.classList.contains('editing')) cancelEdit();
+            if (div.classList.contains('editing')) {
+                cancelEdit();
+            }
         });
 
         div.appendChild(titleText);
@@ -164,7 +174,9 @@
             container.appendChild(div);
         }
 
-        if (startEditing) startEdit();
+        if (startEditing) {
+            startEdit();
+        }
     }
 
     async function loadLists() {

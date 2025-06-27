@@ -121,7 +121,9 @@
 
 		// 6) 요일별 "열(column)" 동적 배치 - 겹치는 구간만 나눠서 계산
 		Object.values(byDay).forEach(dayBlocks => {
-			if (dayBlocks.length === 0) return;
+        if (dayBlocks.length === 0) {
+                return;
+        }
 
 			// 이벤트별 시작/끝 값 보조 속성
 			dayBlocks.forEach(evt => {
@@ -132,7 +134,9 @@
 			const clusters = [];
 			const seen = new Set();
 			dayBlocks.forEach(evt => {
-				if (seen.has(evt)) return;
+                if (seen.has(evt)) {
+                        return;
+                }
 				const queue = [evt];
 				const comp = [];
 				seen.add(evt);
@@ -252,7 +256,9 @@
 	 */
 	function makeDraggable(eventBlocks) {
 		const grid = document.getElementById('schedule-grid');
-		if (!grid) return;
+            if (!grid) {
+                    return;
+            }
 
 		let gridRect = grid.getBoundingClientRect();
 		function updateGridRect() {
@@ -280,7 +286,9 @@
 		});
 
                 function pointerDownHandler(e) {
-                        if (window.currentCanEdit !== 'Y') return;
+                        if (window.currentCanEdit !== 'Y') {
+                                return;
+                        }
                         e.preventDefault();
                         e.stopPropagation();
 
@@ -306,7 +314,9 @@
 		}
 
                 function pointerMoveHandler(eMove) {
-                        if (eMove.pointerId !== pressedPointerId) return;
+                        if (eMove.pointerId !== pressedPointerId) {
+                                return;
+                        }
                         eMove.preventDefault();
 
                         const deltaX = eMove.clientX - startX;
@@ -343,21 +353,31 @@
 				let rawTop = o.origTopPx + deltaY;
 				const minTop = 0;
 				const maxTop = totalGridHeight - o.el.clientHeight;
-				if (rawTop < minTop) rawTop = minTop;
-				if (rawTop > maxTop) rawTop = maxTop;
+                                if (rawTop < minTop) {
+                                        rawTop = minTop;
+                                }
+                                if (rawTop > maxTop) {
+                                        rawTop = maxTop;
+                                }
 				const snappedTop = Math.round(rawTop / quarterSlot) * quarterSlot;
 				o.el.style.top = `${snappedTop}px`;
 
 				// 2) 가로 이동: 요일 경계를 넘어 이동 가능
 				let newDay = Math.round((o.origDayIdx * dayWidthPx + deltaX) / dayWidthPx);
-				if (newDay < 0) newDay = 0;
-				if (newDay > 6) newDay = 6;
+                                if (newDay < 0) {
+                                        newDay = 0;
+                                }
+                                if (newDay > 6) {
+                                        newDay = 6;
+                                }
 				o.el.style.left = `calc(${newDay * percentPerDay}% )`;
 			});
 		}
 
-		async function pointerUpHandler(eUp) {
-			if (eUp.pointerId !== pressedPointerId) return;
+                async function pointerUpHandler(eUp) {
+                        if (eUp.pointerId !== pressedPointerId) {
+                                return;
+                        }
                         eventBlocks.forEach(el => (el.style.zIndex = ''));
                         ghostEls.forEach(g => g.remove());
                         ghostEls = [];
@@ -446,11 +466,15 @@
 
 	function renderAllDayEvents(events, weekStart, weekEnd) {
 		const wrapper = document.querySelector('.events-all-day-wrapper');
-		if (!wrapper) return;
+                if (!wrapper) {
+                        return;
+                }
 		const list = wrapper.querySelector('.events-all-day-list');
 		list.innerHTML = '';
 		const oldToggle = wrapper.querySelector('.all-day-toggle');
-		if (oldToggle) oldToggle.remove();
+                if (oldToggle) {
+                        oldToggle.remove();
+                }
 
 		const ROW_HEIGHT = parseFloat(
 			getComputedStyle(document.documentElement).getPropertyValue('--all-day-row-height') || 20
@@ -508,8 +532,12 @@
 			const div = document.createElement('div');
 			div.className = 'all-day-event';
 			let txt = evt.title;
-			if (evt.arrowLeft) txt = '◀ ' + txt;
-			if (evt.arrowRight) txt = txt + ' ▶';
+                        if (evt.arrowLeft) {
+                                txt = '◀ ' + txt;
+                        }
+                        if (evt.arrowRight) {
+                                txt = txt + ' ▶';
+                        }
 			div.textContent = txt;
 			div.style.backgroundColor = evt.category;
 			div.style.left = `calc(${percentPerDay * evt.startIdx}% + ${GAP}px)`;
@@ -517,9 +545,13 @@
 			div.style.width = `calc(${widthPct}% - ${GAP}px)`;
 			div.style.top = `${evt.row * (ROW_HEIGHT + ROW_GAP)}px`;
 			div.dataset.id = evt.id;
-			if (evt.row >= visible) div.style.display = 'none';
+                        if (evt.row >= visible) {
+                                div.style.display = 'none';
+                        }
 			div.addEventListener('click', () => {
-				if (window.loadAndOpenScheduleModal) window.loadAndOpenScheduleModal(evt.id);
+                        if (window.loadAndOpenScheduleModal) {
+                                window.loadAndOpenScheduleModal(evt.id);
+                        }
 			});
 			list.appendChild(div);
 		});
@@ -533,11 +565,13 @@
 				expanded = !expanded;
 				visible = expanded ? totalRows : 2;
 				list.style.height = `${ROW_HEIGHT * visible + ROW_GAP * Math.max(0, visible - 1)}px`;
-				Array.from(list.children).forEach(el => {
-					if (!el.classList.contains('all-day-event')) return;
-					const rowIdx = parseInt(el.style.top) / (ROW_HEIGHT + ROW_GAP);
-					el.style.display = rowIdx < visible ? '' : 'none';
-				});
+                                Array.from(list.children).forEach(el => {
+                                        if (!el.classList.contains('all-day-event')) {
+                                                return;
+                                        }
+                                        const rowIdx = parseInt(el.style.top) / (ROW_HEIGHT + ROW_GAP);
+                                        el.style.display = rowIdx < visible ? '' : 'none';
+                                });
 				btn.textContent = expanded ? '접기' : `+${totalRows - 2}개 더보기`;
 			});
 			wrapper.appendChild(btn);
@@ -547,7 +581,9 @@
 	// 현재 시간선 위치 및 헤더의 날짜 숫자 업데이트
         function updateCurrentTimeLine() {
                 const line = document.querySelector('.current-time-line');
-                if (!line) return;
+                if (!line) {
+                        return;
+                }
                 const now = new Date();
                 const h = now.getHours() + now.getMinutes() / 60;
                 const slotHeight = parseFloat(
@@ -584,7 +620,9 @@
 		const currentDateInput = document.getElementById('current-date');
 		const val = currentDateInput.value; // "MM.DD-MM.DD"
 		const m = val.match(/^(\d{2})\.(\d{2})-(\d{2})\.(\d{2})$/);
-		if (!m) return;
+                if (!m) {
+                        return;
+                }
 		const startDay = parseInt(m[2], 10);
 		const endDay = parseInt(m[4], 10);
 		const labels = Array.from(
@@ -592,14 +630,18 @@
 		).slice(1, 1 + (endDay - startDay + 1));
 		const days = [];
 		for (let d = startDay; d <= endDay; d++) days.push(d);
-		labels.forEach((el, idx) => {
-			const numSpan = el.querySelector('.date-number');
-			if (numSpan) numSpan.textContent = days[idx] + '';
-		});
+                labels.forEach((el, idx) => {
+                        const numSpan = el.querySelector('.date-number');
+                        if (numSpan) {
+                                numSpan.textContent = days[idx] + '';
+                        }
+                });
 	}
 	function attachGridClick() {
-		const grid = document.getElementById('schedule-grid');
-		if (!grid || grid.dataset.modalClickAttached) return;
+                const grid = document.getElementById('schedule-grid');
+                if (!grid || grid.dataset.modalClickAttached) {
+                        return;
+                }
 
 		const slotHeight = parseFloat(
 			getComputedStyle(document.documentElement).getPropertyValue('--hour-height')
@@ -646,11 +688,15 @@
                         document.getElementById('sched-start-min').value = String(startMin).padStart(2, '0');
                         document.getElementById('sched-end-hour').value = String(endHour).padStart(2, '0');
                         document.getElementById('sched-end-min').value = String(endMin).padStart(2, '0');
-                        if (window.openScheduleModal) window.openScheduleModal();
+                        if (window.openScheduleModal) {
+                                window.openScheduleModal();
+                        }
                 }
 
                 function pointerMove(eMove) {
-                        if (!selecting) return;
+                        if (!selecting) {
+                                return;
+                        }
                         const rect = grid.getBoundingClientRect();
                         const curY = eMove.clientY - rect.top;
                         const top = Math.min(startY, curY);
@@ -661,16 +707,22 @@
                 }
 
                 function cancelSelection() {
-                        if (!selecting) return;
+                        if (!selecting) {
+                                return;
+                        }
                         document.removeEventListener('pointermove', pointerMove);
                         document.removeEventListener('pointerup', pointerUp);
                         document.removeEventListener('pointercancel', cancelSelection);
-                        if (selectDiv) selectDiv.remove();
+                        if (selectDiv) {
+                                selectDiv.remove();
+                        }
                         selecting = false;
                 }
 
                 function pointerUp(eUp) {
-                        if (!selecting) return;
+                        if (!selecting) {
+                                return;
+                        }
                         document.removeEventListener('pointermove', pointerMove);
                         document.removeEventListener('pointerup', pointerUp);
                         document.removeEventListener('pointercancel', cancelSelection);
@@ -686,14 +738,22 @@
                 }
 
                 grid.addEventListener('pointerdown', e => {
-                        if (window.currentCanEdit !== 'Y') return;
-                        if (e.target.closest('.event')) return;
+                        if (window.currentCanEdit !== 'Y') {
+                                return;
+                        }
+                        if (e.target.closest('.event')) {
+                                return;
+                        }
                         const slot = e.target.closest('.hour-slot');
-                        if (!slot) return;
+                        if (!slot) {
+                                return;
+                        }
 
                         let idx = Array.from(slot.parentNode.children).indexOf(slot);
                         const rowIdx = (idx / 7) | 0;
-                        if (rowIdx === 24) return; // ignore the bottom slot
+                        if (rowIdx === 24) {
+                                return; // ignore the bottom slot
+                        }
 
                         const rect = grid.getBoundingClientRect();
                         startColIdx = idx % 7;
@@ -713,7 +773,9 @@
                 });
 
                 grid.addEventListener('contextmenu', e => {
-                        if (!selecting) return;
+                        if (!selecting) {
+                                return;
+                        }
                         e.preventDefault();
                         cancelSelection();
                 });
@@ -721,15 +783,23 @@
                 document.addEventListener('scheduleModalClosed', cancelSelection);
 
                 grid.addEventListener('click', e => {
-                        if (window.currentCanEdit !== 'Y') return;
-                        if (selecting) return; // drag selection handled separately
+                        if (window.currentCanEdit !== 'Y') {
+                                return;
+                        }
+                        if (selecting) {
+                                return; // drag selection handled separately
+                        }
                         const slot = e.target.closest('.hour-slot');
-                        if (!slot) return;
+                        if (!slot) {
+                                return;
+                        }
 
                         let idx = Array.from(slot.parentNode.children).indexOf(slot);
                         const dateStr = getDateForSlot(slot.id);
                         const rowIdx = (idx / 7) | 0;
-                        if (rowIdx === 24) return; // bottom slot does nothing
+                        if (rowIdx === 24) {
+                                return; // bottom slot does nothing
+                        }
 
                         const [y, m, d] = dateStr.split('-').map(v => v.padStart(2, '0'));
                         document.getElementById('sched-start-day').value = `${y}-${m}-${d}`;
@@ -751,7 +821,9 @@
                         document.getElementById('sched-start-min').value = '00';
                         document.getElementById('sched-end-hour').value = String(endHour).padStart(2, '0');
                         document.getElementById('sched-end-min').value = '00';
-                        if (window.openScheduleModal) window.openScheduleModal();
+                        if (window.openScheduleModal) {
+                                window.openScheduleModal();
+                        }
                 });
 		grid.dataset.modalClickAttached = 'true';
 	}

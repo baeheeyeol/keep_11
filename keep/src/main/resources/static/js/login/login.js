@@ -65,7 +65,9 @@ document.addEventListener('DOMContentLoaded', () => {
       // 3) fetch 중복 확인
 	  const url = `/api/members/existsEmail?email=${encodeURIComponent(email)}`;
       const res = await fetch(url);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
 
       // 4) 결과 처리
       const {exists} = await res.json();  // true = 이미 사용 중
@@ -113,7 +115,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // 회원가입 처리
   signupBtn.addEventListener('click', async (e) => {
     e.preventDefault();
-    if (signupBtn.disabled) return;
+    if (signupBtn.disabled) {
+      return;
+    }
 	
 	// **여기서 HTML5 required 검증**
 	if (!signupForm.checkValidity()) {
@@ -132,7 +136,9 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify(payload)
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
       if (res.status === 201) {
         // 성공 토스트
         showToast('🎉 회원가입이 완료되었습니다!');

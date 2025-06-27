@@ -52,7 +52,9 @@
 
         btn?.addEventListener('click', () => {
             const name = input.value.trim();
-            if (!name) return;
+            if (!name) {
+                return;
+            }
             hideControls();
             selected = null;
             ensureList();
@@ -88,7 +90,9 @@
 
                         function updateButton() {
                             const opt = select.selectedOptions[0];
-                            if (!opt) return;
+                            if (!opt) {
+                                return;
+                            }
                             const requested = opt.dataset.requested === 'Y';
                             if (button.textContent !== '선택완료') {
                                 if (requested) {
@@ -119,7 +123,9 @@
 
                         button.addEventListener('click', () => {
                             Array.from(list.children).forEach(item => {
-                                if (item !== div) item.remove();
+                                if (item !== div) {
+                                    item.remove();
+                                }
                             });
                             list.style.minHeight = 'auto';
                             button.textContent = '선택완료';
@@ -152,7 +158,9 @@
         }
 
         requestBtn?.addEventListener('click', () => {
-            if (!selected) return;
+            if (!selected) {
+                return;
+            }
             fetch('/api/requests', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

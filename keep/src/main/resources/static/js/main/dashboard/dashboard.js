@@ -95,7 +95,9 @@ document.addEventListener('DOMContentLoaded', () => {
 	// CSS가 실제로 적용될 때까지 다음 페인트를 기다리는 함수
 	function waitForCssApply(id) {
 		const link = document.getElementById(id);
-		if (!link) return Promise.resolve();
+            if (!link) {
+                return Promise.resolve();
+            }
 		return new Promise(resolve => {
 			// 한 프레임(약 16ms) 뒤에 resolve
 			requestAnimationFrame(() => {
@@ -112,8 +114,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		try {
 			// 1) HTML 가져오기
-			const res = await fetch(`/dashboard/fragment/${view}`);
-			if (!res.ok) throw new Error('네트워크 에러');
+                          const res = await fetch(`/dashboard/fragment/${view}`);
+                          if (!res.ok) {
+                                  throw new Error('네트워크 에러');
+                          }
 			const html = await res.text();
 
 			// 2) 내용 교체
@@ -121,22 +125,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			// 3) CSS 링크 토글
 			['daily', 'weekly', 'monthly'].forEach(v => {
-				const link = document.getElementById(`${v}-css`);
-				if (link) link.disabled = (v !== view);
+                                  const link = document.getElementById(`${v}-css`);
+                                  if (link) {
+                                          link.disabled = (v !== view);
+                                  }
 			});
 			// CSS 적용 완료까지 대기
 			await waitForCssApply(`${view}-css`);
 
 			// 4) 뷰별 초기화 (반드시 Promise 반환)
-			if (view === 'daily' && window.initDailySchedule) await window.initDailySchedule();
-			if (view === 'weekly' && window.initWeeklySchedule) await window.initWeeklySchedule();
+                        if (view === 'daily' && window.initDailySchedule) {
+                                await window.initDailySchedule();
+                        }
+                        if (view === 'weekly' && window.initWeeklySchedule) {
+                                await window.initWeeklySchedule();
+                        }
 			if (view === 'monthly') {
-				if (window.initMonthlySchedule) await window.initMonthlySchedule();
-				if (window.initMonthlyMoreModal) await window.initMonthlyMoreModal();
+                                if (window.initMonthlySchedule) {
+                                        await window.initMonthlySchedule();
+                                }
+                                if (window.initMonthlyMoreModal) {
+                                        await window.initMonthlyMoreModal();
+                                }
 			}
 
 			// 5) 공통 모달 초기화
-			if (window.initScheduleModal) await window.initScheduleModal();
+                        if (window.initScheduleModal) {
+                                await window.initScheduleModal();
+                        }
 
 
 		} catch (err) {
