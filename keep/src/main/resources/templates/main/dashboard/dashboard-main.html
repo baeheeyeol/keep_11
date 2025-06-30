@@ -8,7 +8,8 @@
 <!--/* style */-->
 <th:block layout:fragment="add-css">
 	<link rel="stylesheet" th:href="@{/css/common/calendar.css}" />
-	<link rel="stylesheet" th:href="@{/css/main/dashboard/dashboard.css}" />
+        <link rel="stylesheet" th:href="@{/css/main/dashboard/dashboard.css}" />
+        <link rel="stylesheet" th:href="@{/css/main/dashboard/mobile-sidebar.css}" />
 <!-- dash.html head -->
 <link id="daily-css"  rel="stylesheet" th:href="@{/css/main/dashboard/components/dashboard-daily.css}"  disabled="false" />
 <link id="weekly-css" rel="stylesheet" th:href="@{/css/main/dashboard/components/dashboard-weekly.css}" disabled="true" />
@@ -22,7 +23,12 @@
 </th:block>
 <!--/* content */-->
 <th:block layout:fragment="content">
-	<div class="dashboard-header">
+        <!-- 1) 모바일 햄버거 토글 버튼 (≤767px 에서만 보임) -->
+        <button id="sidebar-open" class="sidebar-open">☰</button>
+
+        <!-- 2) 헤더 전체를 감싸는 wrapper (이걸 사이드바로 이동할 대상) -->
+        <div class="header-top">
+        <div class="dashboard-header">
                 <!-- 좌측: 일정 목록 선택 -->
                 <div class="dashboard-header-left">
                 목록 :
@@ -44,8 +50,16 @@
 			<button class="view-btn" data-view="weekly">주간</button>
 			<button class="view-btn" data-view="monthly">월간</button>
 <!-- 			<button class="view-btn" data-view="yearly">년간</button> -->
-		</div>
-	</div>
+                </div>
+        </div>
+        </div>
+
+        <!-- 3) 모바일 오프캔버스 사이드바 -->
+        <aside id="mobile-sidebar" class="mobile-sidebar hidden">
+          <!-- location-sidebar fragment 안에 .header-top 이 append 됩니다 -->
+          <button class="sidebar-close">×</button>
+          <div class="sidebar-content"></div>
+        </aside>
 	<div id="fragment-container"></div>
 	
 	<!-- 	daily.html 등록 모달 -->	
@@ -69,6 +83,7 @@
         <script th:src="@{/js/main/dashboard/components/modal/schedule-modal.js}"></script>
         <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
         <script th:src="@{/js/location-sidebar.js}"></script>
+        <script th:src="@{/js/mobile-sidebar.js}"></script>
         <script th:src="@{/js/main/common/toast.js}"></script>
         <script th:src="@{/js/main/dashboard/components/modal/monthly-more-modal.js}"></script>
 </th:block>
