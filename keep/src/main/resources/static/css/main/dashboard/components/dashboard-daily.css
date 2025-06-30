@@ -265,3 +265,16 @@
         border-radius: 4px;
         white-space: nowrap;
 }
+
+/* Responsive: single column layout on narrow screens */
+@media (max-width: 576px) {
+  :root {
+    --hour-height: 40px;
+  }
+  .daily-schedule {
+    flex-direction: column;
+  }
+  .schedule-grid {
+    overflow-x: auto;
+  }
+}
