@@ -599,49 +599,125 @@
 	}
 
 
-	function attachRangeSelection(calendar) {
+        function attachRangeSelection(calendar) {
                 if (!calendar) {
                         return;
                 }
-		let selecting = false;
-		let startCell = null;
+                let selecting = false;
+                let startCell = null;
+                let selectDivs = [];
+                let overlay = calendar.querySelector('.monthly-select-overlay');
+                if (!overlay) {
+                        overlay = document.createElement('div');
+                        overlay.className = 'monthly-select-overlay';
+                        calendar.appendChild(overlay);
+                }
 
-		function pointerUp(e) {
-			document.removeEventListener('pointerup', pointerUp);
-			document.removeEventListener('pointercancel', cancel);
+                function clearDivs() {
+                        selectDivs.forEach(d => d.remove());
+                        selectDivs = [];
+                }
+
+                function formatRange(s, e) {
+                        return `${formatYMD(s)} - ${formatYMD(e)}`;
+                }
+
+                function renderSelection(endCell) {
+                        if (!startCell || !endCell) {
+                                return;
+                        }
+                        let start = new Date(startCell.dataset.date);
+                        let end = new Date(endCell.dataset.date);
+                        if (start > end) {
+                                const tmp = start;
+                                start = end;
+                                end = tmp;
+                        }
+
+                        clearDivs();
+
+                        const base = monthlyState.displayStart;
+                        let sIdx = Math.floor((start - base) / 86400000);
+                        const eIdx = Math.floor((end - base) / 86400000);
+                        const calRect = calendar.getBoundingClientRect();
+                        while (sIdx <= eIdx) {
+                                const weekIdx = Math.floor(sIdx / 7);
+                                const weekEnd = (weekIdx + 1) * 7 - 1;
+                                const partEnd = Math.min(eIdx, weekEnd);
+                                const sDate = new Date(base);
+                                sDate.setDate(base.getDate() + sIdx);
+                                const eDate = new Date(base);
+                                eDate.setDate(base.getDate() + partEnd);
+                                const sKey = formatYMD(sDate);
+                                const eKey = formatYMD(eDate);
+                                const sc = monthlyState.cellMap[sKey];
+                                const ec = monthlyState.cellMap[eKey];
+                                if (sc && ec) {
+                                        const r1 = sc.getBoundingClientRect();
+                                        const r2 = ec.getBoundingClientRect();
+                                        const div = document.createElement('div');
+                                        div.className = 'drag-select';
+                                        div.style.left = (r1.left - calRect.left) + 'px';
+                                        div.style.top = (r1.top - calRect.top) + 'px';
+                                        div.style.width = (r2.right - r1.left) + 'px';
+                                        div.style.height = r1.height + 'px';
+                                        div.dataset.range = formatRange(start, end);
+                                        overlay.appendChild(div);
+                                        selectDivs.push(div);
+                                }
+                                sIdx = partEnd + 1;
+                        }
+                }
+
+                function pointerMove(eMove) {
                         if (!selecting) {
                                 return;
                         }
-			selecting = false;
-			const endCell = e.target.closest('.day-cell') || startCell;
+                        const el = document.elementFromPoint(eMove.clientX, eMove.clientY);
+                        const cell = el ? el.closest('.day-cell') : null;
+                        renderSelection(cell || startCell);
+                }
+
+                function pointerUp(e) {
+                        document.removeEventListener('pointerup', pointerUp);
+                        document.removeEventListener('pointermove', pointerMove);
+                        document.removeEventListener('pointercancel', cancel);
+                        if (!selecting) {
+                                return;
+                        }
+                        selecting = false;
+                        clearDivs();
+                        const endCell = e.target.closest('.day-cell') || startCell;
                         if (!endCell || !startCell) {
                                 return;
                         }
-			let start = new Date(startCell.dataset.date);
-			let end = new Date(endCell.dataset.date);
-			if (start > end) {
-				const tmp = start;
-				start = end;
-				end = tmp;
-			}
-			const startDay = document.getElementById('sched-start-day');
-			const endDay = document.getElementById('sched-end-day');
-			if (startDay && endDay && window.openScheduleModal) {
-				startDay.value = formatYMD(start);
-				endDay.value = formatYMD(end);
-				document.getElementById('sched-start-hour').value = '00';
-				document.getElementById('sched-start-min').value = '00';
-				document.getElementById('sched-end-hour').value = '01';
-				document.getElementById('sched-end-min').value = '00';
-				window.openScheduleModal();
-			}
-		}
+                        let start = new Date(startCell.dataset.date);
+                        let end = new Date(endCell.dataset.date);
+                        if (start > end) {
+                                const tmp = start;
+                                start = end;
+                                end = tmp;
+                        }
+                        const startDay = document.getElementById('sched-start-day');
+                        const endDay = document.getElementById('sched-end-day');
+                        if (startDay && endDay && window.openScheduleModal) {
+                                startDay.value = formatYMD(start);
+                                endDay.value = formatYMD(end);
+                                document.getElementById('sched-start-hour').value = '00';
+                                document.getElementById('sched-start-min').value = '00';
+                                document.getElementById('sched-end-hour').value = '01';
+                                document.getElementById('sched-end-min').value = '00';
+                                window.openScheduleModal();
+                        }
+                }
 
-		function cancel() {
-			selecting = false;
-			document.removeEventListener('pointerup', pointerUp);
-			document.removeEventListener('pointercancel', cancel);
-		}
+                function cancel() {
+                        selecting = false;
+                        clearDivs();
+                        document.removeEventListener('pointerup', pointerUp);
+                        document.removeEventListener('pointermove', pointerMove);
+                        document.removeEventListener('pointercancel', cancel);
+                }
 
                 calendar.addEventListener('pointerdown', e => {
                         if (window.currentCanEdit !== 'Y') {
@@ -654,13 +730,15 @@
                         if (!cell || cell.classList.contains('other-month')) {
                                 return;
                         }
-			e.preventDefault();
-			selecting = true;
-			startCell = cell;
-			document.addEventListener('pointerup', pointerUp);
-			document.addEventListener('pointercancel', cancel);
-		});
-	}
+                        e.preventDefault();
+                        selecting = true;
+                        startCell = cell;
+                        renderSelection(startCell);
+                        document.addEventListener('pointermove', pointerMove);
+                        document.addEventListener('pointerup', pointerUp);
+                        document.addEventListener('pointercancel', cancel);
+                });
+        }
 
 	window.initMonthlySchedule = initMonthlySchedule;
 })();
