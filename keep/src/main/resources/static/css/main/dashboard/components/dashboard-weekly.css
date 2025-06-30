@@ -305,7 +305,7 @@
   right: 0;
   background: rgba(59, 130, 246, 0.3);
   pointer-events: none;
-  z-index: 5;
+  z-index: 60;
 }
 .drag-select::after {
   content: attr(data-time);

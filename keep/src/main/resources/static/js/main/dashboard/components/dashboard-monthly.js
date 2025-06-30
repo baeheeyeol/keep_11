@@ -640,6 +640,7 @@
                         let sIdx = Math.floor((start - base) / 86400000);
                         const eIdx = Math.floor((end - base) / 86400000);
                         const calRect = calendar.getBoundingClientRect();
+                        let first = true;
                         while (sIdx <= eIdx) {
                                 const weekIdx = Math.floor(sIdx / 7);
                                 const weekEnd = (weekIdx + 1) * 7 - 1;
@@ -661,7 +662,10 @@
                                         div.style.top = (r1.top - calRect.top) + 'px';
                                         div.style.width = (r2.right - r1.left) + 'px';
                                         div.style.height = r1.height + 'px';
-                                        div.dataset.range = formatRange(start, end);
+                                        if (first) {
+                                                div.dataset.range = formatRange(start, end);
+                                                first = false;
+                                        }
                                         overlay.appendChild(div);
                                         selectDivs.push(div);
                                 }
