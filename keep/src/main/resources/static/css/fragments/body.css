@@ -239,3 +239,54 @@ header .head h1 {
   font-size: 0.9rem;
   color: #777;
 }
+
+/* 모바일 접근성 향상을 위한 기본 버튼/링크 터치 영역 */
+button, a {
+  min-width: 48px;
+  min-height: 48px;
+  padding: 0.5rem 0.75rem;
+}
+
+/* 반응형 레이아웃 */
+@media (max-width: 992px) {
+  #sidebar {
+    width: 200px;
+  }
+  .content {
+    padding: 15px;
+  }
+  html {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  #container {
+    flex-direction: column;
+  }
+  #sidebar {
+    width: 100%;
+  }
+  #sidebar.collapsed {
+    width: 100%;
+  }
+  .content {
+    border-radius: 0;
+  }
+}
+
+@media (max-width: 576px) {
+  header .head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  #sidebar {
+    display: none;
+  }
+  #sidebar.collapsed {
+    display: none;
+  }
+  .content {
+    padding: 10px;
+  }
+}

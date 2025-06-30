@@ -319,3 +319,17 @@
   border-radius: 4px;
   white-space: nowrap;
 }
+
+/* Responsive: horizontal scroll on narrow screens */
+@media (max-width: 576px) {
+  :root {
+    --hour-height: 40px;
+  }
+  .weekday-header,
+  .schedule-grid {
+    min-width: 700px;
+  }
+  .daily-schedule {
+    overflow-x: auto;
+  }
+}
