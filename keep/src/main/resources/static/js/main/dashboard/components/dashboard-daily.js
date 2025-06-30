@@ -1,9 +1,18 @@
 // static/js/main/dashboard/components/dashboard-daily.js
 (function() {
-	let draggingEvt = null;
-	let ghostEl = null;
-	let startY, origTop;
-	let H, STEP;
+        let draggingEvt = null;
+        let ghostEl = null;
+        let startY, origTop;
+        let H, STEP;
+        function cssVarPx(name) {
+                const val = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+                const num = parseFloat(val);
+                if (val.endsWith('rem')) {
+                        const base = parseFloat(getComputedStyle(document.documentElement).fontSize);
+                        return num * base;
+                }
+                return num;
+        }
 	let isDragging = false;               // 실제 드래그 중인지 플래그
 	const DRAG_THRESHOLD = 5;
 
@@ -112,9 +121,8 @@
 			return;
 		}
 
-		H = parseFloat(getComputedStyle(document.documentElement)
-			.getPropertyValue('--hour-height'));
-		STEP = H / 4;
+                H = cssVarPx('--hour-height');
+                STEP = H / 4;
 
 		grid.addEventListener('pointerdown', e => {
 			if (window.currentCanEdit !== 'Y') {
@@ -147,8 +155,8 @@
 		if (oldToggle) {
 			oldToggle.remove();
 		}
-		const ROW_HEIGHT = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--all-day-row-height') || 20);
-		const ROW_GAP = 2;
+                const ROW_HEIGHT = cssVarPx('--all-day-row-height');
+                const ROW_GAP = 2;
 
 		const dayStart = new Date(dateStr + 'T00:00:00');
 		const dayEnd = new Date(dayStart);
@@ -289,8 +297,8 @@
 		const container = grid.querySelector('.events-container');
 		container.innerHTML = '';
 		updateCurrentTimeLine();
-		const H = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hour-height'));
-		const GAP = 2;
+                const H = cssVarPx('--hour-height');
+                const GAP = 2;
 
 		events.forEach(evt => {
 			const startDate = new Date(evt.startTs);
@@ -321,9 +329,8 @@
 		}
 		const now = new Date();
 		const h = now.getHours() + now.getMinutes() / 60;
-		const H = parseFloat(getComputedStyle(document.documentElement)
-			.getPropertyValue('--hour-height'));
-		line.style.top = `${h * H}px`;
+                const H = cssVarPx('--hour-height');
+                line.style.top = `${h * H}px`;
 		const pad = n => String(n).padStart(2, '0');
 		line.dataset.time = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
 	}
@@ -333,8 +340,8 @@
 		if (!grid || grid.dataset.modalClickAttached) {
 			return;
 		}
-		const H = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hour-height'));
-		const STEP = H / 4;
+                const H = cssVarPx('--hour-height');
+                const STEP = H / 4;
 		let selecting = false;
 		let startY = 0;
 		let selectDiv = null;

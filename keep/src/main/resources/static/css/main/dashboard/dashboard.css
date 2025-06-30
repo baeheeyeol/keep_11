@@ -129,4 +129,18 @@
     align-items: stretch;
     gap: 1rem;
   }
+  .dashboard-header-left,
+  .dashboard-header-center,
+  .dashboard-header-right {
+    width: 100%;
+  }
+  .dashboard-header-left {
+    justify-content: flex-start;
+  }
+  .dashboard-header-center {
+    justify-content: center;
+  }
+  .dashboard-header-right {
+    justify-content: flex-end;
+  }
 }
