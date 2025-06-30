@@ -380,17 +380,21 @@
 			}
 		}
 
-		function pointerMove(eMove) {
-			if (!selecting) {
-				return;
-			}
-			const cur = eMove.clientY - grid.getBoundingClientRect().top;
-			const top = Math.min(startY, cur);
-			const bottom = Math.max(startY, cur);
-			selectDiv.style.top = `${top}px`;
-			selectDiv.style.height = `${bottom - top}px`;
-			selectDiv.dataset.time = `${formatTime(top)} - ${formatTime(bottom)}`;
-		}
+                function pointerMove(eMove) {
+                        if (!selecting) {
+                                return;
+                        }
+                        eMove.preventDefault();
+                        const rect = grid.getBoundingClientRect();
+                        let cur = eMove.clientY - rect.top;
+                        const maxY = 24 * H;
+                        cur = Math.max(0, Math.min(maxY, cur));
+                        const top = Math.min(startY, cur);
+                        const bottom = Math.max(startY, cur);
+                        selectDiv.style.top = `${top}px`;
+                        selectDiv.style.height = `${bottom - top}px`;
+                        selectDiv.dataset.time = `${formatTime(top)} - ${formatTime(bottom)}`;
+                }
 
 		function cancelSelection() {
 			if (!selecting) {
@@ -405,42 +409,46 @@
 			selecting = false;
 		}
 
-		function pointerUp(eUp) {
-			if (!selecting) {
-				return;
-			}
-			document.removeEventListener('pointermove', pointerMove);
-			document.removeEventListener('pointerup', pointerUp);
-			document.removeEventListener('pointercancel', cancelSelection);
-			const cur = eUp.clientY - grid.getBoundingClientRect().top;
-			let top = Math.min(startY, cur);
-			let bottom = Math.max(startY, cur);
-			top = Math.max(0, Math.round(top / STEP) * STEP);
-			bottom = Math.min(24 * H, Math.round(bottom / STEP) * STEP);
-			selectDiv.remove();
-			selecting = false;
-			openModalWithRange(top, bottom);
-		}
+                function pointerUp(eUp) {
+                        if (!selecting) {
+                                return;
+                        }
+                        document.removeEventListener('pointermove', pointerMove);
+                        document.removeEventListener('pointerup', pointerUp);
+                        document.removeEventListener('pointercancel', cancelSelection);
+                        const rect = grid.getBoundingClientRect();
+                        let cur = eUp.clientY - rect.top;
+                        const maxY = 24 * H;
+                        cur = Math.max(0, Math.min(maxY, cur));
+                        let top = Math.min(startY, cur);
+                        let bottom = Math.max(startY, cur);
+                        top = Math.max(0, Math.round(top / STEP) * STEP);
+                        bottom = Math.min(maxY, Math.round(bottom / STEP) * STEP);
+                        selectDiv.remove();
+                        selecting = false;
+                        openModalWithRange(top, bottom);
+                }
 
-		grid.addEventListener('pointerdown', e => {
-			if (window.currentCanEdit !== 'Y') {
-				return;
-			}
-			if (e.target.closest('.event')) {
-				return;
-			}
-			const slot = e.target.closest('.hour-slot');
-			if (!slot) {
-				return;
-			}
-			const hourSlots = Array.from(grid.querySelectorAll('.hour-slot'));
-			const idx = hourSlots.indexOf(slot);
-			if (idx === hourSlots.length - 1) {
-				return;
-			}
-			selecting = true;
-			startY = e.clientY - grid.getBoundingClientRect().top;
-			selectDiv = document.createElement('div');
+                grid.addEventListener('pointerdown', e => {
+                        if (window.currentCanEdit !== 'Y') {
+                                return;
+                        }
+                        if (e.target.closest('.event')) {
+                                return;
+                        }
+                        const slot = e.target.closest('.hour-slot');
+                        if (!slot) {
+                                return;
+                        }
+                        const hourSlots = Array.from(grid.querySelectorAll('.hour-slot'));
+                        const idx = hourSlots.indexOf(slot);
+                        if (idx === hourSlots.length - 1) {
+                                return;
+                        }
+                        e.preventDefault();
+                        selecting = true;
+                        startY = e.clientY - grid.getBoundingClientRect().top;
+                        selectDiv = document.createElement('div');
 			selectDiv.className = 'drag-select';
 			selectDiv.style.top = `${startY}px`;
 			grid.appendChild(selectDiv);

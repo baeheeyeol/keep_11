@@ -677,7 +677,11 @@
                         if (!selecting) {
                                 return;
                         }
-                        const el = document.elementFromPoint(eMove.clientX, eMove.clientY);
+                        eMove.preventDefault();
+                        const rect = calendar.getBoundingClientRect();
+                        const x = Math.max(rect.left + 1, Math.min(rect.right - 1, eMove.clientX));
+                        const y = Math.max(rect.top + 1, Math.min(rect.bottom - 1, eMove.clientY));
+                        const el = document.elementFromPoint(x, y);
                         const cell = el ? el.closest('.day-cell') : null;
                         renderSelection(cell || startCell);
                 }
@@ -691,7 +695,11 @@
                         }
                         selecting = false;
                         clearDivs();
-                        const endCell = e.target.closest('.day-cell') || startCell;
+                        const rect = calendar.getBoundingClientRect();
+                        const x = Math.max(rect.left + 1, Math.min(rect.right - 1, e.clientX));
+                        const y = Math.max(rect.top + 1, Math.min(rect.bottom - 1, e.clientY));
+                        const el = document.elementFromPoint(x, y);
+                        const endCell = (el ? el.closest('.day-cell') : null) || startCell;
                         if (!endCell || !startCell) {
                                 return;
                         }
