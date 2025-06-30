@@ -1,20 +1,20 @@
 :root {
   /* 시간 슬롯 높이 (일반 행 높이) */
-  --hour-height: 60px;
+  --hour-height: 3.75rem;
   /* 맨 밑 “다음 날 00시” 슬롯 높이 (일반 슬롯보다 작게) */
-  --bottom-slot-height: 40px;
+  --bottom-slot-height: 2.5rem;
   /* 종일 이벤트 카드 최소 너비 */
-  --all-day-card-width: 150px;
+  --all-day-card-width: 9.375rem;
   /* 종일 이벤트 한 줄 높이 */
-  --all-day-row-height: 20px;
+  --all-day-row-height: 1.25rem;
   /* 요일 컬럼 수 */
   --weekday-count: 7;
   /* 요일 헤더 높이 */
-  --weekday-header-height: 40px;
+  --weekday-header-height: 2.5rem;
   /* 시간축(왼쪽) 컬럼 너비 */
-  --time-column-width: 60px;
+  --time-column-width: 3.75rem;
   /* 대시보드 헤더 높이(스크롤 고정 offset) */
-  --dashboard-header-height: 60px;
+  --dashboard-header-height: 3.75rem;
 }
 
 /* — 요일 헤더 — */
@@ -64,7 +64,7 @@
 .weekday-header .date-number {
   font-size: 0.75rem;
   color: #555;
-  margin-right: 4px;
+  margin-right: 0.25rem;
 }
 
 /* — 종일 이벤트 영역 — */
@@ -74,7 +74,7 @@
   z-index: 20;
   display: grid;
   grid-template-columns: var(--time-column-width) 1fr;
-  padding: 8px;
+  padding: 0.5rem;
   background: #f9fafb;
   border-bottom: 1px solid #e5e7eb;
 }
@@ -89,7 +89,7 @@
   justify-content: center;
   font-weight: 600;
   color: #333;
-  margin-right: 8px;
+  margin-right: 0.5rem;
 }
 
 /* 종일 이벤트 카드 리스트 */
@@ -101,9 +101,9 @@
 .all-day-event {
   position: absolute;
   height: var(--all-day-row-height);
-  margin-bottom: 2px;
-  padding: 0 4px;
-  border-radius: 4px;
+  margin-bottom: 0.125rem;
+  padding: 0 0.25rem;
+  border-radius: 0.25rem;
   font-size: 0.75rem;
   color: #fff;
   white-space: nowrap;
@@ -115,8 +115,8 @@
 .all-day-toggle {
   grid-column: 1 / -1;
   justify-self: start;
-  margin-top: 4px;
-  padding: 4px 8px;
+  margin-top: 0.25rem;
+  padding: 0.25rem 0.5rem;
   background: transparent;
   border: none;
   font-size: 0.875rem;
@@ -130,11 +130,11 @@
   justify-content: center;
   flex: 0 0 auto;
   min-width: var(--all-day-card-width);
-  padding: 8px 12px;
+  padding: 0.5rem 0.75rem;
   background-color: #ffffff;
   border: 1px solid #d1d5db;
-  border-radius: 4px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  border-radius: 0.25rem;
+  box-shadow: 0 0.0625rem 0.125rem rgba(0, 0, 0, 0.1);
   font-size: 0.875rem;
   color: #333;
   cursor: pointer;
@@ -144,7 +144,7 @@
 }
 .event-card:hover {
   background-color: #f8f9fa;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.15);
 }
 
 /* — 메인 일정 영역 — */
@@ -177,8 +177,8 @@
 /* 텍스트 포지션 */
 .hour-text {
   position: absolute;
-  top: 4px;
-  left: 8px;
+  top: 0.25rem;
+  left: 0.5rem;
   font-size: 0.75rem;
   color: #555;
   white-space: nowrap;
@@ -230,12 +230,12 @@
 /* 이벤트 블록 스타일 */
 .event {
   position: absolute;
-  padding: 4px;
-  border-radius: 4px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  box-shadow: 0 0.0625rem 0.125rem rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
-  margin-bottom: 2px;
-  margin-right: 2px;
+  margin-bottom: 0.125rem;
+  margin-right: 0.125rem;
   font-size: 0.875rem;
   color: #fff;
   cursor: pointer;
@@ -258,7 +258,7 @@
 /* — 전체 컨테이너 — */
 .daily-schedule-container {
   background: #ffffff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05);
   font-family: 'Noto Sans KR', sans-serif;
   overflow: visible;
 }
@@ -276,12 +276,12 @@
 .current-time-line[data-time]:hover::after {
   content: attr(data-time);
   position: absolute;
-  top: -28px;
+  top: -1.75rem;
   left: 0;
   background: rgba(0, 0, 0, 0.75);
   color: #fff;
-  padding: 2px 6px;
-  border-radius: 4px;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
   font-size: 0.75rem;
   white-space: nowrap;
   pointer-events: none;
@@ -291,9 +291,9 @@
 .current-time-line[data-time]:hover::before {
   content: '';
   position: absolute;
-  top: -6px;
-  left: 8px;
-  border: 4px solid transparent;
+  top: -0.375rem;
+  left: 0.5rem;
+  border: 0.25rem solid transparent;
   border-top-color: rgba(0, 0, 0, 0.75);
   pointer-events: none;
   z-index: 20;
@@ -310,25 +310,25 @@
 .drag-select::after {
   content: attr(data-time);
   position: absolute;
-  top: 2px;
-  left: 2px;
+  top: 0.125rem;
+  left: 0.125rem;
   background: rgba(59, 130, 246, 0.9);
   color: #fff;
   font-size: 0.75rem;
-  padding: 2px 4px;
-  border-radius: 4px;
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
   white-space: nowrap;
 }
 
 /* 모바일 환경에서도 동일한 주간 뷰 유지 */
 /*
-@media (max-width: 576px) {
+@media (max-width: 36rem) {
   :root {
-    --hour-height: 40px;
+    --hour-height: 2.5rem;
   }
   .weekday-header,
   .schedule-grid {
-    min-width: 700px;
+    min-width: 43.75rem;
   }
   .daily-schedule {
     overflow-x: auto;

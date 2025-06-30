@@ -1,5 +1,5 @@
 :root {
-  --monthly-cell-height: 120px;
+  --monthly-cell-height: 7.5rem;
 }
 
 .monthly-calendar {
@@ -31,7 +31,7 @@
   position: relative;
   border-right: 1px solid #e5e7eb;
   border-bottom: 1px solid #e5e7eb;
-  padding: 2px;
+  padding: 0.125rem;
   overflow: hidden;
 }
 
@@ -45,8 +45,8 @@
 
 .monthly-calendar .day-number {
   position: absolute;
-  top: 2px;
-  right: 4px;
+  top: 0.125rem;
+  right: 0.25rem;
   font-size: 0.75rem;
   color: #555;
   z-index: 2;
@@ -59,20 +59,20 @@
 
 .monthly-calendar .events-container {
   position: absolute;
-  top: 22px;
-  bottom: 2px;
-  left: 2px;
-  right: 2px;
+  top: 1.375rem;
+  bottom: 0.125rem;
+  left: 0.125rem;
+  right: 0.125rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .monthly-calendar .event-bar {
   display: block;
-  border-radius: 3px;
-  padding: 0 2px;
+  border-radius: 0.1875rem;
+  padding: 0 0.125rem;
   font-size: 0.75rem;
   color: #fff;
   white-space: nowrap;
@@ -100,7 +100,7 @@
 }
 .weekday-header .day-label {
   text-align: center;
-  padding: 4px 0;
+  padding: 0.25rem 0;
   font-weight: 600;
   border-right: 1px solid #e5e7eb;
   color: #333;
@@ -110,13 +110,13 @@
 }
 
 .monthly-calendar-container {
-  height: calc(100vh - var(--dashboard-header-height) - 20px);
+  height: calc(100vh - var(--dashboard-header-height) - 1.25rem);
   display: flex;
   flex-direction: column;
   overflow: hidden;
   border-radius: 1rem;
   background: #ffffff;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,0.05);
   font-family: 'Noto Sans KR', sans-serif;
 }
 
@@ -145,21 +145,21 @@
 .monthly-select-overlay .drag-select::after {
   content: attr(data-range);
   position: absolute;
-  top: 2px;
-  left: 2px;
+  top: 0.125rem;
+  left: 0.125rem;
   background: rgba(59, 130, 246, 0.9);
   color: #fff;
   font-size: 0.75rem;
-  padding: 2px 4px;
-  border-radius: 4px;
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
   white-space: nowrap;
 }
 
 /* 모바일 레이아웃 변형 비활성화 */
 /*
-@media (max-width: 576px) {
+@media (max-width: 36rem) {
   :root {
-    --monthly-cell-height: 80px;
+    --monthly-cell-height: 5rem;
   }
   .monthly-calendar {
     font-size: 0.75rem;

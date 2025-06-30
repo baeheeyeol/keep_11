@@ -1,15 +1,15 @@
 #share-list {
-  margin: 10px 0;
-  min-height: calc(100vh - 240px);
+  margin: 0.625rem 0;
+  min-height: calc(100vh - 15rem);
 }
 
 .placeholder {
-  padding: 30px;
+  padding: 1.875rem;
   text-align: center;
   color: #888;
   width: 100%;
   font-size: 1.6rem;
-  min-height: calc(100vh - 240px);
+  min-height: calc(100vh - 15rem);
   display: flex;
   justify-content: center;
   align-items: center;

@@ -1,5 +1,5 @@
 .mylist-header {
-  margin-bottom: 10px;
+  margin-bottom: 0.625rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -8,7 +8,7 @@
 .mylist-columns {
   flex: 1;
   display: flex;
-  gap: 20px;
+  gap: 1.25rem;
   font-weight: bold;
 }
 
@@ -16,7 +16,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px;
+  padding: 0.5rem;
   border-bottom: 1px solid #eee;
   transition: background-color 0.2s;
 }
@@ -30,12 +30,12 @@
 }
 
 .mylist-item .edit-btn {
-  margin-left: 8px;
+  margin-left: 0.5rem;
 }
 
 .mylist-item .save-btn,
 .mylist-item .cancel-btn {
-  margin-left: 8px;
+  margin-left: 0.5rem;
   display: none;
 }
 
@@ -52,7 +52,7 @@
   flex: 1;
   border: none;
   background: transparent;
-  padding: 6px 4px;
+  padding: 0.375rem 0.25rem;
   display: none;
 }
 
@@ -75,10 +75,10 @@
 }
 
 .mylist-share .share-btn {
-  margin-left: 4px;
-  padding: 4px 8px;
+  margin-left: 0.25rem;
+  padding: 0.25rem 0.5rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   cursor: pointer;
   background-color: #eef2ff;
 }
@@ -94,9 +94,9 @@
 
 .list-add-btn,
 .mylist-item button {
-  padding: 4px 8px;
+  padding: 0.25rem 0.5rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   cursor: pointer;
   background-color: #eef2ff;
   transition: background-color 0.2s;
@@ -112,5 +112,5 @@
 }
 
 .mylist-item.new-item {
-  margin-bottom: 10px;
+  margin-bottom: 0.625rem;
 }
