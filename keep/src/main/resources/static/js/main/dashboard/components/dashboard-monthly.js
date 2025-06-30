@@ -670,6 +670,7 @@
                                         selectDivs.push(div);
                                 }
                                 sIdx = partEnd + 1;
+                                break; // show only the first row selection
                         }
                 }
 
