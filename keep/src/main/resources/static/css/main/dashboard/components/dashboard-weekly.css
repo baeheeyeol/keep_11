@@ -320,7 +320,8 @@
   white-space: nowrap;
 }
 
-/* Responsive: horizontal scroll on narrow screens */
+/* 모바일 환경에서도 동일한 주간 뷰 유지 */
+/*
 @media (max-width: 576px) {
   :root {
     --hour-height: 40px;
@@ -333,3 +334,4 @@
     overflow-x: auto;
   }
 }
+*/

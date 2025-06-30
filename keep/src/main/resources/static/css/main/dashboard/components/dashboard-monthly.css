@@ -155,7 +155,8 @@
   white-space: nowrap;
 }
 
-/* Responsive: reduce cell height on narrow screens */
+/* 모바일 레이아웃 변형 비활성화 */
+/*
 @media (max-width: 576px) {
   :root {
     --monthly-cell-height: 80px;
@@ -164,3 +165,4 @@
     font-size: 0.75rem;
   }
 }
+*/

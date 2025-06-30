@@ -260,6 +260,8 @@ button, a {
   }
 }
 
+/* 모바일에서도 데스크톱과 동일한 레이아웃을 유지한다 */
+/*
 @media (max-width: 768px) {
   #container {
     flex-direction: column;
@@ -290,3 +292,4 @@ button, a {
     padding: 10px;
   }
 }
+*/
