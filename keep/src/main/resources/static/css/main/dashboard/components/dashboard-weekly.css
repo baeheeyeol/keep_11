@@ -310,8 +310,8 @@
 .drag-select::after {
   content: attr(data-time);
   position: absolute;
-  top: -18px;
-  left: 0;
+  top: 2px;
+  left: 2px;
   background: rgba(59, 130, 246, 0.9);
   color: #fff;
   font-size: 0.75rem;
