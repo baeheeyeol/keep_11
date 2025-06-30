@@ -245,15 +245,14 @@
 }
 
 
-/* Responsive: fullscreen modal on small screens */
+/* 모바일 화면에서도 모달에 약간의 여백을 두어 잘리지 않도록 한다 */
 @media (max-width: 576px) {
   .modal {
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    transform: none;
-    border-radius: 0;
+    top: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-height: 90%;
     overflow-y: auto;
   }
 }

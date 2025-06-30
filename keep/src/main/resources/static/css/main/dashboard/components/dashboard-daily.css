@@ -266,7 +266,8 @@
         white-space: nowrap;
 }
 
-/* Responsive: single column layout on narrow screens */
+/* 모바일에서도 데스크톱과 동일한 레이아웃 사용 */
+/*
 @media (max-width: 576px) {
   :root {
     --hour-height: 40px;
@@ -278,3 +279,4 @@
     overflow-x: auto;
   }
 }
+*/
