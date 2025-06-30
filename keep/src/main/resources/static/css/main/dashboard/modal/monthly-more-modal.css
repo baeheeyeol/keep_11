@@ -58,3 +58,14 @@
 #monthly-more-close:hover {
   background: #e5e7eb;
 }
+
+/* Responsive: fullscreen modal on small screens */
+@media (max-width: 576px) {
+  #monthly-more-modal {
+    width: 100%;
+    height: 100%;
+    transform: translateX(0);
+    top: 0;
+    left: 0;
+  }
+}

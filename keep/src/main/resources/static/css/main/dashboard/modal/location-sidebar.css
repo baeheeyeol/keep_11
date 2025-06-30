@@ -83,3 +83,10 @@
 #location-sidebar-close:hover {
   background: #e5e7eb;
 }
+
+/* Responsive: fullscreen sidebar on small screens */
+@media (max-width: 576px) {
+  .location-sidebar {
+    width: 100%;
+  }
+}
