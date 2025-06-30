@@ -1,5 +1,6 @@
 // static/js/main/dashboard/components/dashboard-monthly.js 에서 하루가 지나는 일정및 그렇지 않은 일정 둘다 드래그중에는 해당 요일에 딱딱 들어맞게 이동되는거 처럼 보이도록 수정.드래그 중에는 기존 일정은 반투명상태로 변환.하루가 지나는 일정의 경우
-// 
+// 빈공간 드래그 시 주간을 넘어서면 두번째 줄부터는 일정은 표시하지 않지만
+// 가상의 선택 영역은 계속 표시되도록 수정
 (function() {
 	let suppressCellClick = false;
 	const monthlyState = {}; // 현재 렌더 상태 저장
@@ -670,7 +671,9 @@
                                         selectDivs.push(div);
                                 }
                                 sIdx = partEnd + 1;
-                                break; // show only the first row selection
+                                // continue showing selection boxes for
+                                // additional week rows without duplicating the
+                                // range label
                         }
                 }
 
