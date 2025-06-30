@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layouts/layout">
+<!-- title -->
+<th:block layout:fragment="title">
+  <title>Responsive Calendar</title>
+</th:block>
+
+<!-- style -->
+<th:block layout:fragment="add-css">
+  <link rel="stylesheet" th:href="@{/css/responsive-calendar.css}" />
+</th:block>
+
+<!-- content -->
+<th:block layout:fragment="content">
+  <header class="app-header">
+    <button id="menu-toggle" class="menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="sidebar">&#9776;</button>
+    <h1>Calendar</h1>
+  </header>
+
+  <aside id="sidebar" class="sidebar" aria-hidden="true" aria-modal="true">
+    <div class="sidebar-content" tabindex="-1">
+      <button id="sidebar-close" class="close-btn" aria-label="Close sidebar">&times;</button>
+      <p class="greeting">Hello, User</p>
+      <nav class="icon-buttons" aria-label="Primary">
+        <button aria-label="Friends">👥</button>
+        <button aria-label="Calendar">📅</button>
+        <button aria-label="Notifications">🔔</button>
+      </nav>
+      <label for="list-select" class="list-label">Choose List</label>
+      <select id="list-select">
+        <option>Default</option>
+      </select>
+      <div class="date-nav">
+        <button id="prev-week" aria-label="Previous week">&lt;</button>
+        <span id="current-week">This Week</span>
+        <button id="next-week" aria-label="Next week">&gt;</button>
+      </div>
+      <div class="view-toggle" role="group" aria-label="View toggle">
+        <button>Today</button>
+        <button>Day</button>
+        <button class="active">Week</button>
+        <button>Month</button>
+        <button>Year</button>
+      </div>
+    </div>
+  </aside>
+
+  <main id="main-content" class="main-content" tabindex="-1">
+    <div class="calendar-grid" aria-label="Weekly calendar">
+      <div class="hours" aria-hidden="true">
+        <div class="hour">0:00</div>
+        <div class="hour">1:00</div>
+        <div class="hour">2:00</div>
+        <div class="hour">3:00</div>
+        <div class="hour">4:00</div>
+        <div class="hour">5:00</div>
+        <div class="hour">6:00</div>
+        <div class="hour">7:00</div>
+        <div class="hour">8:00</div>
+        <div class="hour">9:00</div>
+        <div class="hour">10:00</div>
+        <div class="hour">11:00</div>
+        <div class="hour">12:00</div>
+        <div class="hour">13:00</div>
+        <div class="hour">14:00</div>
+        <div class="hour">15:00</div>
+        <div class="hour">16:00</div>
+        <div class="hour">17:00</div>
+        <div class="hour">18:00</div>
+        <div class="hour">19:00</div>
+        <div class="hour">20:00</div>
+        <div class="hour">21:00</div>
+        <div class="hour">22:00</div>
+        <div class="hour">23:00</div>
+      </div>
+      <div class="days">
+        <div class="day" aria-label="Sunday"></div>
+        <div class="day" aria-label="Monday"></div>
+        <div class="day" aria-label="Tuesday"></div>
+        <div class="day" aria-label="Wednesday"></div>
+        <div class="day" aria-label="Thursday"></div>
+        <div class="day" aria-label="Friday"></div>
+        <div class="day" aria-label="Saturday"></div>
+      </div>
+    </div>
+  </main>
+  <div id="overlay" class="overlay" aria-hidden="true"></div>
+</th:block>
+
+<!-- script -->
+<th:block layout:fragment="script">
+  <script th:src="@{/js/responsive-calendar.js}"></script>
+</th:block>
+</html>
