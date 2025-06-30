@@ -1,17 +1,17 @@
 #invite-list {
-  margin: 10px 0;
+  margin: 0.625rem 0;
   /* Ensure the footer is visible without scrolling */
-  min-height: calc(100vh - 240px);
+  min-height: calc(100vh - 15rem);
 }
 
 .placeholder {
-  padding: 30px;
+  padding: 1.875rem;
   text-align: center;
   color: #888;
   width: 100%;
   font-size: 1.6rem;
   /* Match container height to occupy remaining space */
-  min-height: calc(100vh - 240px);
+  min-height: calc(100vh - 15rem);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -22,7 +22,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
+  padding: 0.5rem 0;
   border-bottom: 1px solid #ddd;
   position: relative;
 }
@@ -38,7 +38,7 @@
   left: 0;
   background: #fff;
   border: 1px solid #ddd;
-  padding: 8px;
+  padding: 0.5rem;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   z-index: 10;
 }
@@ -51,7 +51,7 @@
   background-color: #4CAF50;
   color: #fff;
   border: none;
-  padding: 4px 8px;
+  padding: 0.25rem 0.5rem;
   cursor: pointer;
 }
 
@@ -65,5 +65,5 @@
 }
 
 #go-mylist {
-  margin-top: 6px;
+  margin-top: 0.375rem;
 }
