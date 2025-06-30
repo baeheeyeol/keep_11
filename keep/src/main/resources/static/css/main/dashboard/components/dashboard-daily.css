@@ -245,12 +245,12 @@
 
 /* 드래그 선택 영역 */
 .drag-select {
-	position: absolute;
-	left: 0;
-	right: 0;
-	background: rgba(59, 130, 246, 0.3);
-	pointer-events: none;
-	z-index: 5;
+        position: absolute;
+        left: 0;
+        right: 0;
+        background: rgba(59, 130, 246, 0.3);
+        pointer-events: none;
+        z-index: 60;
 }
 
 .drag-select::after {
