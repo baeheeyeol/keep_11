@@ -697,8 +697,11 @@
                         if (!selecting) {
                                 return;
                         }
+                        eMove.preventDefault();
                         const rect = grid.getBoundingClientRect();
-                        const curY = eMove.clientY - rect.top;
+                        let curY = eMove.clientY - rect.top;
+                        const maxY = 24 * slotHeight;
+                        curY = Math.max(0, Math.min(maxY, curY));
                         const top = Math.min(startY, curY);
                         const bottom = Math.max(startY, curY);
                         selectDiv.style.top = `${top}px`;
@@ -719,11 +722,12 @@
                         selecting = false;
                 }
 
-                function pointerUp(eUp) {
-                        if (!selecting) {
-                                return;
-                        }
-                        document.removeEventListener('pointermove', pointerMove);
+               function pointerUp(eUp) {
+                       if (!selecting) {
+                               return;
+                       }
+                        eUp.preventDefault();
+                       document.removeEventListener('pointermove', pointerMove);
                         document.removeEventListener('pointerup', pointerUp);
                         document.removeEventListener('pointercancel', cancelSelection);
                         const rect = grid.getBoundingClientRect();
@@ -741,6 +745,7 @@
                         if (window.currentCanEdit !== 'Y') {
                                 return;
                         }
+                        e.preventDefault();
                         if (e.target.closest('.event')) {
                                 return;
                         }
