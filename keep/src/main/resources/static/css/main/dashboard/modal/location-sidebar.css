@@ -84,9 +84,10 @@
   background: #e5e7eb;
 }
 
-/* Responsive: fullscreen sidebar on small screens */
+/* 모바일에서도 약간의 여백을 둔 사이드바 표시 */
 @media (max-width: 576px) {
   .location-sidebar {
-    width: 100%;
+    width: 90%;
+    left: 5%;
   }
 }
