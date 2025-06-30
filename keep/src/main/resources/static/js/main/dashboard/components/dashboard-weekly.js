@@ -5,6 +5,15 @@
  */
 
 (function() {
+        function cssVarPx(name) {
+                const val = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+                const num = parseFloat(val);
+                if (val.endsWith('rem')) {
+                        const base = parseFloat(getComputedStyle(document.documentElement).fontSize);
+                        return num * base;
+                }
+                return num;
+        }
 	/**
 	 * initWeeklySchedule:
 	 *  1) 주간 시작·끝 날짜 계산
@@ -55,10 +64,8 @@
                 container.innerHTML = '';
 		updateCurrentTimeLine();
 		// CSS 변수 읽기
-		const slotHeight = parseFloat(
-			getComputedStyle(document.documentElement).getPropertyValue('--hour-height')
-		);
-		const percentPerDay = 100 / 7;
+                const slotHeight = cssVarPx('--hour-height');
+                const percentPerDay = 100 / 7;
 
 		attachGridClick();
 
@@ -266,14 +273,10 @@
 		}
 		window.addEventListener('resize', updateGridRect);
 
-		const slotHeight = parseFloat(
-			getComputedStyle(document.documentElement).getPropertyValue('--hour-height')
-		);
-		const quarterSlot = slotHeight / 4;                     // 15분 단위
-		const bottomSlotHeight = parseFloat(
-			getComputedStyle(document.documentElement).getPropertyValue('--bottom-slot-height')
-		);
-		const totalGridHeight = 24 * slotHeight + bottomSlotHeight;
+                const slotHeight = cssVarPx('--hour-height');
+                const quarterSlot = slotHeight / 4;                     // 15분 단위
+                const bottomSlotHeight = cssVarPx('--bottom-slot-height');
+                const totalGridHeight = 24 * slotHeight + bottomSlotHeight;
 		const percentPerDay = 100 / 7;
 
                 let originals, pressedPointerId, scheduleId, startX, startY;
@@ -476,10 +479,8 @@
                         oldToggle.remove();
                 }
 
-		const ROW_HEIGHT = parseFloat(
-			getComputedStyle(document.documentElement).getPropertyValue('--all-day-row-height') || 20
-		);
-		const ROW_GAP = 2;
+                const ROW_HEIGHT = cssVarPx('--all-day-row-height');
+                const ROW_GAP = 2;
 		const percentPerDay = 100 / 7;
 
 		const items = events
@@ -586,9 +587,7 @@
                 }
                 const now = new Date();
                 const h = now.getHours() + now.getMinutes() / 60;
-                const slotHeight = parseFloat(
-                        getComputedStyle(document.documentElement).getPropertyValue('--hour-height')
-                );
+                const slotHeight = cssVarPx('--hour-height');
                 line.style.top = `${h * slotHeight}px`;
 
                 const currentDateInput = document.getElementById('current-date');
@@ -643,10 +642,8 @@
                         return;
                 }
 
-		const slotHeight = parseFloat(
-			getComputedStyle(document.documentElement).getPropertyValue('--hour-height')
-		);
-		const STEP = slotHeight / 4;
+                const slotHeight = cssVarPx('--hour-height');
+                const STEP = slotHeight / 4;
 		let selecting = false;
 		let startY = 0;
 		let startColIdx = 0;
